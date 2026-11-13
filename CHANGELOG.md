@@ -6,6 +6,15 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.1.1] - 2026-11-14
+
+### Added
+
+- Landing page at <https://drsamonline.github.io/tessera/>: one file, no dependencies, no network calls, no
+  analytics, dark and light, keyboard first.
+- `docs/404.html` and `docs/.nojekyll` for GitHub Pages.
+- `VERSION` file.
+
 ## [1.1.0] - 2026-11-14
 
 ### Added

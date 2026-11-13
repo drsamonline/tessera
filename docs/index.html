@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TESSERA — the mosaic layer above every CRM</title>
+<meta name="description" content="A federation mesh above every CRM: one customer view, one hash-chained ledger, and a workforce where humans and agents fill the same seats. Specification v1.1, audited — no implementation yet.">
+<meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f2ea" media="(prefers-color-scheme: light)">
+<meta property="og:title" content="TESSERA — the mosaic layer above every CRM">
+<meta property="og:description" content="Every system you already run becomes a tile. Together they make one picture — and one record of how it was made.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230b0d10'/%3E%3Crect x='4' y='4' width='10' height='10' fill='%23d9a441'/%3E%3Crect x='18' y='4' width='10' height='10' fill='%233f7d7a'/%3E%3Crect x='4' y='18' width='10' height='10' fill='%233f7d7a'/%3E%3Crect x='18' y='18' width='10' height='10' fill='%23c0653b'/%3E%3C/svg%3E">
+<style>
+  /* TESSERA landing page. One file, no dependencies, no network calls, no analytics.
+     Built on the product's own design rules: semantic tokens, a 1.25 type scale,
+     4/8px spacing, 150ms motion, dark and light, AA contrast, keyboard first. */
+  :root {
+    --bg: #0b0d10; --panel: #11151a; --panel-2: #161b21; --ink: #e8e6e1; --ink-2: #b6b3ac;
+    --mut: #8f8c85; --line: #232a32; --line-2: #2e3742;
+    --ochre: #d9a441; --teal: #4f9a95; --clay: #c0653b;
+    --step-0: 1rem; --step-1: 1.25rem; --step-2: 1.5625rem; --step-3: 1.953rem;
+    --step-4: 2.441rem; --step-5: 3.052rem; --step-6: 3.815rem;
+    --s1: 4px; --s2: 8px; --s3: 16px; --s4: 24px; --s5: 40px; --s6: 64px; --s7: 96px;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --r: 3px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f2ea; --panel: #fffdf8; --panel-2: #efe9dd; --ink: #14161a; --ink-2: #3a3f47;
+      --mut: #5f6570; --line: #ddd5c6; --line-2: #c9bfad;
+      --ochre: #8a6416; --teal: #1f5f5b; --clay: #9c4620;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0d10; --panel: #11151a; --panel-2: #161b21; --ink: #e8e6e1; --ink-2: #b6b3ac;
+    --mut: #8f8c85; --line: #232a32; --line-2: #2e3742;
+    --ochre: #d9a441; --teal: #4f9a95; --clay: #c0653b;
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f2ea; --panel: #fffdf8; --panel-2: #efe9dd; --ink: #14161a; --ink-2: #3a3f47;
+    --mut: #5f6570; --line: #ddd5c6; --line-2: #c9bfad;
+    --ochre: #8a6416; --teal: #1f5f5b; --clay: #9c4620;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-size: var(--step-0); line-height: 1.62;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 var(--s4); }
+  a { color: var(--ochre); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 2px; }
+  code { font-family: var(--mono); font-size: .88em; background: var(--panel-2);
+         border: 1px solid var(--line); border-radius: var(--r); padding: 1px 5px; }
+  h1, h2, h3 { line-height: 1.14; letter-spacing: -0.02em; margin: 0; font-weight: 650; }
+  p { margin: 0 0 var(--s3); }
+  .skip { position: absolute; left: -9999px; }
+  .skip:focus { left: var(--s3); top: var(--s3); background: var(--panel); color: var(--ink);
+                padding: var(--s2) var(--s3); z-index: 100; border: 1px solid var(--line-2); }
+
+  /* bar */
+  .bar { position: sticky; top: 0; z-index: 30; background: color-mix(in srgb, var(--bg) 88%, transparent);
+         backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .bar-in { display: flex; align-items: center; gap: var(--s4); height: 60px; }
+  .mark { display: flex; align-items: center; gap: var(--s2); font-weight: 700; letter-spacing: .16em;
+          font-size: .82rem; color: var(--ink); text-decoration: none; }
+  .mark svg { display: block; }
+  .bar nav { margin-left: auto; display: flex; gap: var(--s3); align-items: center; flex-wrap: wrap; }
+  .bar nav a { color: var(--ink-2); text-decoration: none; font-size: .875rem; padding: var(--s1) 0; }
+  .bar nav a:hover { color: var(--ink); }
+  .tog { background: none; border: 1px solid var(--line-2); color: var(--ink-2); border-radius: var(--r);
+         width: 34px; height: 30px; cursor: pointer; font-size: .8rem; line-height: 1; }
+  .tog:hover { color: var(--ink); border-color: var(--ochre); }
+  @media (max-width: 720px) { .bar nav a.hide { display: none; } }
+
+  /* hero */
+  header.hero { padding: var(--s7) 0 var(--s6); border-bottom: 1px solid var(--line); position: relative; overflow: hidden; }
+  .mosaic { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(14, 1fr);
+            grid-auto-rows: 1fr; gap: 3px; opacity: .16; pointer-events: none; }
+  .mosaic i { display: block; background: var(--line-2); }
+  .mosaic i.a { background: var(--ochre); } .mosaic i.b { background: var(--teal); }
+  .mosaic i.c { background: var(--clay); }
+  .hero-in { position: relative; }
+  .eyebrow { font-family: var(--mono); font-size: .74rem; letter-spacing: .18em; text-transform: uppercase;
+             color: var(--ochre); margin: 0 0 var(--s3); }
+  h1 { font-size: clamp(2.6rem, 7vw, var(--step-6)); letter-spacing: -0.035em; }
+  .sub { font-size: clamp(1.05rem, 2.4vw, var(--step-2)); color: var(--ink-2); max-width: 30ch;
+         margin: var(--s4) 0 var(--s4); line-height: 1.4; }
+  .lede { font-size: 1.06rem; color: var(--ink-2); max-width: 62ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s5) 0 var(--s4); }
+  .chip { font-family: var(--mono); font-size: .72rem; letter-spacing: .04em; border: 1px solid var(--line-2);
+          color: var(--ink-2); border-radius: 999px; padding: 3px 10px; }
+  .chip.warn { border-color: color-mix(in srgb, var(--clay) 55%, var(--line-2)); color: var(--clay); }
+  .cta { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s4); }
+  .btn { display: inline-flex; align-items: center; gap: var(--s2); text-decoration: none; font-size: .94rem;
+         padding: 11px 20px; border-radius: var(--r); border: 1px solid var(--line-2); color: var(--ink);
+         transition: background 150ms ease-out, border-color 150ms ease-out, transform 150ms ease-out; }
+  .btn:hover { border-color: var(--ochre); background: var(--panel); }
+  .btn.primary { background: var(--ochre); border-color: var(--ochre); color: #17130a; font-weight: 600; }
+  .btn.primary:hover { transform: translateY(-1px); }
+
+  /* sections */
+  section { padding: var(--s7) 0; border-bottom: 1px solid var(--line); }
+  .kicker { font-family: var(--mono); font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+            color: var(--mut); margin: 0 0 var(--s3); }
+  h2 { font-size: clamp(1.5rem, 3.6vw, var(--step-4)); max-width: 22ch; }
+  .say { color: var(--ink-2); max-width: 62ch; margin-top: var(--s3); font-size: 1.04rem; }
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--s4);
+           margin-top: var(--s5); }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: var(--s4); }
+  .card h3 { font-size: 1.02rem; margin-bottom: var(--s2); }
+  .card p { color: var(--ink-2); font-size: .93rem; margin: 0; }
+  .card .num { font-family: var(--mono); font-size: .72rem; color: var(--ochre); letter-spacing: .1em; }
+
+  /* flow */
+  .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--s3);
+          margin-top: var(--s5); align-items: stretch; }
+  .step { border: 1px solid var(--line); border-radius: var(--r); padding: var(--s4); background: var(--panel);
+          position: relative; }
+  .step .n { font-family: var(--mono); font-size: .72rem; color: var(--mut); }
+  .step h3 { font-size: 1.02rem; margin: var(--s2) 0 var(--s2); }
+  .step p { margin: 0; color: var(--ink-2); font-size: .92rem; }
+  .step::after { content: ""; position: absolute; right: -10px; top: 50%; width: 8px; height: 8px;
+                 border-top: 1px solid var(--line-2); border-right: 1px solid var(--line-2);
+                 transform: translateY(-50%) rotate(45deg); }
+  .step:last-child::after { display: none; }
+  @media (max-width: 700px) { .step::after { display: none; } }
+
+  /* layers */
+  .layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: var(--s3);
+            margin-top: var(--s5); }
+  .layer { display: grid; grid-template-columns: 46px 1fr; gap: var(--s3); padding: var(--s3) 0;
+           border-bottom: 1px solid var(--line); }
+  .layer .ln { font-family: var(--mono); font-size: .8rem; color: var(--ochre); padding-top: 3px; }
+  .layer h3 { font-size: 1rem; margin: 0 0 2px; }
+  .layer p { margin: 0; font-size: .9rem; color: var(--ink-2); }
+  .tag { font-family: var(--mono); font-size: .66rem; letter-spacing: .06em; text-transform: uppercase;
+         border: 1px solid var(--line-2); border-radius: 999px; padding: 1px 7px; color: var(--mut);
+         margin-left: var(--s2); vertical-align: 2px; }
+  .tag.road { border-color: color-mix(in srgb, var(--teal) 50%, var(--line-2)); color: var(--teal); }
+
+  /* rules */
+  .rules { display: grid; gap: var(--s3); margin-top: var(--s5); counter-reset: r; }
+  .rule { display: grid; grid-template-columns: 40px 1fr; gap: var(--s3); padding: var(--s4);
+          background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--ochre);
+          border-radius: var(--r); }
+  .rule .rn { font-family: var(--mono); color: var(--ochre); font-size: .95rem; }
+  .rule h3 { font-size: 1.02rem; margin-bottom: var(--s1); }
+  .rule p { margin: 0; color: var(--ink-2); font-size: .93rem; }
+
+  /* numbers */
+  .nums { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px;
+          background: var(--line); border: 1px solid var(--line); border-radius: var(--r);
+          margin-top: var(--s5); overflow: hidden; }
+  .num-cell { background: var(--panel); padding: var(--s4); }
+  .num-cell .v { font-size: var(--step-3); font-weight: 650; letter-spacing: -0.03em; line-height: 1; }
+  .num-cell .v small { font-size: .5em; color: var(--mut); font-weight: 400; }
+  .num-cell .k { font-size: .82rem; color: var(--mut); margin-top: var(--s2); }
+
+  /* docs */
+  .docs { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0 var(--s5);
+          margin-top: var(--s5); }
+  .doc { display: flex; gap: var(--s3); padding: var(--s3) 0; border-bottom: 1px solid var(--line);
+         text-decoration: none; color: var(--ink); transition: color 150ms ease-out; }
+  .doc:hover { color: var(--ochre); }
+  .doc .i { font-family: var(--mono); font-size: .78rem; color: var(--mut); min-width: 24px; padding-top: 2px; }
+  .doc .t { font-size: .95rem; }
+  .doc .d { display: block; font-size: .84rem; color: var(--mut); margin-top: 1px; }
+
+  /* status */
+  .status { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--clay);
+            border-radius: var(--r); padding: var(--s4); margin-top: var(--s4); }
+  .status p { margin: 0 0 var(--s2); font-size: .95rem; color: var(--ink-2); }
+  .status p:last-child { margin-bottom: 0; }
+  .status strong { color: var(--ink); }
+
+  footer { padding: var(--s6) 0 var(--s7); }
+  .foot { display: flex; flex-wrap: wrap; gap: var(--s4); align-items: baseline;
+          justify-content: space-between; color: var(--mut); font-size: .86rem; }
+  .foot nav { display: flex; flex-wrap: wrap; gap: var(--s3); }
+  .foot a { color: var(--ink-2); text-decoration: none; }
+  .foot a:hover { color: var(--ochre); }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="bar">
+  <div class="wrap bar-in">
+    <a class="mark" href="#top" aria-label="TESSERA, top of page">
+      <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="2" y="2" width="12" height="12" fill="#d9a441"/>
+        <rect x="18" y="2" width="12" height="12" fill="#4f9a95"/>
+        <rect x="2" y="18" width="12" height="12" fill="#4f9a95"/>
+        <rect x="18" y="18" width="12" height="12" fill="#c0653b"/>
+      </svg>
+      TESSERA
+    </a>
+    <nav aria-label="Sections">
+      <a href="#what">What</a>
+      <a href="#how">How</a>
+      <a href="#layers">Layers</a>
+      <a href="#rules" class="hide">Rules</a>
+      <a href="#audit">Audit</a>
+      <a href="#docs">Docs</a>
+      <a href="https://github.com/drsamonline/tessera">Repo</a>
+      <button class="tog" id="tog" type="button" aria-label="Switch colour theme">◐</button>
+    </nav>
+  </div>
+</div>
+
+<header class="hero" id="top">
+  <div class="mosaic" aria-hidden="true"></div>
+  <div class="wrap hero-in">
+    <p class="eyebrow">Federation mesh &middot; specification v1.1</p>
+    <h1>TESSERA</h1>
+    <p class="sub">The mosaic layer above every CRM.</p>
+    <p class="lede">Every system you already run becomes a tile. The tiles keep their own shape and their own
+      identity. Together they make one picture &mdash; and one tamper-evident record of how the picture was made.</p>
+    <div class="chips">
+      <span class="chip warn">Specification only &mdash; no implementation</span>
+      <span class="chip">43 defects found, 43 closed</span>
+      <span class="chip">22 deliverables, 22 acceptance criteria</span>
+      <span class="chip">PolyForm Noncommercial 1.0.0</span>
+    </div>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/drsamonline/tessera/blob/main/docs/index.md">Read the specification</a>
+      <a class="btn" href="https://github.com/drsamonline/tessera/blob/main/docs/audit/defect-register.md">Audit register</a>
+      <a class="btn" href="https://github.com/drsamonline/tessera">Repository</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<section id="what">
+  <div class="wrap">
+    <p class="kicker">The problem</p>
+    <h2>Four to seven systems hold a slice of the same customer. The slices disagree.</h2>
+    <p class="say">Reconciling them costs a person a morning a week, and the reconciliation is invisible to
+      everyone else. The usual answer is a migration: move everything into one CRM, lose two years of history in
+      the edges, and repeat the exercise in five years.</p>
+    <div class="grid3">
+      <div class="card">
+        <span class="num">01</span>
+        <h3>No migration</h3>
+        <p>Adoption is additive. The mesh connects to what exists and produces the first result before anything
+          is moved. The native core is one node in the mesh, not the product.</p>
+      </div>
+      <div class="card">
+        <span class="num">02</span>
+        <h3>One ledger</h3>
+        <p>Every action in every connected system becomes one hash-chained event. &ldquo;What did each system
+          know at time T&rdquo; has exactly one answer, and it is provable.</p>
+      </div>
+      <div class="card">
+        <span class="num">03</span>
+        <h3>Seats, not users</h3>
+        <p>Work is assigned to a position, not a person. A human or an agent fills it. Every agent seat must
+          declare a fallback, and every handoff carries full state, signed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <p class="kicker">How it works</p>
+    <h2>Three moves, in this order.</h2>
+    <div class="flow">
+      <div class="step">
+        <span class="n">STEP 1</span>
+        <h3>Connect</h3>
+        <p>A node joins with a capability manifest, a versioned schema map and a per-field authority map. Nothing
+          is copied. Nothing is migrated.</p>
+      </div>
+      <div class="step">
+        <span class="n">STEP 2</span>
+        <h3>Unify</h3>
+        <p>One canonical schema, ten objects, four sync modes per field. Conflicts resolve by a declared order
+          and are logged &mdash; never silently overwritten.</p>
+      </div>
+      <div class="step">
+        <span class="n">STEP 3</span>
+        <h3>Prove</h3>
+        <p>Every action lands in the ledger. Bi-temporal views and git checkpoints are projections of it, and a
+          projection that cannot be rebuilt is a defect.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="layers">
+  <div class="wrap">
+    <p class="kicker">Architecture</p>
+    <h2>Eight layers. Five are specified, three are roadmap with written entry criteria.</h2>
+    <div class="layers">
+      <div class="layer"><div class="ln">L0</div><div><h3>Federation mesh <span class="tag">v1</span></h3>
+        <p>Nodes, canonical schema, four connectors, deterministic routing, universal ledger, conflict resolution.</p></div></div>
+      <div class="layer"><div class="ln">L1</div><div><h3>CRM core <span class="tag">v1, optional</span></h3>
+        <p>Reference implementation of the canonical schema. Local-first web, encrypted offline mobile.</p></div></div>
+      <div class="layer"><div class="ln">L2</div><div><h3>Workforce <span class="tag">v1 subset</span></h3>
+        <p>Seats, occupants, tasks, handoff packets, escalation ladders, two observable autonomy tiers.</p></div></div>
+      <div class="layer"><div class="ln">L3</div><div><h3>Intelligence <span class="tag road">v2</span></h3>
+        <p>Graduated autonomy, workforce analytics with provenance, cost-aware routing.</p></div></div>
+      <div class="layer"><div class="ln">L4</div><div><h3>Protocol and settlement <span class="tag road">v3</span></h3>
+        <p>Cross-company chains, agent-to-agent transactions, a universal dispute trail.</p></div></div>
+      <div class="layer"><div class="ln">L5</div><div><h3>Economic engine <span class="tag road">v3</span></h3>
+        <p>Marketplace with provenance, outcome billing, revenue share for published org designs.</p></div></div>
+      <div class="layer"><div class="ln">L6</div><div><h3>Experience <span class="tag">v1</span></h3>
+        <p>Design system, jargon discipline enforced by lint, migration as an interface rather than a project.</p></div></div>
+      <div class="layer"><div class="ln">L7</div><div><h3>Learning <span class="tag">v1</span></h3>
+        <p>Bootcamp, coach, academy, documentation, changelog, community &mdash; ten artefacts, each with a criterion.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="rules">
+  <div class="wrap">
+    <p class="kicker">Non-negotiable</p>
+    <h2>Three rules, each with a test. A rule without a test is a slogan.</h2>
+    <div class="rules">
+      <div class="rule"><div class="rn">1</div><div>
+        <h3>No AI in the critical path</h3>
+        <p>Read, write, sync, auth, search, report and notification work with every AI container switched off.
+          The full test suite must pass at the bare profile.</p></div></div>
+      <div class="rule"><div class="rn">2</div><div>
+        <h3>Nothing is silently overwritten</h3>
+        <p>A cross-system conflict resolves by a declared order and is written to the ledger with both candidate
+          values and the rule that settled it.</p></div></div>
+      <div class="rule"><div class="rn">3</div><div>
+        <h3>History has one authority</h3>
+        <p>The event ledger is the record. Bi-temporal columns, git checkpoints and graph projections are derived,
+          and must be rebuildable from it.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="audit">
+  <div class="wrap">
+    <p class="kicker">The audit</p>
+    <h2>The specification was audited against itself before anything was built.</h2>
+    <p class="say">The source was a 261-line build prompt. Four passes &mdash; structural, definitional,
+      contradiction, external &mdash; found 43 defects. All 43 are closed here, by formal definition or by a
+      numbered assumption with a named owner.</p>
+    <div class="nums">
+      <div class="num-cell"><div class="v">43</div><div class="k">defects found</div></div>
+      <div class="num-cell"><div class="v">7</div><div class="k">blockers that stopped construction</div></div>
+      <div class="num-cell"><div class="v">7</div><div class="k">composite scores defined for the first time</div></div>
+      <div class="num-cell"><div class="v">22</div><div class="k">deliverables with testable criteria</div></div>
+      <div class="num-cell"><div class="v">18</div><div class="k">recorded assumptions</div></div>
+      <div class="num-cell"><div class="v">3<small> &rarr; 1</small></div><div class="k">history mechanisms ruled to one authority</div></div>
+    </div>
+    <div class="status">
+      <p><strong>What exists:</strong> a specification, an audit register, a metric dictionary, acceptance
+        criteria, and three rendered documents.</p>
+      <p><strong>What does not exist:</strong> code. No service runs, no connector connects, no ledger appends.
+        Every claim on this page is a requirement, not a feature.</p>
+      <p><strong>What was corrected:</strong> the source document&rsquo;s 30-day data-subject-request clock was a
+        GDPR transplant and is now a per-jurisdiction configuration. Its 72-hour breach clock was right &mdash;
+        DPDP Rules 2025, rule 7(2), requires it &mdash; and is retained.</p>
+    </div>
+  </div>
+</section>
+
+<section id="docs">
+  <div class="wrap">
+    <p class="kicker">Documentation</p>
+    <h2>Twenty-one documents. Read five of them and you have the system.</h2>
+    <div class="docs">
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/01-product.md"><span class="i">01</span><span class="t">Product definition<span class="d">Customers, the activation event, what is out of scope</span></span></a>
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/02-architecture.md"><span class="i">02</span><span class="t">Architecture<span class="d">Layer model, boundaries, failure semantics</span></span></a>
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/03-mesh.md"><span class="i">03</span><span class="t">Federation mesh<span class="d">Nodes, connectors, routing, conflict resolution</span></span></a>
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/05-workforce.md"><span class="i">05</span><span class="t">Workforce<span class="d">Seats, occupancy, handoff, revocation</span></span></a>
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/10-metrics.md"><span class="i">10</span><span class="t">Metric dictionary<span class="d">Every score in the product, defined once</span></span></a>
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/11-history-authority.md"><span class="i">11</span><span class="t">History authority<span class="d">Which record wins, and why</span></span></a>
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/12-ai-contract.md"><span class="i">12</span><span class="t">AI contract<span class="d">The non-negotiables, each with its test</span></span></a>
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/16-acceptance-criteria.md"><span class="i">16</span><span class="t">Acceptance criteria<span class="d">22 deliverables, 22 tests</span></span></a>
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/audit/defect-register.md"><span class="i">A</span><span class="t">Defect register<span class="d">43 defects: severity, location, impact, fix</span></span></a>
+      <a class="doc" href="https://github.com/drsamonline/tessera/blob/main/docs/research/compliance.md"><span class="i">R</span><span class="t">Compliance, checked 2026<span class="d">DPDP Rules 2025 and AI Act timing, with sources</span></span></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <strong style="color:var(--ink)">TESSERA</strong> &middot; PolyForm Noncommercial 1.0.0 &copy; 2026 Dr. Sohil Momin<br>
+      Specification only. Nothing here runs.
+    </div>
+    <nav aria-label="Elsewhere">
+      <a href="https://github.com/drsamonline/tessera">Repository</a>
+      <a href="https://github.com/drsamonline/tessera/blob/main/CONTRIBUTING.md">Contributing</a>
+      <a href="https://github.com/drsamonline/tessera/blob/main/SECURITY.md">Security</a>
+      <a href="https://drsamonline.github.io/">All projects</a>
+      <a href="mailto:sohilmomin2000@gmail.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Theme: system default, one-click override, remembered locally. No network, no cookie.
+  var root = document.documentElement, key = 'tessera-theme';
+  try { var saved = localStorage.getItem(key); if (saved) root.setAttribute('data-theme', saved); } catch (e) {}
+  document.getElementById('tog').addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') === 'dark' ||
+      (!root.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem(key, next); } catch (e) {}
+  });
+  // Mosaic: a deterministic scatter of tiles, drawn once. No animation, no randomness on reload.
+  var m = document.querySelector('.mosaic'), seq = [0,3,0,1,0,0,2,0,0,1,0,0,0,3, 1,0,0,0,2,0,0,0,1,0,3,0,0,0,
+                                                  0,0,2,0,0,1,0,0,0,0,0,2,1,0, 0,1,0,0,0,0,3,0,2,0,0,0,0,1];
+  var cls = {1:'a', 2:'b', 3:'c'};
+  for (var i = 0; i < 56; i++) {
+    var el = document.createElement('i'), v = seq[i % seq.length];
+    if (cls[v]) el.className = cls[v];
+    m.appendChild(el);
+  }
+})();
+</script>
+</body>
+</html>

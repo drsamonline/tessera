@@ -7,6 +7,7 @@ Every system you already run becomes a tile. The tiles keep their own shape.<br>
 Together they make one picture &mdash; and one tamper-evident record of how the picture was made.</p>
 
 <p>
+<a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
 <img alt="Status: specification" src="https://img.shields.io/badge/status-specification-1F3552">
 <img alt="Version 1.1" src="https://img.shields.io/badge/version-1.1-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
@@ -14,6 +15,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 </p>
 
 <p>
+<a href="https://drsamonline.github.io/tessera/"><b>Landing page</b></a> &nbsp;&middot;&nbsp;
 <a href="docs/index.md"><b>Documentation</b></a> &nbsp;&middot;&nbsp;
 <a href="docs/audit/defect-register.md">Audit register</a> &nbsp;&middot;&nbsp;
 <a href="docs/16-acceptance-criteria.md">Acceptance criteria</a> &nbsp;&middot;&nbsp;

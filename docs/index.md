@@ -1,5 +1,8 @@
 # Documentation index
 
+> The published landing page is at <https://drsamonline.github.io/tessera/>. It links back into these
+> documents on GitHub, because GitHub Pages serves this folder without a markdown renderer.
+
 Status legend used across this repository:
 
 | Label | Meaning |
