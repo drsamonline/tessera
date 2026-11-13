@@ -37,6 +37,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 17 | [Constraints](17-constraints.md) | &mdash; | What must never be built |
 | 18 | [Assumptions](18-assumptions.md) | &mdash; | Every gap closed by record, not by invention |
 | 19 | [Open decisions](19-open-decisions.md) | &mdash; | Four items needing a founder's signature |
+| 20 | [Reference core](20-reference-core.md) | 0, 1, 2 | What is actually implemented, tested, and what is not |
 
 ## Audit
 

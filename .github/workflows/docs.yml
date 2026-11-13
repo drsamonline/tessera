@@ -1,5 +1,5 @@
-# Documentation repository: the only check is the internal link checker.
-# There is no build, no test suite and no deployment. Do not add jobs that cannot pass.
+# Two checks: the internal link checker, and the reference core's test suite.
+# There is no build and no deployment. Do not add jobs that cannot pass.
 name: docs
 
 on:
@@ -21,3 +21,13 @@ jobs:
           python-version: "3.12"
       - name: Internal link check
         run: python3 scripts/linkcheck.py
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Reference core tests
+        run: python3 -m unittest discover -s tests -t . -v

@@ -21,7 +21,7 @@ that two engineers would implement identically. That is the largest single sourc
 | `utilization` | `1 - clamp(0, 1, current_load / capacity)` | `[0,1]` |
 | `cost_efficiency` | `1 - clamp(0, 1, estimated_cost / cost_budget)` | `[0,1]` |
 | `trust_score` | see below | `[0,1]` |
-| `data_freshness` | `exp(-age_hours / half_life_hours)`; half-life 24 h for sales nodes, 4 h for support | `[0,1]` |
+| `data_freshness` | `exp(-ln2 * age_hours / half_life_hours)`; half-life 24 h for sales nodes, 4 h for support | `[0,1]` |
 | `cross_boundary_penalty` | 1.0 if the write crosses a declared privacy boundary, else 0 | `{0,1}` |
 | `escalation_penalty` | 0.3 if the candidate is itself a fallback seat, else 0 | `{0, 0.3}` |
 
@@ -69,6 +69,17 @@ RVS = sum over interactions i of [ decay(Δt_i) * w_type(type_i) ]
 Weighted pipeline uses stage probability from trailing 12-month conversion per stage, recomputed nightly, with
 each number linked to its evidence tree. Manual overrides are recorded as events and shown as overrides rather
 than silently folded into the number.
+
+## Defects found by implementing this document
+
+Implementing the formulas in `tessera/metrics.py` found three contradictions that reading did not. All three are
+closed; the record is in [20-reference-core.md](20-reference-core.md#three-defects-found-by-implementing-the-specification).
+
+- **R-01.** `data_freshness` was written without the `ln 2`, giving a 1/e life of 0.368 at the stated half-life,
+  while the relationship score's decay two paragraphs below did halve. Two metrics, two meanings for one term.
+  The formula above is corrected.
+- **R-03.** The conflict order treated the authority map as one step without saying which modes claim a field
+  outright. Only `authority` does.
 
 ## Definition of done for a metric
 

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tessera-core"
+version = "0.1.0"
+description = "Reference core for TESSERA: canonical schema, hash-chained ledger, metrics, routing, conflict resolution. No dependencies."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "PolyForm-Noncommercial-1.0.0" }
+authors = [{ name = "Dr Sohil Momin", email = "sohilmomin2000@gmail.com" }]
+keywords = ["crm", "federation", "event-sourcing", "audit-log", "multi-tenant"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Topic :: Office/Business",
+]
+dependencies = []
+
+[tool.setuptools]
+packages = ["tessera"]

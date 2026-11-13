@@ -6,6 +6,28 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.2.0] - 2026-11-14
+
+### Added
+
+- `tessera/` - a dependency-free reference core: canonical schema with validation, append-only hash-chained
+  ledger with verification and anchoring, every metric in the dictionary, versioned routing weights, and
+  five-step conflict resolution.
+- `tests/` - 95 tests, standard library `unittest`, no dependencies.
+- `python3 -m tessera.cli demo` - an end-to-end demonstration including tamper detection.
+- [docs/20-reference-core.md](docs/20-reference-core.md) - what is implemented, what is not, and where the
+  boundary sits against the 22 acceptance criteria.
+- A test job in `.github/workflows/docs.yml`.
+
+### Fixed
+
+- **R-01.** `data_freshness` omitted the `ln 2`, producing a 1/e life instead of a half-life, and disagreeing
+  with the relationship score's decay. Both now halve at the stated half-life.
+- **R-02.** The point-in-time query seeked instead of filtering, which loses late-arriving events. It now
+  filters, and the module says why.
+- **R-03.** Conflict resolution did not state which authority-map modes claim a field outright. Only
+  `authority` does; `delegate` falls through to trust.
+
 ## [1.1.1] - 2026-11-14
 
 ### Added
