@@ -1,0 +1,36 @@
+---
+name: Documentation issue
+about: Report an error, contradiction or honesty violation in the specification
+title: "docs: "
+labels: documentation
+---
+
+<!--
+This is a specification repository. Documentation accuracy IS the product quality.
+A statement that contradicts verified reality is a defect of the same severity as a code bug.
+-->
+
+## Which document?
+
+<!-- path + section, e.g. docs/10-metrics.md, "trust_score" -->
+
+## What does it claim, and what is verifiably true?
+
+<!-- Quote the offending text, then state the verified reality. -->
+
+## Severity
+
+- [ ] A guarantee is stated with no enforcement point (highest priority)
+- [ ] Two documents contradict each other
+- [ ] A metric or acceptance criterion is defined in more than one place
+- [ ] An unbounded absolute ("never", "always", "instant") that cannot be tested
+- [ ] Broken or misleading link
+- [ ] Unclear wording
+
+## Evidence
+
+```text
+# the file state, source or output that contradicts the document
+```
+
+## Suggested correction

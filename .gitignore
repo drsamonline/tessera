@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editors / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Local secrets - never commit
+.env
+*.key
+*.pem
+
+# Rendered working files (the deliverables in /deliverables are committed; regenerated copies are not)
+*.tmp
+render/

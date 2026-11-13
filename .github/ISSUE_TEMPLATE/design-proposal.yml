@@ -1,0 +1,27 @@
+---
+name: Design proposal
+about: Propose a change to the architecture, a layer, or an object model
+title: "design: "
+labels: design
+---
+
+## What problem does this solve?
+
+<!-- The failure mode or gap, stated concretely. Not "it would be better if". -->
+
+## Which layer and which objects?
+
+## The proposal
+
+## What it costs
+
+<!-- Sprints, complexity, new failure modes, migration. A proposal with no cost is not a proposal. -->
+
+## Which existing decision does this contradict?
+
+<!-- Check docs/19-open-decisions.md and docs/17-constraints.md first. If it breaks a constraint,
+say which one and why the constraint should change. -->
+
+## Acceptance criterion
+
+<!-- How a reviewer would know this worked. One sentence, testable. -->
