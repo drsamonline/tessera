@@ -3,6 +3,7 @@
     python3 -m tessera.cli demo [--keep]
     python3 -m tessera.cli mesh
     python3 -m tessera.cli timeline
+    python3 -m tessera.cli workforce
     python3 -m tessera.cli verify <ledger.jsonl>
     python3 -m tessera.cli anchor <ledger.jsonl> <anchor.jsonl>
     python3 -m tessera.cli history <ledger.jsonl> <tenant_id> <canonical_ref>
@@ -19,7 +20,8 @@ import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
 
-from . import canonical, checkpoint, conflict, conformance, ledger, metrics, mirror, projection, routing
+from . import (canonical, checkpoint, conflict, conformance, ledger, metrics, mirror,
+               projection, routing, workforce)
 from .connectors import NativeConnector, SimulatedConnector
 from .mesh import Mesh, Node
 
@@ -331,6 +333,96 @@ def cmd_timeline(args) -> int:
     return 0
 
 
+def cmd_workforce(args) -> int:
+    """Seats, not users. Four rules, each enforced."""
+    tmpdir = tempfile.mkdtemp(prefix="tessera-wf-")
+    log = ledger.EventLog(os.path.join(tmpdir, "ledger.jsonl"))
+    wf = workforce.Workforce(TENANT, b"demo-key-not-a-secret", log=log)
+
+    _rule("1. An agent seat cannot exist without a fallback seat")
+    try:
+        wf.register_seat(workforce.Seat(id="agent-responder", name="Responder", version=1,
+                                        capability_manifest=["email"], occupant_type="agent"))
+    except workforce.WorkforceError as exc:
+        print(f"  refused: {exc}")
+
+    wf.register_seat(workforce.Seat(id="triage", name="Triage", version=1,
+                                    capability_manifest=["email", "triage"],
+                                    sla_seconds=900, escalation_ladder=["specialist"]))
+    wf.register_seat(workforce.Seat(id="specialist", name="Specialist", version=1,
+                                    capability_manifest=["email", "refund"]))
+    wf.register_seat(workforce.Seat(id="agent-responder", name="Responder", version=1,
+                                    capability_manifest=["email"], occupant_type="agent",
+                                    fallback_seat_id="specialist",
+                                    escalation_ladder=["specialist"]))
+    print("  triage, specialist and agent-responder registered")
+
+    _rule("2. Occupants fill seats; humans and agents are interchangeable")
+    wf.register_occupant(workforce.Occupant(id="priya", type="human", principal_id="p1",
+                                            seat_id="triage", trust_score=0.9))
+    wf.register_occupant(workforce.Occupant(id="sam", type="human", principal_id="p2",
+                                            seat_id="specialist", trust_score=0.7))
+    wf.register_occupant(workforce.Occupant(id="agent-1", type="agent", principal_id="p3",
+                                            seat_id="agent-responder", trust_score=0.8,
+                                            autonomy_tier="confirm_then_run"))
+    for occ in wf.occupants.values():
+        print(f"  {occ.id:<10} {occ.type:<6} seat {occ.seat_id:<16} trust {occ.trust_score}")
+
+    _rule("3. A task routes to a seat, and the decision is logged")
+    t = workforce.Task(id=canonical.uuid7(), seat_id="triage",
+                       required_capabilities=["email"],
+                       payload={"subject": "Where is my order?", "channel": "email"})
+    decision = wf.assign(t)
+    print(f"  occupant  {decision['id']}  score {decision['score']:.4f}  "
+          f"({decision['weights_version']})")
+    for name, part in decision["breakdown"].items():
+        print(f"    {name:<20} {part['value']:.3f} x {part['weight']:.2f} "
+              f"= {part['contribution']:+.4f}")
+
+    _rule("4. Escalation carries a signed packet with full state")
+    packet = wf.escalate(t.id, "low_confidence", evidence=["call-transcript-1"])
+    print(f"  from      {packet.from_seat} -> {packet.to_seat}")
+    print(f"  trigger   {packet.trigger}")
+    print(f"  signature {packet.signature[:24]}...")
+    print(f"  verifies  {packet.verify(wf.key)}")
+
+    _rule("5. The receiver rebuilds the task from the packet alone")
+    saved_seats, saved_tasks, saved_occ = wf.seats, wf.tasks, wf.occupants
+    wf.seats, wf.tasks, wf.occupants = {}, {}, {}
+    rebuilt = wf.receive(packet)
+    wf.seats, wf.tasks, wf.occupants = saved_seats, saved_tasks, saved_occ
+    print(f"  rebuilt   task {rebuilt.id[:8]}  seat {rebuilt.seat_id}")
+    print(f"  payload   {rebuilt.payload['subject']}")
+    print(f"  sla       {rebuilt.sla_deadline}")
+    print("  nothing else was consulted")
+
+    _rule("6. Revocation halts the agent, and fails closed")
+    agent_task = workforce.Task(id=canonical.uuid7(), seat_id="agent-responder",
+                                required_capabilities=["email"],
+                                payload={"subject": "Refund request"})
+    wf.assign(agent_task)
+    print(f"  before    poll={wf.poll('agent-1')}  "
+          f"act={'pending' if wf.act(agent_task.id, {'kind': 'send_email'})['pending'] else '?'}")
+    wf.revoke("p3")
+    print(f"  revoked   poll={wf.poll('agent-1')}")
+    try:
+        wf.act(agent_task.id, {"kind": "send_email"})
+    except workforce.WorkforceError as exc:
+        print(f"  refused   {exc}")
+    print(f"  unknown   poll={wf.poll('nobody')} - an unknown occupant fails closed too")
+
+    _rule("7. The ledger")
+    ok, problems = log.verify()
+    print(f"  events  {sum(1 for _ in log.events())}")
+    print(f"  chain   {'OK' if ok else 'BROKEN'}")
+    for problem in problems:
+        print(f"  {problem}")
+
+    print()
+    print(f"workspace {tmpdir}")
+    return 0
+
+
 def cmd_verify(args) -> int:
     ok, problems = ledger.EventLog(args.path).verify()
     print("OK" if ok else "BROKEN")
@@ -363,6 +455,9 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("demo", help="run the end-to-end demonstration")
     p.add_argument("--keep", action="store_true", help="keep the temporary ledger")
     p.set_defaults(func=cmd_demo)
+
+    p = sub.add_parser("workforce", help="seats, handoff, escalation, revocation")
+    p.set_defaults(func=cmd_workforce)
 
     p = sub.add_parser("timeline", help="projection, point-in-time, checkpoints, mirror")
     p.set_defaults(func=cmd_timeline)

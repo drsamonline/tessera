@@ -5,6 +5,12 @@
 Tasks are assigned to seats, never to users. Humans and agents are interchangeable occupants. The v1 subset is
 now explicit. *(Closes A-03.)*
 
+## Implemented
+
+Seats, occupants, tasks, signed handoff packets, escalation ladders, both SLA clocks, the two autonomy tiers
+and fail-closed revocation are implemented and tested: [26-workforce.md](26-workforce.md). The scheduler,
+queue persistence and the capacity model are not.
+
 ## v1 object subset
 
 v1 implements **Seat, Occupant, Task, HandoffPacket, EscalationLadder**. Deferred to v2: shift scheduling,

@@ -28,7 +28,8 @@ without ambiguity.
 | `tessera/projection.py` | 190 | Current and bi-temporal state, rebuildability as a test | [11-history-authority.md](11-history-authority.md) |
 | `tessera/checkpoint.py` | 170 | Chained snapshots, diff, revert by compensation | [11-history-authority.md](11-history-authority.md) |
 | `tessera/mirror.py` | 160 | Markdown projection, manifest of hashes, lag as a count | [25-deterministic-features.md](25-deterministic-features.md) |
-| `tessera/cli.py` | 480 | Three demonstrations that exercise all of the above end to end | &mdash; |
+| `tessera/workforce.py` | 480 | Seats, occupants, tasks, signed handoff, escalation, revocation | [05-workforce.md](05-workforce.md) |
+| `tessera/cli.py` | 620 | Four demonstrations that exercise all of the above end to end | &mdash; |
 
 No dependencies. Standard library only. No network calls. No model, no service, no container.
 
@@ -62,7 +63,8 @@ identically. They now do. Specifically:
   suite, but only against recorded transports speaking documented shapes. No tenant, no token, no real traffic.
 - No HTTP surface, no OpenAPI, no MCP tools.
 - No web application, no mobile client, no local-first sync.
-- No workforce runtime: no queue, no scheduler, no revocation polling, no handoff transport.
+- No workforce scheduler, queue persistence or capacity model. The seat, handoff, escalation and
+  revocation rules are implemented: [26-workforce.md](26-workforce.md).
 - No push subscription, no backpressure accounting, no interface for a blocked field.
 - No database. The ledger is a JSON Lines file; Postgres with row-level security is the production target and
   is not implemented.

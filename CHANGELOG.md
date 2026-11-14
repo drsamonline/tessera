@@ -6,6 +6,29 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.7.0] - 2026-11-14
+
+### Added
+
+- `tessera/workforce.py` - deliverable 5. Seats as versioned job descriptions, occupants as interchangeable
+  humans and agents, routing with a logged breakdown, escalation ladders with two terminal states, HMAC-signed
+  handoff packets carrying full state, and fail-closed revocation.
+- `python3 -m tessera.cli workforce` - the demonstration, including the receiver rebuilding a task from the
+  packet after the task, seat and occupant tables have been destroyed.
+- [docs/26-workforce.md](docs/26-workforce.md).
+- 37 more tests (259 total).
+
+### Changed
+
+- The two autonomy tiers are observably distinct: `shadow_only` discards the action, `confirm_then_run` holds
+  it. In v1.0 of the specification both routed to the review queue and the field was decoration.
+- A seat may not appear in its own escalation ladder, and may not be its own fallback. Both were loops the
+  original specification permitted.
+
+### Note
+
+There is no default signing key. A default key is not a signature, it is decoration.
+
 ## [1.6.0] - 2026-11-14
 
 ### Added
