@@ -6,6 +6,25 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.33.0] - 2026-11-14
+
+### Added
+
+- **`CONFORMANCE.md`, generated.** `scripts/conformance_report.py` runs the sixteen-check suite against every
+  connector this repository ships and writes the result, including a per-check matrix. HubSpot, Salesforce, Zendesk
+  and the native store are 16/16.
+- **A freshness gate.** `check_docs.py` regenerates the report and fails if the committed file differs, so the
+  document cannot drift into being a claim.
+
+### Why generated
+
+A conformance table typed by hand is a claim about the past. The generator exits non-zero and writes `**fail**` cells
+when a connector does not pass — verified by running it against `BrokenConnector`, which produced
+`5 connectors, 16 checks, 1 failing` and exit code 1.
+
+The document also states, in its own text, the one thing it cannot prove: every result comes from a recorded
+transport, and no connector here has called a live tenant.
+
 ## [1.32.0] - 2026-11-14
 
 ### Added

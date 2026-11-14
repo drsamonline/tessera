@@ -61,6 +61,21 @@ in that mesh, not the product. Adoption is additive: the first result arrives be
 The design constraint that shapes everything else: one founder and a five-thousand-person organisation run the
 same code paths. That bounds the architecture, not the customer list.
 
+## Does it actually conform?
+
+[CONFORMANCE.md](CONFORMANCE.md) is generated, not written: `scripts/conformance_report.py` runs the sixteen-check
+suite against every connector in this repository and writes the result. `check_docs.py` fails the build if the
+committed document does not match a fresh run, so it cannot drift into being a claim.
+
+| Connector | Checks |
+|---|---|
+| HubSpot (CRM v3) | 16/16 |
+| Salesforce (REST v60) | 16/16 |
+| Zendesk (Support API v2) | 16/16 |
+| Native (in-process) | 16/16 |
+
+All four run against recorded transports. No connector here has called a live tenant.
+
 ## How it fits together
 
 <img src="docs/diagrams/architecture.svg" alt="Four systems of record feed a federation mesh that merges them field by field, records every action in a hash-chained ledger, and assigns work to seats filled by humans or agents. A console reads it over HTTP." width="100%">
@@ -144,6 +159,7 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/44-archival.md](docs/44-archival.md) | Segments, a header line, and a proof that survives |
 | [docs/45-smoke-audit.md](docs/45-smoke-audit.md) | One real call into every module |
 | [docs/46-cors.md](docs/46-cors.md) | The allowlist, and the gap it exposed |
+| [CONFORMANCE.md](CONFORMANCE.md) | Four connectors, sixteen checks, generated |
 | [docs/diagrams/](docs/diagrams/) | Architecture and escalation, as SVG |
 | [**tessera-app**](https://github.com/drsamonline/tessera-app) | The console: this core, in a browser, offline |
 | `tests/` | 721 tests, standard library `unittest`, no dependencies |
