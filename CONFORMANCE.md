@@ -17,22 +17,22 @@ asserted by hand, and the script fails rather than writing a pass for a connecto
 
 | Check | The question it answers |
 |---|---|
-| `capabilities` | Does it declare what it can do, in the shared taxonomy? |
-| `schema` | Does it describe its fields in the canonical shape? |
-| `read_paging` | Does it page without repeating or dropping a record? |
-| `read_cursor_stability` | Is the cursor meaningful, or an offset that shifts under a write? |
-| `write_idempotency` | Does the same idempotency key twice create one record or two? |
-| `write_roundtrip` | Does what you wrote come back, field for field? |
-| `auth_error` | Is a bad token reported as auth, not as a transient failure to retry? |
-| `rate_limit` | Is the limit reported in the shared shape? |
-| `cost_estimate` | Can routing price an operation before doing it? |
-| `health` | Is there a health signal, and does it carry a reason? |
-| `schema_drift` | Is an unexpected field a drift error rather than a silent drop? |
-| `error_taxonomy` | Do failures map onto the six shared classes? |
-| `sandbox` | Can it snapshot and restore, so the suite does not pollute data? |
-| `object_scope` | Does it refuse an object it does not serve? |
-| `paging_termination` | Does paging stop, or loop on a cursor that never advances? |
-| `environment` | Does it say which environment it points at? |
+| `capabilities_present` | Does it declare capabilities at all, rather than being assumed? |
+| `capabilities_declare_objects` | Does it list the objects it serves? |
+| `capabilities_use_canonical_objects` | Are those objects the canonical ones, not vendor names? |
+| `schema_present` | Does it describe its fields? |
+| `schema_maps_only_canonical_fields` | Does the description use canonical field names, not vendor ones? |
+| `schema_covers_declared_objects` | Does every object it claims to serve have a schema? |
+| `write_accepts_valid_payload` | Does a valid canonical record get accepted? |
+| `read_returns_valid_records` | Do the records that come back validate against the canonical schema? |
+| `read_pagination_terminates` | Does paging stop, rather than loop on a cursor that never advances? |
+| `write_is_idempotent` | Does the same idempotency key twice create one record or two? |
+| `write_rejects_invalid_payload` | Is an invalid record refused, rather than stored and repaired later? |
+| `round_trip` | Does what you wrote come back, field for field? |
+| `health_is_valid` | Is there a health signal, and does it carry a reason? |
+| `rate_limit_is_positive` | Is a rate limit reported, and is it a real number? |
+| `cost_estimate_non_negative` | Can routing price an operation before doing it, without a negative? |
+| `errors_are_from_the_taxonomy` | Do failures map onto the shared error classes? |
 
 ## The per-check results
 
