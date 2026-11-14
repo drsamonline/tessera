@@ -39,6 +39,14 @@ OPERATIONS = [
         "responses": {200: "ObjectList", 404: "Error"},
     },
     {
+        "method": "post", "path": "/v1/objects/{object}", "operation_id": "createRecord",
+        "pattern": r"^/v1/objects/(?P<object>[A-Za-z]+)$", "scope": "write",
+        "summary": "Create a record on the primary node. This is what makes the product usable with no CRM behind it.",
+        "parameters": [{"name": "object", "in": "path", "required": True,
+                        "schema": {"type": "string"}}],
+        "responses": {201: "ObjectList", 422: "Error", 503: "Error"},
+    },
+    {
         "method": "get", "path": "/v1/objects/{object}/export", "operation_id": "exportObjects",
         "pattern": r"^/v1/objects/(?P<object>[A-Za-z]+)/export$", "scope": "read",
         "summary": "Every visible record of one object type, redacted by the same gate as a read.",

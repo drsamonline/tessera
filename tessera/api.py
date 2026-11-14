@@ -121,6 +121,7 @@ class Api:
              "read", self._as_of),
             ("GET", r"^/v1/mesh/view/(?P<object>[A-Za-z]+)/(?P<id>[0-9a-f\-]{36})$",
              "read", self._unified),
+            ("POST", r"^/v1/objects/(?P<object>[A-Za-z]+)$", "write", self._create),
             ("POST", r"^/v1/objects/(?P<object>[A-Za-z]+)/(?P<id>[0-9a-f\-]{36})"
                      r"/fields/(?P<field_name>[A-Za-z_]+)$", "write", self._write_field),
             ("POST", r"^/v1/tasks$", "workforce", self._assign),
@@ -290,6 +291,27 @@ class Api:
                                  if c.get("field") not in hidden]
         return Response(200, view)
 
+    def _create(self, request: Request, object: str) -> Response:
+        """Create a record. This is what makes the product usable with no CRM behind it."""
+        if self.mesh is None:
+            return Response(503, {"error": "no_mesh"})
+        body = request.body or {}
+        principal = request.query["_principal"]
+        try:
+            result = self.mesh.create_record(object, body, actor=principal.id)
+        except ValueError as exc:
+            return Response(422, {"error": "invalid_record", "detail": str(exc)})
+        except PermissionError as exc:
+            return Response(403, {"error": "not_writable", "detail": str(exc)})
+        except ConnectorError as exc:
+            return Response(502, {"error": "connector_failure", "detail": type(exc).__name__})
+        # A create that leaves the list empty is a create nobody believes. The
+        # projection is the read model, and it is only as fresh as the last
+        # refresh - so a mutation refreshes it before the response goes out.
+        if self.projection is not None:
+            self.projection.refresh()
+        return Response(201, dict(result, principal=principal.id))
+
     def _write_field(self, request: Request, object: str, id: str, field_name: str) -> Response:
         if self.mesh is None:
             return Response(503, {"error": "no_mesh"})
@@ -313,6 +335,8 @@ class Api:
             # fall back, 500 tells them we are broken. (O-03)
             return Response(502, {"error": "connector_failure",
                                   "detail": type(exc).__name__})
+        if self.projection is not None:
+            self.projection.refresh()
         return Response(200, dict(result, principal=principal.id))
 
     def _assign(self, request: Request, **_) -> Response:
@@ -446,7 +470,7 @@ def serve(api: Api, host: str = "127.0.0.1", port: int = 8080) -> None:
 
 
 def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
-             token: str = "demo-token") -> "Api":
+             token: str = "demo-token", standalone: bool = False) -> "Api":
     """A running API with sample data, for the container and for `python -m`.
 
     The token is printed by the entry point rather than baked into the image: a
@@ -456,7 +480,7 @@ def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
     import os
     import tempfile
 
-    from .connectors import SimulatedConnector
+    from .connectors import NativeConnector, SimulatedConnector
     from .ledger import EventLog
     from .mesh import Mesh, Node
     from .projection import Projection
@@ -521,12 +545,31 @@ def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
         if index != 3:
             erp.seed("Deal", dict(record, amount_minor=amount))
 
-    mesh.register(Node("hubspot", crm, "sales", authority={"email": "authority", "stage": "authority"},
-                       trust=0.8))
-    mesh.register(Node("zendesk", support, "support", trust=0.6))
-    mesh.register(Node("netsuite", erp, "erp", authority={"amount_minor": "authority"}, trust=0.75))
-    for object_name in ("Company", "Contact", "Deal"):
-        mesh.sync(object_name)
+    if standalone:
+        # No CRM behind it. The native store is the system of record, and the
+        # product is a CRM that happens to be able to federate later.
+        native = NativeConnector("native", page_size=20)
+        for suffix, name, email, company in [
+                ("1001", "Ananya Sharma", "ananya@example.com", "0001"),
+                ("1002", "Vikram Desai", "vikram@example.com", "0002"),
+                ("1003", "Leela Menon", "leela@example.com", "0001")]:
+            native.seed("Company", dict(base, id=uid("c0", company),
+                                        name=companies[int(company) - 1][0],
+                                        domain=companies[int(company) - 1][1]))
+            native.seed("Contact", dict(base, id=uid("c1", suffix), full_name=name,
+                                        email=email, phone="+91 90000 00001",
+                                        company_ref=f"Company:{uid('c0', company)}"))
+        mesh.register(Node("native", native, "native", trust=0.9))
+        mesh.sync("Contact")
+        mesh.sync("Company")
+    else:
+        mesh.register(Node("hubspot", crm, "sales",
+                           authority={"email": "authority", "stage": "authority"}, trust=0.8))
+        mesh.register(Node("zendesk", support, "support", trust=0.6))
+        mesh.register(Node("netsuite", erp, "erp",
+                           authority={"amount_minor": "authority"}, trust=0.75))
+        for object_name in ("Company", "Contact", "Deal"):
+            mesh.sync(object_name)
 
     tokens = {
         token: Principal("demo", ("admin",), role="admin"),

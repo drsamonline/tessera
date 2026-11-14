@@ -37,6 +37,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--console-port", type=int, default=8080,
                         help="8080 is on the CORS allowlist by default")
     parser.add_argument("--token", default="demo-token")
+    parser.add_argument("--standalone", action="store_true",
+                        help="no external CRM: the native store is the system of record")
     args = parser.parse_args(argv)
 
     console = pathlib.Path(args.console).expanduser().resolve()
@@ -47,7 +49,7 @@ def main(argv: list[str] | None = None) -> int:
 
     from . import api as api_module
 
-    service = api_module.demo_api(token=args.token)
+    service = api_module.demo_api(token=args.token, standalone=args.standalone)
     api_port = free_port(args.api_port)
     console_port = free_port(args.console_port)
 
@@ -71,6 +73,9 @@ def main(argv: list[str] | None = None) -> int:
 
     link = (f"http://127.0.0.1:{console_port}/index.html"
             f"?engine=http://127.0.0.1:{api_port}&token={args.token}")
+    mode = "standalone — the native store is the system of record" if args.standalone \
+        else "federated — three simulated systems of record"
+    print(f"  Mode      {mode}", flush=True)
     print(f"  API       http://127.0.0.1:{api_port}   token {args.token}", flush=True)
     print(f"  Console   http://127.0.0.1:{console_port}", flush=True)
     print(f"  Open      {link}", flush=True)

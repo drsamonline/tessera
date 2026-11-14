@@ -6,6 +6,31 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.35.0] - 2026-11-14
+
+### Added
+
+- **Standalone mode.** `POST /v1/objects/{object}` creates a record on the primary node, which with no CRM connected is
+  the native store. `python3 -m tessera.demo --standalone` starts the product with nothing behind it.
+- **`Mesh.primary_node` and `Mesh.create_record`** — one node is written, not four, because a create broadcast to every
+  system produces four records with four ids.
+- [docs/48-standalone.md](docs/48-standalone.md), seven tests in `tests/test_standalone.py`.
+
+### Not defaulted, on purpose
+
+A record requires `consent_state`, `lawful_basis` and `purpose_id`. A record created with an invented lawful basis is a
+compliance claim nobody made; the API answers `422` rather than choosing one. `retention_policy_id` defaults to
+`rp-default`, because a retention policy is a house rule rather than a representation about a person.
+
+### Fixed
+
+- **A create left the list empty.** The projection is the read model and was only as fresh as the last refresh, so a
+  new record was invisible to the next read. Mutations now refresh it before responding.
+- **The ledger rejected the principal id as an actor.** Its vocabulary is `human`, `agent`, `system`; the principal now
+  travels in the payload.
+- **The create route was missing from the OpenAPI document**, caught by the test that compares the router to the
+  contract.
+
 ## [1.34.0] - 2026-11-14
 
 ### Added

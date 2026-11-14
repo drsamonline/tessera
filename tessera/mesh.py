@@ -39,6 +39,12 @@ class Node:
     budget: NodeBudget | None = None
 
 
+def _now_iso() -> str:
+    """ISO-8601, seconds, UTC. No dependency, no locale, no drift."""
+    import datetime
+    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 class Mesh:
     def __init__(self, tenant_id: str, log: EventLog | None = None):
         self.tenant_id = tenant_id
@@ -223,6 +229,59 @@ class Mesh:
             node_id: self.nodes[node_id].authority.get(name, "bidirectional")
             for node_id in candidates
         }
+
+    def primary_node(self, object_name: str) -> Node | None:
+        """The node that should hold a record the mesh creates.
+
+        When nothing else is connected this is the native store, which is the
+        whole point: TESSERA is a system of record when there is no other one,
+        and a mesh over other systems when there are.
+        """
+        candidates = self.nodes_for(object_name)
+        if not candidates:
+            return None
+        native = [node for node in candidates if node.category == "native"]
+        if native:
+            return native[0]
+        return max(candidates, key=lambda node: (node.trust, node.id))
+
+    def create_record(self, object_name: str, payload: dict,
+                      actor: str = "human") -> dict:
+        """Create a record on the primary node, then read it back through the mesh.
+
+        The write goes to one node on purpose. A create broadcast to four systems
+        creates four records with four ids, and reconciling them afterwards is the
+        problem this layer exists to solve, not one it should introduce.
+        """
+        from . import canonical as canonical_module
+
+        target = self.primary_node(object_name)
+        if target is None:
+            raise ValueError(f"no node serves {object_name}")
+        record = dict(payload)
+        record.setdefault("tenant_id", self.tenant_id)
+        record.setdefault("id", canonical_module.uuid7())
+        stamp = _now_iso()
+        record.setdefault("valid_from", stamp)
+        record.setdefault("tx_time", stamp)
+        # Consent, lawful basis and purpose are not defaulted. A record created
+        # with an invented lawful basis is a compliance claim nobody made, and
+        # under the DPDP Act that claim has to be defensible. The caller states
+        # them; a caller that cannot has not decided why it holds the data.
+        record.setdefault("retention_policy_id", "rp-default")
+        problems = canonical_module.validate(object_name, record)
+        if problems:
+            raise ValueError("; ".join(problems[:3]))
+        target.connector.write(object_name, record, idempotency_key=record["id"])
+        if self.log is not None:
+            # The ledger's actor vocabulary is human, agent or system. A principal
+            # id is none of those; the principal travels in the payload instead.
+            self.log.append(tenant_id=self.tenant_id, actor="human",
+                            action="record.created",
+                            payload={"object": object_name, "id": record["id"],
+                                     "node": target.id, "principal": actor})
+        self.sync(object_name)
+        return {"object": object_name, "id": record["id"], "node": target.id}
 
     def write_field(self, object_name: str, record_id: str, name: str, value,
                     actor: str = "human") -> dict:

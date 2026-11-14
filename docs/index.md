@@ -65,6 +65,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 45 | [Smoke audit](45-smoke-audit.md) | all | One real call into every module, and what it proved |
 | 46 | [CORS](46-cors.md) | all | An allowlist, and the gap the API had |
 | 47 | [Running it](47-running-it.md) | all | One command, one link, and what the demo data shows |
+| 48 | [Standalone mode](48-standalone.md) | all | A layer and a CRM, and what each means |
 | — | [CONFORMANCE.md](../CONFORMANCE.md) | all | Four connectors, sixteen checks, generated |
 
 **Live:** the reference core runs in a browser, offline, at [drsamonline.github.io/tessera-app](https://drsamonline.github.io/tessera-app/) - source in [tessera-app](https://github.com/drsamonline/tessera-app).
