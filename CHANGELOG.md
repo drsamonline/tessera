@@ -6,6 +6,31 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.8.0] - 2026-11-14
+
+### Added
+
+- `tessera/api.py` - a stdlib HTTP surface: ten routes, bearer auth with four scopes, and an audit event naming
+  the caller on every mutation. Loopback-only server included.
+- `tessera/openapi.py` - the OpenAPI 3.1 document generated from the route table, with 23 schemas built from the
+  canonical schema. Two validators: a structural one that always runs, and the real spec validator when it is
+  installed.
+- `tessera/mcp.py` - ten tools, each with a JSON Schema, an auth scope and an audit action, plus a dispatcher
+  that writes a `mcp.call` event for every call including a failed one.
+- `python3 -m tessera.cli schema` - print and check both contracts.
+- [docs/27-api-and-contracts.md](docs/27-api-and-contracts.md).
+- 41 more tests (300 total).
+
+### Changed
+
+- The audit event records `arguments_hash`, not the arguments. A log holding what was asked for is a second copy
+  of the data with weaker access control.
+
+### Note
+
+The server binds to loopback. A development surface that silently listens on 0.0.0.0 is how a prototype ends up
+on the internet with a bearer token in a shell history.
+
 ## [1.7.0] - 2026-11-14
 
 ### Added

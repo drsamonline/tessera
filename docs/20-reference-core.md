@@ -29,7 +29,10 @@ without ambiguity.
 | `tessera/checkpoint.py` | 170 | Chained snapshots, diff, revert by compensation | [11-history-authority.md](11-history-authority.md) |
 | `tessera/mirror.py` | 160 | Markdown projection, manifest of hashes, lag as a count | [25-deterministic-features.md](25-deterministic-features.md) |
 | `tessera/workforce.py` | 480 | Seats, occupants, tasks, signed handoff, escalation, revocation | [05-workforce.md](05-workforce.md) |
-| `tessera/cli.py` | 620 | Four demonstrations that exercise all of the above end to end | &mdash; |
+| `tessera/api.py` | 320 | The HTTP surface: routing, bearer auth, scopes, audit emission | [27-api-and-contracts.md](27-api-and-contracts.md) |
+| `tessera/openapi.py` | 400 | The generated OpenAPI 3.1 document and its two validators | [27-api-and-contracts.md](27-api-and-contracts.md) |
+| `tessera/mcp.py` | 280 | Ten tools, each with a schema, a scope and an audit action | [27-api-and-contracts.md](27-api-and-contracts.md) |
+| `tessera/cli.py` | 700 | Five demonstrations that exercise all of the above end to end | &mdash; |
 
 No dependencies. Standard library only. No network calls. No model, no service, no container.
 
@@ -61,7 +64,8 @@ identically. They now do. Specifically:
 
 - No live provider integration. HubSpot, Salesforce and Zendesk connectors exist and pass the conformance
   suite, but only against recorded transports speaking documented shapes. No tenant, no token, no real traffic.
-- No HTTP surface, no OpenAPI, no MCP tools.
+- No production gateway, no MCP transport. The HTTP surface, the OpenAPI document and the ten tool
+  definitions exist: [27-api-and-contracts.md](27-api-and-contracts.md).
 - No web application, no mobile client, no local-first sync.
 - No workforce scheduler, queue persistence or capacity model. The seat, handoff, escalation and
   revocation rules are implemented: [26-workforce.md](26-workforce.md).

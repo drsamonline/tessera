@@ -18,5 +18,8 @@ classifiers = [
 ]
 dependencies = []
 
+[project.optional-dependencies]
+dev = ["openapi-spec-validator>=0.7"]
+
 [tool.setuptools]
 packages = ["tessera"]

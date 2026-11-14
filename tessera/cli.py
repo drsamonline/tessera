@@ -4,6 +4,7 @@
     python3 -m tessera.cli mesh
     python3 -m tessera.cli timeline
     python3 -m tessera.cli workforce
+    python3 -m tessera.cli schema [--json openapi|mcp]
     python3 -m tessera.cli verify <ledger.jsonl>
     python3 -m tessera.cli anchor <ledger.jsonl> <anchor.jsonl>
     python3 -m tessera.cli history <ledger.jsonl> <tenant_id> <canonical_ref>
@@ -20,8 +21,8 @@ import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
 
-from . import (canonical, checkpoint, conflict, conformance, ledger, metrics, mirror,
-               projection, routing, workforce)
+from . import (canonical, checkpoint, conflict, conformance, ledger, mcp, metrics,
+               mirror, openapi, projection, routing, workforce)
 from .connectors import NativeConnector, SimulatedConnector
 from .mesh import Mesh, Node
 
@@ -423,6 +424,42 @@ def cmd_workforce(args) -> int:
     return 0
 
 
+def cmd_schema(args) -> int:
+    """Print the two contracts: OpenAPI and the MCP discovery document."""
+    document = openapi.build_document()
+    problems = openapi.validate(document)
+    full = openapi.validate_full(document)
+
+    _rule("OpenAPI 3.1")
+    print(f"  version    {document['openapi']}")
+    print(f"  paths      {len(document['paths'])}")
+    operations = sum(1 for item in document["paths"].values()
+                     for method in item if method in ("get", "post", "put", "patch", "delete"))
+    print(f"  operations {operations}")
+    print(f"  schemas    {len(document['components']['schemas'])}")
+    print(f"  structural {'clean' if not problems else problems}")
+    try:
+        import openapi_spec_validator  # noqa: F401
+        print(f"  full spec  {'clean' if not full else full}")
+    except ImportError:
+        print("  full spec  not checked (openapi-spec-validator is not installed)")
+
+    _rule("MCP discovery")
+    discovery = mcp.discovery_document()
+    print(f"  tools      {len(discovery['tools'])}")
+    tool_problems = mcp.validate_tools()
+    print(f"  schema     {'every tool has one' if not tool_problems else tool_problems}")
+    print()
+    print(f"  {'tool':<22}{'scope':<12}audit action")
+    for tool in discovery["tools"]:
+        print(f"  {tool['name']:<22}{tool['auth_scope']:<12}{tool['audit_action']}")
+
+    if args.json:
+        print()
+        print(json.dumps(document if args.json == "openapi" else discovery, indent=2))
+    return 0
+
+
 def cmd_verify(args) -> int:
     ok, problems = ledger.EventLog(args.path).verify()
     print("OK" if ok else "BROKEN")
@@ -455,6 +492,10 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("demo", help="run the end-to-end demonstration")
     p.add_argument("--keep", action="store_true", help="keep the temporary ledger")
     p.set_defaults(func=cmd_demo)
+
+    p = sub.add_parser("schema", help="print and check the OpenAPI and MCP contracts")
+    p.add_argument("--json", choices=["openapi", "mcp"], help="emit the document")
+    p.set_defaults(func=cmd_schema)
 
     p = sub.add_parser("workforce", help="seats, handoff, escalation, revocation")
     p.set_defaults(func=cmd_workforce)

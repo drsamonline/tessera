@@ -44,6 +44,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 24 | [Projections and checkpoints](24-history-projections.md) | 1 | Bi-temporal views, rebuild, revert by compensation, the mirror |
 | 25 | [Deterministic features](25-deterministic-features.md) | all | What works with every model switched off, and what does not yet |
 | 26 | [Workforce](26-workforce.md) | 2 | Seats, handoff packets, escalation, revocation, autonomy |
+| 27 | [API and contracts](27-api-and-contracts.md) | all | The HTTP surface, OpenAPI 3.1, the 10 MCP tools |
 
 ## Audit
 
