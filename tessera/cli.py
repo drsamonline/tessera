@@ -1,6 +1,7 @@
 """Command line for the reference core.
 
     python3 -m tessera.cli demo [--keep]
+    python3 -m tessera.cli mesh
     python3 -m tessera.cli verify <ledger.jsonl>
     python3 -m tessera.cli anchor <ledger.jsonl> <anchor.jsonl>
     python3 -m tessera.cli history <ledger.jsonl> <tenant_id> <canonical_ref>
@@ -17,7 +18,9 @@ import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
 
-from . import canonical, conflict, ledger, metrics, routing
+from . import canonical, conflict, conformance, ledger, metrics, routing
+from .connectors import NativeConnector, SimulatedConnector
+from .mesh import Mesh, Node
 
 TENANT = "018f0000-0000-7000-8000-000000000001"
 HUBSPOT = "018f0000-0000-7000-8000-0000000000a1"
@@ -145,6 +148,103 @@ def cmd_demo(args) -> int:
     return 0
 
 
+def cmd_mesh(args) -> int:
+    """Two nodes, one contact, one picture."""
+    tmpdir = tempfile.mkdtemp(prefix="tessera-mesh-")
+    log = ledger.EventLog(os.path.join(tmpdir, "ledger.jsonl"))
+    mesh = Mesh(TENANT, log)
+
+    crm = SimulatedConnector("hubspot", "sales", page_size=2)
+    support = SimulatedConnector("zendesk", "support", page_size=2)
+    native = NativeConnector(page_size=5)
+
+    _rule("1. Three nodes register, each with an authority map")
+    mesh.register(Node("hubspot", crm, "sales", authority={"email": "authority"}, trust=0.8))
+    mesh.register(Node("zendesk", support, "support", trust=0.6))
+    mesh.register(Node("native", native, "custom", trust=0.7))
+    for node in mesh.nodes.values():
+        print(f"  {node.id:<8} {node.category:<8} trust {node.trust}  "
+              f"owns {list(node.authority) or 'nothing'}")
+
+    _rule("2. Conformance: one suite, every connector")
+    # Run against fresh instances: the suite writes test records, and seeding the
+    # nodes that the demonstration then syncs would confuse the output.
+    for fresh in (SimulatedConnector("hubspot", "sales"),
+                  SimulatedConnector("zendesk", "support"),
+                  NativeConnector()):
+        print("  " + conformance.run_conformance(fresh).summary().replace("\n", "\n  "))
+
+    _rule("3. Seed the systems and sync")
+    ref = canonical.make_ref("Contact", CONTACT_ID)
+    base = dict(
+        id=CONTACT_ID, tenant_id=TENANT, valid_from="2026-11-01T09:00:00Z",
+        tx_time="2026-11-01T09:00:01Z", consent_state="granted", lawful_basis="consent",
+        purpose_id="sales-outreach", retention_policy_id="rp-24m", full_name="Asha Rao",
+    )
+    crm.seed("Contact", dict(base, email="asha@example.com"))
+    support.seed("Contact", dict(base, email="asha.rao@example.com"))
+    native.seed("Contact", dict(base, email="asha@example.com"))
+    for i, (node_id, node, kind) in enumerate((("hubspot", crm, "email"),
+                                               ("zendesk", support, "ticket")), start=1):
+        node.seed("Activity", {
+            "id": canonical.uuid7(ms=1_700_000_100_000 + i, rand=bytes([i] * 10)),
+            "tenant_id": TENANT, "valid_from": "2026-11-01T10:00:00Z",
+            "tx_time": "2026-11-01T10:00:01Z", "consent_state": "granted",
+            "lawful_basis": "consent", "purpose_id": "sales-outreach",
+            "retention_policy_id": "rp-24m", "kind": kind,
+            "occurred_at": "2026-11-01T09:30:00Z", "subject_ref": ref,
+            "body": f"logged by {node_id}",
+        })
+    print(f"  contacts  {mesh.sync('Contact')['stored']}")
+    print(f"  activity  {mesh.sync('Activity')['stored']}")
+
+    _rule("4. The unified view: one record, provenance on every field")
+    view = mesh.unified_view("Contact", CONTACT_ID)
+    print(f"  {'field':<22}{'value':<26}{'source':<14}rule")
+    for name, cell in view["fields"].items():
+        value = str(cell["value"])[:24]
+        source = str(cell["source"])
+        if source.count("+") >= 1:
+            parts = source.split("+")
+            source = f"{parts[0]}+{len(parts) - 1}"
+        print(f"  {name:<22}{value:<26}{source:<14}{cell['rule']}")
+
+    _rule("5. What actually disagreed")
+    if view["conflicts"]:
+        for c in view["conflicts"]:
+            print(f"  {c['field']}: {c['rule']} -> {c['winner']}")
+            for node_id, value in c["values"].items():
+                print(f"    {node_id:<10} {value}")
+    else:
+        print("  nothing")
+    print(f"  blocked fields: {view['blocked_fields'] or 'none'}")
+
+    _rule("6. The activation event")
+    activation = mesh.activation()
+    print(f"  reached   {activation['reached']}")
+    print(f"  contact   {activation.get('contact')}")
+    print(f"  nodes     {activation.get('activity_sources')}")
+    print(f"  evidence  {activation.get('evidence') or activation.get('reason')}")
+
+    _rule("7. Write back, to the node that owns the field")
+    result = mesh.write_field("Contact", CONTACT_ID, "email", "asha@rao.example.com")
+    print(f"  wrote {result['field']}={result['value']} to {result['node']}")
+    after = mesh.unified_view("Contact", CONTACT_ID)
+    print(f"  unified view now: {after['fields']['email']['value']}")
+
+    _rule("8. The ledger")
+    ok, problems = log.verify()
+    print(f"  events  {sum(1 for _ in log.events())}")
+    print(f"  chain   {'OK' if ok else 'BROKEN'}")
+    for problem in problems:
+        print(f"  {problem}")
+    print(f"  anchor  {log.anchor()['heads'][TENANT]['head'][:16]}...")
+
+    print()
+    print(f"workspace {tmpdir}")
+    return 0
+
+
 def cmd_verify(args) -> int:
     ok, problems = ledger.EventLog(args.path).verify()
     print("OK" if ok else "BROKEN")
@@ -177,6 +277,9 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("demo", help="run the end-to-end demonstration")
     p.add_argument("--keep", action="store_true", help="keep the temporary ledger")
     p.set_defaults(func=cmd_demo)
+
+    p = sub.add_parser("mesh", help="run the federation demonstration")
+    p.set_defaults(func=cmd_mesh)
 
     p = sub.add_parser("verify", help="verify a ledger's hash chain")
     p.add_argument("path")

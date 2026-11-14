@@ -38,6 +38,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 18 | [Assumptions](18-assumptions.md) | &mdash; | Every gap closed by record, not by invention |
 | 19 | [Open decisions](19-open-decisions.md) | &mdash; | Four items needing a founder's signature |
 | 20 | [Reference core](20-reference-core.md) | 0, 1, 2 | What is actually implemented, tested, and what is not |
+| 21 | [Connectors and mesh](21-connectors-and-mesh.md) | 0 | The connector contract, the conformance suite, the unified view |
 
 ## Audit
 

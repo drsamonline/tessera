@@ -11,6 +11,10 @@ The order is fixed and total:
     4. field priority     the declared field order wins
     5. human review       nobody wins; the field is blocked, the record is not
 
+Two sources reporting the same value are not in conflict, and the mesh records
+that as `agreement` rather than manufacturing a resolution for a disagreement
+that does not exist.
+
 Every resolution produces a record with both candidate values and the rule that
 settled it. That record is what the ledger stores, and it is what makes a
 dispute answerable a year later.
@@ -25,6 +29,7 @@ AUTHORITY_RANK = {"authority": 3, "delegate": 2, "bidirectional": 1, "mirror": 0
 
 RULES = (
     "single_source",
+    "agreement",
     "authority_map",
     "trust_score",
     "bi_temporal_recency",

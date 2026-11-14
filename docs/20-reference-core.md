@@ -16,7 +16,11 @@ without ambiguity.
 | `tessera/metrics.py` | 240 | Every routing term, `trust_score`, relationship velocity score (twice), forecast | [10-metrics.md](10-metrics.md) |
 | `tessera/routing.py` | 210 | Weighted routing with versioned weight vectors, deterministic tie-break, occupant selection, SLA clock | [03-mesh.md](03-mesh.md#routing), [05-workforce.md](05-workforce.md#routing) |
 | `tessera/conflict.py` | 150 | Five-step conflict resolution producing a record, never a bare value | [03-mesh.md](03-mesh.md#conflict-resolution) |
-| `tessera/cli.py` | 200 | A demonstration that exercises all of the above end to end | &mdash; |
+| `tessera/connector.py` | 230 | The connector contract, closed error taxonomy, circuit breaker, retry wrapper | [02-architecture.md](02-architecture.md#failure-semantics) |
+| `tessera/connectors.py` | 220 | Native and simulated connectors, plus a deliberately broken one | &mdash; |
+| `tessera/conformance.py` | 260 | Sixteen checks that a connector must pass, tested against nine deliberate violations | [16-acceptance-criteria.md](16-acceptance-criteria.md) |
+| `tessera/mesh.py` | 260 | Registration, sync, unified view, write-back, activation event | [03-mesh.md](03-mesh.md) |
+| `tessera/cli.py` | 340 | Two demonstrations that exercise all of the above end to end | &mdash; |
 
 No dependencies. Standard library only. No network calls. No model, no service, no container.
 
@@ -46,10 +50,12 @@ identically. They now do. Specifically:
 
 ## What it does not do
 
-- No connectors. HubSpot, Salesforce and Zendesk are specified and not built.
+- No real connectors. HubSpot, Salesforce and Zendesk are specified and not built; the contract they must
+  satisfy, and the suite that proves it, are in [21-connectors-and-mesh.md](21-connectors-and-mesh.md).
 - No HTTP surface, no OpenAPI, no MCP tools.
 - No web application, no mobile client, no local-first sync.
 - No workforce runtime: no queue, no scheduler, no revocation polling, no handoff transport.
+- No push subscription, no backpressure accounting, no interface for a blocked field.
 - No database. The ledger is a JSON Lines file; Postgres with row-level security is the production target and
   is not implemented.
 - No access control. Field-level, row-level and object-level enforcement are specified and absent, which means
@@ -76,7 +82,7 @@ Zero of 22 deliverables are fully met. Four are partly met, and the part that is
 | Deliverable | Status | What is done | What is missing |
 |---|---|---|---|
 | 2 - Models for v1 objects | Partial | The canonical schema for 10 objects with validation and hashing | Django models, migrations, row-level security, bi-temporal columns |
-| 3 - Federation layer | Partial | Canonical schema, ledger, conflict resolution, routing with weight versions | All four connectors, the conformance suite, write-back, backpressure |
+| 3 - Federation layer | Partial | Canonical schema, ledger, conflict resolution, routing, the connector contract, the conformance suite, mesh sync, the unified view, write-back to the declared owner | All four real connectors, push subscription, backpressure, per-field sync modes |
 | 7 - Graph sidecar and RVS | Partial | The score, implemented twice, agreeing to six decimals | The graph, the sidecar, the service |
 | 9 - Compliance substrate | Partial | Consent states, lawful bases and purposes enforced at validation | DSAR lifecycle, retention engine, audit export, three-layer access control |
 

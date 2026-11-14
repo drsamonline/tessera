@@ -9,7 +9,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <p>
 <a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
 <img alt="Status: specification + reference core" src="https://img.shields.io/badge/status-spec%20%2B%20reference%20core-1F3552">
-<img alt="Tests: 95 passing" src="https://img.shields.io/badge/tests-95%20passing-2e7d32">
+<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-148%20passing-2e7d32">
 <img alt="Version 1.1" src="https://img.shields.io/badge/version-1.1-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
 <img alt="License: PolyForm Noncommercial 1.0.0" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2e7d32">
@@ -40,7 +40,8 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 > **Nothing in this repository is measured.** Where a figure is an estimate it says so on the line it appears.
 >
 > What does run: `tessera/`, a dependency-free reference implementation of the canonical schema, the ledger,
-> the metrics, routing and conflict resolution. 95 tests, standard library only, no network.
+> the metrics, routing, conflict resolution, the connector contract, the conformance suite and a working mesh.
+> 148 tests, standard library only, no network.
 > [What it does and does not do](docs/20-reference-core.md).
 
 ---
@@ -111,20 +112,26 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/16-acceptance-criteria.md](docs/16-acceptance-criteria.md) | 22 deliverables, 22 testable criteria |
 | [docs/audit/defect-register.md](docs/audit/defect-register.md) | 43 defects with impact and fix |
 | [docs/20-reference-core.md](docs/20-reference-core.md) | What is implemented, tested, and what is not |
-| `tessera/` | The reference core: schema, ledger, metrics, routing, conflict |
-| `tests/` | 95 tests, standard library `unittest`, no dependencies |
+| [docs/21-connectors-and-mesh.md](docs/21-connectors-and-mesh.md) | The connector contract, the conformance suite, the unified view |
+| `tessera/` | The reference core: schema, ledger, metrics, routing, conflict, connectors, mesh |
+| `tests/` | 148 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
 
 ## Run it
 
 ```bash
 python3 -m tessera.cli demo                  # two systems, one contact, one ledger, tamper detection
-python3 -m unittest discover -s tests -t .   # 95 tests
+python3 -m tessera.cli mesh                  # three nodes, one picture, the activation event
+python3 -m unittest discover -s tests -t .   # 148 tests
 ```
 
-The demonstration appends two writes from two systems, asks what each system knew at two different times,
-resolves the conflict between them, routes the next write, computes the trust and relationship scores, verifies
-the chain, then alters one byte and verifies again.
+`demo` appends two writes from two systems, asks what each system knew at two different times, resolves the
+conflict between them, routes the next write, computes the trust and relationship scores, verifies the chain,
+then alters one byte and verifies again.
+
+`mesh` registers three nodes, runs the conformance suite against each connector, syncs their records, prints
+the unified view with provenance on every field, shows the one real disagreement with both values, evaluates
+the activation event, writes a field back to the node that owns it, and verifies the chain.
 
 No dependencies. Python 3.10 or later. Nothing reaches the network.
 

@@ -6,6 +6,28 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.3.0] - 2026-11-14
+
+### Added
+
+- `tessera/connector.py` - the eight-method contract, a closed error taxonomy, a per-node circuit breaker and a
+  retry wrapper that distinguishes a throttle from a failure.
+- `tessera/connectors.py` - `NativeConnector`, `SimulatedConnector`, and `BrokenConnector` with nine deliberate
+  violations so the suite can be tested against what it must reject.
+- `tessera/conformance.py` - sixteen named checks, run against a live connector. `assert_conforms()` for use in
+  a connector's own tests.
+- `tessera/mesh.py` - registration, sync with canonical validation at the boundary, the unified view with
+  per-field provenance, write-back to the declared owner, and the activation event from
+  [docs/01-product.md](docs/01-product.md).
+- `python3 -m tessera.cli mesh` - the federation demonstration.
+- [docs/21-connectors-and-mesh.md](docs/21-connectors-and-mesh.md).
+- 53 more tests (148 total).
+
+### Fixed
+
+- **R-04.** The unified view reported agreeing nodes as a conflict. Two systems reporting the same value now
+  resolve as `agreement` and are kept out of the conflict log, so the log contains only real disagreements.
+
 ## [1.2.0] - 2026-11-14
 
 ### Added
