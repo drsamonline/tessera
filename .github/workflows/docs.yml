@@ -1,5 +1,5 @@
-# Two checks: the internal link checker, and the reference core's test suite.
-# There is no build and no deployment. Do not add jobs that cannot pass.
+# Three checks: the internal link checker, the reference core's test suite, and the
+# jargon lint - which blocks a release by constraint 17 in docs/17-constraints.md.
 name: docs
 
 on:
@@ -31,3 +31,5 @@ jobs:
           python-version: "3.12"
       - name: Reference core tests
         run: python3 -m unittest discover -s tests -t . -v
+      - name: Jargon lint
+        run: python3 -m tessera.jargon

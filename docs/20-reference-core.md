@@ -37,6 +37,8 @@ without ambiguity.
 | `tessera/views.py` | 170 | Saved views and the report builder, on the same filter grammar | [33-boring-and-escape.md](33-boring-and-escape.md) |
 | `tessera/escape.py` | 190 | Four escape hatches, role-gated and audited | [33-boring-and-escape.md](33-boring-and-escape.md) |
 | `tessera/locale.py` | 340 | Five locales, the formatter, the RTL mirror, historical rates | [34-localisation.md](34-localisation.md) |
+| `tessera/jargon.py` | 110 | The lint that blocks a release on an internal term | [35-jargon-and-plugins.md](35-jargon-and-plugins.md) |
+| `tessera/plugins.py` | 210 | Allowlist, pinned hash, signature, static scan, permissions | [35-jargon-and-plugins.md](35-jargon-and-plugins.md) |
 | `tessera/api.py` | 380 | The HTTP surface: routing, bearer auth, scopes, redaction, audit | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/openapi.py` | 400 | The generated OpenAPI 3.1 document and its two validators | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/mcp.py` | 280 | Ten tools, each with a schema, a scope and an audit action | [27-api-and-contracts.md](27-api-and-contracts.md) |

@@ -9,7 +9,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <p>
 <a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
 <img alt="Status: specification + reference core" src="https://img.shields.io/badge/status-spec%20%2B%20reference%20core-1F3552">
-<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-525%20passing-2e7d32">
+<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-548%20passing-2e7d32">
 <img alt="Version 1.1" src="https://img.shields.io/badge/version-1.1-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
 <img alt="License: PolyForm Noncommercial 1.0.0" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2e7d32">
@@ -42,7 +42,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 > What does run: `tessera/`, a dependency-free reference implementation of the canonical schema, the ledger,
 > the metrics, routing, conflict resolution, the connector contract, the conformance suite, four connectors and
 > a working mesh, projections that rebuild from the ledger, the workforce layer, and an HTTP surface with an OpenAPI 3.1
-> contract, ten MCP tools, three-layer access control a compliance substrate and local-first sync. 525 tests, standard library only, no network.
+> contract, ten MCP tools, three-layer access control a compliance substrate and local-first sync. 548 tests, standard library only, no network.
 > An independent code review found 13 findings and fixed 11: [docs/31-code-review.md](docs/31-code-review.md).
 > [What it does and does not do](docs/20-reference-core.md).
 
@@ -128,7 +128,8 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/32-automation.md](docs/32-automation.md) | Triggers, a condition language, the approval gate |
 | [docs/33-boring-and-escape.md](docs/33-boring-and-escape.md) | Import, undo, backup, views, reports, four audited doors |
 | [docs/34-localisation.md](docs/34-localisation.md) | Five locales, RTL mechanism, historical rates |
-| `tests/` | 525 tests, standard library `unittest`, no dependencies |
+| [docs/35-jargon-and-plugins.md](docs/35-jargon-and-plugins.md) | A lint that blocks release, four gates on a plugin |
+| `tests/` | 548 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
 
 ## Run it
@@ -140,7 +141,8 @@ python3 -m tessera.cli workforce             # seats, a signed handoff, revocati
 python3 -m tessera.cli schema                # print and check both contracts
 python3 -m tessera.cli timeline              # what we knew vs what was true, then revert and mirror
 python3 -m tessera.bench --gate              # measure, and fail on a regression
-python3 -m unittest discover -s tests -t .   # 525 tests
+python3 -m tessera.jargon                    # the lint that blocks release
+python3 -m unittest discover -s tests -t .   # 548 tests
 ```
 
 `demo` appends two writes from two systems, asks what each system knew at two different times, resolves the

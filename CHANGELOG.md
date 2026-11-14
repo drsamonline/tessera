@@ -6,6 +6,25 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.18.0] - 2026-11-14
+
+### Added
+
+- `tessera/jargon.py` - deliverable 12. Thirteen internal terms, the map taken verbatim from the experience
+  document and compared against it by a test, and a CI step that fails the build.
+- `tessera/plugins.py` - deliverable 16. Allowlist, pinned hash, signature, an `ast`-based static scan and a
+  permission grant. Every refusal is a ledger event.
+- [docs/35-jargon-and-plugins.md](docs/35-jargon-and-plugins.md).
+- 23 more tests (548 total).
+
+### Note
+
+The linter has no suppression mechanism, on purpose: a suppression mechanism is how a lint rule becomes a
+formality.
+
+The plugin loader never executes a plugin. A loader that runs untrusted code to find out whether it is safe to run
+has already answered the question wrongly, and the test asserts that validation leaves no file behind.
+
 ## [1.17.0] - 2026-11-14
 
 ### Added

@@ -52,6 +52,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 32 | [Automation](32-automation.md) | 2 | Triggers, a condition language that is not Python, and the approval gate |
 | 33 | [Boring features and escape hatches](33-boring-and-escape.md) | 1 | Import, undo, backup, views, reports, and four audited doors |
 | 34 | [Localisation](34-localisation.md) | 6 | Five locales, RTL mechanism, historical rates, timezones |
+| 35 | [Jargon lint and plugins](35-jargon-and-plugins.md) | 6 | A lint that blocks release, and four gates on a plugin |
 
 ## Audit
 
