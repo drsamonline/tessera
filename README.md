@@ -139,6 +139,7 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/43-release.md](docs/43-release.md) | The tag, the gate and the generated note |
 | [docs/44-archival.md](docs/44-archival.md) | Segments, a header line, and a proof that survives |
 | [docs/45-smoke-audit.md](docs/45-smoke-audit.md) | One real call into every module |
+| [**tessera-app**](https://github.com/drsamonline/tessera-app) | The console: this core, in a browser, offline |
 | `tests/` | 709 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
 

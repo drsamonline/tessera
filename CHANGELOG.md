@@ -6,6 +6,18 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.29.0] - 2026-11-14
+
+### Added
+
+- A **live console** section on the landing page, with a real screenshot and a link to the running app:
+  [drsamonline.github.io/tessera-app](https://drsamonline.github.io/tessera-app/). The console is the reference
+  core ported to the client, offline and installable.
+
+### Changed
+
+- The landing page keeps its design. It gains one section and one chip; nothing else moved.
+
 ## [1.28.0] - 2026-11-14
 
 ### Added

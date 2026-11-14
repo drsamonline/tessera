@@ -92,6 +92,19 @@
   .sub { font-size: clamp(1.05rem, 2.4vw, var(--step-2)); color: var(--ink-2); max-width: 30ch;
          margin: var(--s4) 0 var(--s4); line-height: 1.4; }
   .lede { font-size: 1.06rem; color: var(--ink-2); max-width: 62ch; }
+  .live-grid { display: grid; gap: var(--s5); grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    align-items: start; margin-top: var(--s5); }
+  .live-shot { display: block; border: 1px solid var(--line-2); border-radius: 14px; overflow: hidden;
+    background: var(--surface); box-shadow: 0 24px 60px -34px rgba(0,0,0,.85); }
+  .live-shot img { display: block; width: 100%; height: auto; }
+  .live-side { display: flex; flex-direction: column; gap: var(--s4); }
+  .live-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .live-list li { font-size: .92rem; color: var(--ink-2); padding-left: 16px; position: relative; }
+  .live-list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--ochre); }
+  .live-list b { color: var(--ink); font-weight: 600; }
+  .live-note { font-size: .82rem; color: var(--ink-3); margin: 0; }
+  @media (max-width: 880px) { .live-grid { grid-template-columns: 1fr; } }
   .chips { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s5) 0 var(--s4); }
   .chip { font-family: var(--mono); font-size: .72rem; letter-spacing: .04em; border: 1px solid var(--line-2);
           color: var(--ink-2); border-radius: 999px; padding: 3px 10px; }
@@ -224,6 +237,7 @@
       identity. Together they make one picture &mdash; and one tamper-evident record of how the picture was made.</p>
     <div class="chips">
       <span class="chip warn">Specification + reference core &mdash; no product</span>
+      <span class="chip">Console: live in your browser</span>
       <span class="chip">709 tests passing, no dependencies</span>
       <span class="chip">43 defects found, 43 closed</span>
       <span class="chip">22 deliverables, 22 acceptance criteria</span>
@@ -238,6 +252,33 @@
 </header>
 
 <main id="main">
+
+<section id="live">
+  <div class="wrap">
+    <h2>It runs. Right now, in this browser tab.</h2>
+    <p class="lede">The console is the reference core ported to the client: field-level merge, conflict
+      resolution that names its rule, a SHA-256 chain you verify yourself, and seat-based routing.
+      No server, no account, no network after the first load.</p>
+
+    <div class="live-grid">
+      <a class="live-shot" href="https://drsamonline.github.io/tessera-app/" aria-label="Open the live console">
+        <img src="assets/console.png" alt="The TESSERA console: one customer record with provenance on every field, three conflicts flagged, and an activity feed from four systems." loading="lazy">
+      </a>
+      <div class="live-side">
+        <a class="btn primary" href="https://drsamonline.github.io/tessera-app/">Open the live console</a>
+        <a class="btn" href="https://github.com/drsamonline/tessera-app">Console source</a>
+        <ul class="live-list">
+          <li><b>Unified</b> &mdash; every field names the system it came from and the rule that chose it</li>
+          <li><b>Resolve</b> &mdash; both values, both trust scores, and the deciding rule before you choose</li>
+          <li><b>Ledger</b> &mdash; verify recomputes SHA-256 in the page; a tamper button proves it works</li>
+          <li><b>Workforce</b> &mdash; work goes to a position; the router prints its arithmetic</li>
+          <li><b>Automate</b> &mdash; a playbook written by an agent cannot run until a person approves it</li>
+        </ul>
+        <p class="live-note">Installable as an app. Works offline. One 43&nbsp;KB HTML file, no framework.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section id="what">
   <div class="wrap">
