@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" role="img"
+     aria-labelledby="archTitle archDesc" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <title id="archTitle">TESSERA architecture</title>
+  <desc id="archDesc">Four source systems feed a federation mesh that merges them field by field, records every
+  action in a hash-chained ledger, and assigns work to seats filled by humans or agents. A console reads it over
+  HTTP.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5f6b78"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="640" fill="#0b0d10"/>
+
+<text x="48" y="52" font-size="22" fill="#e8e6e1" font-weight="700" text-anchor="start">TESSERA</text>
+<text x="160" y="52" font-size="14" fill="#a3acb6" font-weight="400" text-anchor="start">the mosaic layer above every CRM</text>
+<text x="48" y="104" font-size="11" fill="#a3acb6" font-weight="600" text-anchor="start">SYSTEMS OF RECORD</text>
+<rect x="48" y="124" width="190" height="62" rx="10" fill="#14181d" stroke="#2a3038"/>
+<rect x="48" y="124" width="4" height="62" rx="2" fill="#d9a441"/>
+<text x="66" y="150" font-size="14" fill="#e8e6e1" font-weight="600" text-anchor="start">HubSpot</text>
+<text x="66" y="170" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">sales</text>
+<line x1="238" y1="155" x2="320" y2="300" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="48" y="202" width="190" height="62" rx="10" fill="#14181d" stroke="#2a3038"/>
+<rect x="48" y="202" width="4" height="62" rx="2" fill="#d9a441"/>
+<text x="66" y="228" font-size="14" fill="#e8e6e1" font-weight="600" text-anchor="start">Salesforce</text>
+<text x="66" y="248" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">sales</text>
+<line x1="238" y1="233" x2="320" y2="300" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="48" y="280" width="190" height="62" rx="10" fill="#14181d" stroke="#2a3038"/>
+<rect x="48" y="280" width="4" height="62" rx="2" fill="#5fb3ac"/>
+<text x="66" y="306" font-size="14" fill="#e8e6e1" font-weight="600" text-anchor="start">Zendesk</text>
+<text x="66" y="326" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">support</text>
+<line x1="238" y1="311" x2="320" y2="300" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="48" y="358" width="190" height="62" rx="10" fill="#14181d" stroke="#2a3038"/>
+<rect x="48" y="358" width="4" height="62" rx="2" fill="#c0653b"/>
+<text x="66" y="384" font-size="14" fill="#e8e6e1" font-weight="600" text-anchor="start">NetSuite</text>
+<text x="66" y="404" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">erp</text>
+<line x1="238" y1="389" x2="320" y2="300" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="320" y="96" width="320" height="336" rx="12" fill="#14181d" stroke="#d9a441"/>
+<text x="344" y="130" font-size="12" fill="#d9a441" font-weight="700" text-anchor="start">FEDERATION MESH</text>
+<text x="344" y="152" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">one contract, four dialects</text>
+<rect x="344" y="176" width="272" height="34" rx="8" fill="#1c2229" stroke="#2a3038"/>
+<text x="358" y="192" font-size="12.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Canonical schema</text>
+<text x="358" y="205" font-size="10.5" fill="#a3acb6" font-weight="400" text-anchor="start">10 objects, versioned</text>
+<rect x="344" y="218" width="272" height="34" rx="8" fill="#1c2229" stroke="#2a3038"/>
+<text x="358" y="234" font-size="12.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Connector contract</text>
+<text x="358" y="247" font-size="10.5" fill="#a3acb6" font-weight="400" text-anchor="start">8 methods, 1 taxonomy</text>
+<rect x="344" y="260" width="272" height="34" rx="8" fill="#1c2229" stroke="#2a3038"/>
+<text x="358" y="276" font-size="12.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Authority map</text>
+<text x="358" y="289" font-size="10.5" fill="#a3acb6" font-weight="400" text-anchor="start">who owns which field</text>
+<rect x="344" y="302" width="272" height="34" rx="8" fill="#1c2229" stroke="#2a3038"/>
+<text x="358" y="318" font-size="12.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Conflict resolution</text>
+<text x="358" y="331" font-size="10.5" fill="#a3acb6" font-weight="400" text-anchor="start">5 steps, rule recorded</text>
+<rect x="344" y="344" width="272" height="34" rx="8" fill="#1c2229" stroke="#2a3038"/>
+<text x="358" y="360" font-size="12.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Routing</text>
+<text x="358" y="373" font-size="10.5" fill="#a3acb6" font-weight="400" text-anchor="start">weighted, term by term</text>
+<rect x="344" y="386" width="272" height="34" rx="8" fill="#1c2229" stroke="#2a3038"/>
+<text x="358" y="402" font-size="12.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Backpressure</text>
+<text x="358" y="415" font-size="10.5" fill="#a3acb6" font-weight="400" text-anchor="start">token bucket per node</text>
+<rect x="700" y="96" width="452" height="150" rx="12" fill="#14181d" stroke="#5fb3ac"/>
+<text x="724" y="130" font-size="12" fill="#5fb3ac" font-weight="700" text-anchor="start">LEDGER</text>
+<text x="724" y="152" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">append-only, SHA-256 chained, the single authority</text>
+<rect x="724" y="176" width="62" height="40" rx="6" fill="#1c2229" stroke="#2a3038"/>
+<text x="755" y="195" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">#1</text>
+<text x="755" y="209" font-size="9.5" fill="#a3acb6" font-weight="400" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">a1b2</text>
+<line x1="787" y1="196" x2="801" y2="196" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="802" y="176" width="62" height="40" rx="6" fill="#1c2229" stroke="#2a3038"/>
+<text x="833" y="195" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">#2</text>
+<text x="833" y="209" font-size="9.5" fill="#a3acb6" font-weight="400" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">…</text>
+<line x1="865" y1="196" x2="879" y2="196" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="880" y="176" width="62" height="40" rx="6" fill="#1c2229" stroke="#2a3038"/>
+<text x="911" y="195" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">#3</text>
+<text x="911" y="209" font-size="9.5" fill="#a3acb6" font-weight="400" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">…</text>
+<line x1="943" y1="196" x2="957" y2="196" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="958" y="176" width="62" height="40" rx="6" fill="#1c2229" stroke="#2a3038"/>
+<text x="989" y="195" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">#4</text>
+<text x="989" y="209" font-size="9.5" fill="#a3acb6" font-weight="400" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">…</text>
+<line x1="1021" y1="196" x2="1035" y2="196" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="1036" y="176" width="62" height="40" rx="6" fill="#1c2229" stroke="#2a3038"/>
+<text x="1067" y="195" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">#5</text>
+<text x="1067" y="209" font-size="9.5" fill="#a3acb6" font-weight="400" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">…</text>
+<line x1="640" y1="200" x2="696" y2="172" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="700" y="282" width="452" height="150" rx="12" fill="#14181d" stroke="#c0653b"/>
+<text x="724" y="316" font-size="12" fill="#c0653b" font-weight="700" text-anchor="start">WORKFORCE</text>
+<text x="724" y="338" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">work goes to a seat; a human or an agent fills it</text>
+<rect x="724" y="356" width="134" height="54" rx="8" fill="#1c2229" stroke="#2a3038"/>
+<text x="734" y="376" font-size="11.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Support triage</text>
+<text x="734" y="393" font-size="10.5" fill="#a3acb6" font-weight="400" text-anchor="start">priya · human</text>
+<rect x="870" y="356" width="134" height="54" rx="8" fill="#1c2229" stroke="#2a3038"/>
+<text x="880" y="376" font-size="11.5" fill="#e8e6e1" font-weight="600" text-anchor="start">First response</text>
+<text x="880" y="393" font-size="10.5" fill="#a3acb6" font-weight="400" text-anchor="start">agent-7 · agent</text>
+<rect x="1016" y="356" width="134" height="54" rx="8" fill="#1c2229" stroke="#2a3038"/>
+<text x="1026" y="376" font-size="11.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Escalation</text>
+<text x="1026" y="393" font-size="10.5" fill="#a3acb6" font-weight="400" text-anchor="start">sam · human</text>
+<line x1="640" y1="300" x2="696" y2="300" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="320" y="470" width="832" height="108" rx="12" fill="#14181d" stroke="#2a3038"/>
+<text x="344" y="504" font-size="12" fill="#e8e6e1" font-weight="700" text-anchor="start">CONSOLE</text>
+<text x="344" y="526" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">one HTML file, offline, reads this API over HTTP with a bearer token</text>
+<rect x="344" y="540" width="112.4" height="26" rx="13" fill="#1c2229" stroke="#2a3038"/>
+<text x="400.2" y="557" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle">Unified view</text>
+<rect x="466.4" y="540" width="76.4" height="26" rx="13" fill="#1c2229" stroke="#2a3038"/>
+<text x="504.59999999999997" y="557" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle">Resolve</text>
+<rect x="552.8" y="540" width="69.2" height="26" rx="13" fill="#1c2229" stroke="#2a3038"/>
+<text x="587.4" y="557" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle">Ledger</text>
+<rect x="632.0" y="540" width="90.8" height="26" rx="13" fill="#1c2229" stroke="#2a3038"/>
+<text x="677.4" y="557" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle">Workforce</text>
+<rect x="732.8" y="540" width="83.6" height="26" rx="13" fill="#1c2229" stroke="#2a3038"/>
+<text x="774.5999999999999" y="557" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle">Automate</text>
+<rect x="826.4" y="540" width="69.2" height="26" rx="13" fill="#1c2229" stroke="#2a3038"/>
+<text x="861.0" y="557" font-size="11" fill="#a3acb6" font-weight="500" text-anchor="middle">Import</text>
+<line x1="780" y1="432" x2="780" y2="466" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="48" y="600" font-size="12" fill="#a3acb6" font-weight="400" text-anchor="start">Every action in every system lands in the ledger. Nothing is merged without a rule being recorded.</text>
+</svg>

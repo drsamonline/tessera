@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 460" width="1200" height="460" role="img"
+     aria-labelledby="escTitle escDesc" font-family="ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif">
+  <title id="escTitle">Escalation and the handoff packet</title>
+  <desc id="escDesc">A task moves from seat to seat. Each escalation carries a signed packet holding the full state,
+  so the receiving seat needs nothing but the packet.</desc>
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5f6b78"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="460" fill="#0b0d10"/>
+
+<text x="48" y="48" font-size="20" fill="#e8e6e1" font-weight="700" text-anchor="start">Escalation, and why the packet is not a summary</text>
+<text x="48" y="74" font-size="12.5" fill="#a3acb6" font-weight="400" text-anchor="start">A task moves seat to seat. The receiver needs nothing but the packet — no task table, no seat table.</text>
+<rect x="120" y="110" width="190" height="74" rx="10" fill="#14181d" stroke="#2a3038"/>
+<rect x="120" y="110" width="4" height="74" rx="2" fill="#5fb3ac"/>
+<text x="138" y="136" font-size="13.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Support triage</text>
+<text x="138" y="158" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">priya · human</text>
+<rect x="340" y="110" width="190" height="74" rx="10" fill="#14181d" stroke="#2a3038"/>
+<rect x="340" y="110" width="4" height="74" rx="2" fill="#d9a441"/>
+<text x="358" y="136" font-size="13.5" fill="#e8e6e1" font-weight="600" text-anchor="start">First response</text>
+<text x="358" y="158" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">agent-7 · agent</text>
+<rect x="560" y="110" width="190" height="74" rx="10" fill="#14181d" stroke="#2a3038"/>
+<rect x="560" y="110" width="4" height="74" rx="2" fill="#5fb3ac"/>
+<text x="578" y="136" font-size="13.5" fill="#e8e6e1" font-weight="600" text-anchor="start">Escalation</text>
+<text x="578" y="158" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">sam · human</text>
+<line x1="310" y1="147" x2="338" y2="147" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#a2)"/>
+<line x1="530" y1="147" x2="558" y2="147" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#a2)"/>
+<rect x="790" y="96" width="362" height="300" rx="10" fill="#14181d" stroke="#d9a441"/>
+<text x="814" y="126" font-size="11.5" fill="#d9a441" font-weight="700" text-anchor="start">HANDOFF PACKET</text>
+<text x="814" y="152" font-size="10.5" fill="#a3acb6" font-weight="500" text-anchor="start" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">task</text>
+<text x="880" y="152" font-size="11.5" fill="#e8e6e1" font-weight="400" text-anchor="start">Delivery address change</text>
+<text x="814" y="182" font-size="10.5" fill="#a3acb6" font-weight="500" text-anchor="start" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">from</text>
+<text x="880" y="182" font-size="11.5" fill="#e8e6e1" font-weight="400" text-anchor="start">Support triage</text>
+<text x="814" y="212" font-size="10.5" fill="#a3acb6" font-weight="500" text-anchor="start" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">to</text>
+<text x="880" y="212" font-size="11.5" fill="#e8e6e1" font-weight="400" text-anchor="start">Escalation</text>
+<text x="814" y="242" font-size="10.5" fill="#a3acb6" font-weight="500" text-anchor="start" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">state</text>
+<text x="880" y="242" font-size="11.5" fill="#e8e6e1" font-weight="400" text-anchor="start">8 fields, full values</text>
+<text x="814" y="272" font-size="10.5" fill="#a3acb6" font-weight="500" text-anchor="start" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">issued</text>
+<text x="880" y="272" font-size="11.5" fill="#5fb3ac" font-weight="400" text-anchor="start">2026-11-14T10:22Z</text>
+<text x="814" y="302" font-size="10.5" fill="#a3acb6" font-weight="500" text-anchor="start" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">sig</text>
+<text x="880" y="302" font-size="11.5" fill="#5fb3ac" font-weight="400" text-anchor="start">9f2c41d8… (HMAC)</text>
+<line x1="760" y1="147" x2="786" y2="200" stroke="#5f6b78" stroke-width="1.5" marker-end="url(#a2)"/>
+<text x="814" y="382" font-size="11" fill="#a3acb6" font-weight="400" text-anchor="start">verify(packet) fails on one altered byte</text>
+<rect x="48" y="250" width="700" height="150" rx="10" fill="#14181d" stroke="#2a3038"/>
+<text x="72" y="282" font-size="11.5" fill="#a3acb6" font-weight="700" text-anchor="start">WHY IT MATTERS</text>
+<text x="72" y="308" font-size="11.5" fill="#e8e6e1" font-weight="400" text-anchor="start">The packet carries the full state, not a summary of it.</text>
+<text x="72" y="330" font-size="11.5" fill="#e8e6e1" font-weight="400" text-anchor="start">Signed with HMAC-SHA256: tamper with one field and the signature fails.</text>
+<text x="72" y="352" font-size="11.5" fill="#e8e6e1" font-weight="400" text-anchor="start">The receiver rebuilds the task from the packet alone - the test deletes the task,</text>
+<text x="72" y="374" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">the seat and the occupant tables first, and the reconstruction still works.</text>
+<text x="72" y="396" font-size="11.5" fill="#a3acb6" font-weight="400" text-anchor="start">SLA clocks travel with it: parked pauses the clock, human_review keeps it running.</text>
+</svg>

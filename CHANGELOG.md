@@ -6,6 +6,20 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.32.0] - 2026-11-14
+
+### Added
+
+- **Two diagrams, as SVG.** `docs/diagrams/architecture.svg` — four systems of record, the mesh, the ledger, the
+  workforce and the console. `docs/diagrams/escalation.svg` — a task moving seat to seat with the handoff packet
+  beside it, and why the packet is not a summary.
+- Both are embedded in the README and the landing page. Forty-seven documents and, until now, zero pictures.
+
+### Note
+
+Hand-built SVG, not a diagramming tool. It renders on GitHub, in the README and on Pages with no dependency, and it
+uses the same palette as the console - so the picture and the product do not look like two different projects.
+
 ## [1.31.0] - 2026-11-14
 
 ### Fixed

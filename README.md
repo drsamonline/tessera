@@ -61,6 +61,10 @@ in that mesh, not the product. Adoption is additive: the first result arrives be
 The design constraint that shapes everything else: one founder and a five-thousand-person organisation run the
 same code paths. That bounds the architecture, not the customer list.
 
+## How it fits together
+
+<img src="docs/diagrams/architecture.svg" alt="Four systems of record feed a federation mesh that merges them field by field, records every action in a hash-chained ledger, and assigns work to seats filled by humans or agents. A console reads it over HTTP." width="100%">
+
 ## Why the name
 
 A *tessera* was a single tile in a Roman mosaic, and separately a token of identity carried by a citizen to
@@ -140,6 +144,7 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/44-archival.md](docs/44-archival.md) | Segments, a header line, and a proof that survives |
 | [docs/45-smoke-audit.md](docs/45-smoke-audit.md) | One real call into every module |
 | [docs/46-cors.md](docs/46-cors.md) | The allowlist, and the gap it exposed |
+| [docs/diagrams/](docs/diagrams/) | Architecture and escalation, as SVG |
 | [**tessera-app**](https://github.com/drsamonline/tessera-app) | The console: this core, in a browser, offline |
 | `tests/` | 721 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
