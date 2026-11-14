@@ -21,7 +21,7 @@ Every control names its enforcement point and carries one test. A control withou
 | Field-level security | One gate on every read path | Denied field absent from API, export, MCP, history, as-of and the unified view |
 | Row-level security | The same gate | An owner-scoped role sees only its own records, and gets 404 rather than 403 |
 
-Implemented: [28-access-control.md](28-access-control.md).
+Implemented: [28-access-control.md](28-access-control.md) and [29-compliance.md](29-compliance.md).
 
 ## Observability and operations
 

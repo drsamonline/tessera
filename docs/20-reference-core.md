@@ -30,6 +30,7 @@ without ambiguity.
 | `tessera/mirror.py` | 160 | Markdown projection, manifest of hashes, lag as a count | [25-deterministic-features.md](25-deterministic-features.md) |
 | `tessera/workforce.py` | 480 | Seats, occupants, tasks, signed handoff, escalation, revocation | [05-workforce.md](05-workforce.md) |
 | `tessera/access.py` | 200 | Object, field and row rules; the one gate every read path calls | [28-access-control.md](28-access-control.md) |
+| `tessera/compliance.py` | 400 | Consent, DSAR, retention, signed audit export, erasure | [29-compliance.md](29-compliance.md) |
 | `tessera/api.py` | 380 | The HTTP surface: routing, bearer auth, scopes, redaction, audit | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/openapi.py` | 400 | The generated OpenAPI 3.1 document and its two validators | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/mcp.py` | 280 | Ten tools, each with a schema, a scope and an audit action | [27-api-and-contracts.md](27-api-and-contracts.md) |
@@ -99,7 +100,7 @@ Zero of 22 deliverables are fully met. Four are partly met, and the part that is
 | 2 - Models for v1 objects | Partial | The canonical schema for 10 objects with validation and hashing | Django models, migrations, row-level security, bi-temporal columns |
 | 3 - Federation layer | Partial | Canonical schema, ledger, conflict resolution, routing, the connector contract, the conformance suite, four connectors, mesh sync, the unified view, write-back to the declared owner | Live provider integration, push subscription, backpressure, per-field sync modes |
 | 7 - Graph sidecar and RVS | Partial | The score, implemented twice, agreeing to six decimals | The graph, the sidecar, the service |
-| 9 - Compliance substrate | Partial | Consent states, lawful bases and purposes enforced at validation | DSAR lifecycle, retention engine, audit export, three-layer access control |
+| 9 - Compliance substrate | Partial | Access control, consent, DSAR, retention, audit export | Real erasure (R-07), breach workflow, ROPA, residency |
 
 The remaining 18 are untouched. The [acceptance criteria](16-acceptance-criteria.md) are unchanged by this
 document: a partial implementation does not move a criterion, it moves the evidence toward one.

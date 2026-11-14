@@ -6,6 +6,27 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.10.0] - 2026-11-14
+
+### Added
+
+- `tessera/compliance.py` - purpose-bound consent, a DSAR lifecycle with a configurable clock and a complete
+  hashed export, a retention engine with legal hold, a signed audit export, and erasure by tombstone.
+- `Projection` honours tombstones: an erased or expired record leaves the projection on rebuild.
+- [docs/29-compliance.md](docs/29-compliance.md).
+- 34 more tests (354 total).
+
+### Fixed
+
+- **R-07, and it is not fixed.** The ledger cannot honour an erasure request: an append-only hash chain cannot
+  delete bytes already written. `erase()` tombstones, and the original payload stays in the log. Closing it needs
+  crypto-shredding or segmented retention, and this repository has neither. Recorded as a defect, not a gap.
+
+### Changed
+
+- `DsarService` rebuilds the projection on every export instead of trusting the snapshot it was constructed with.
+  An export that serves the state from before an erasure is a confident, signed, wrong answer.
+
 ## [1.9.0] - 2026-11-14
 
 ### Added

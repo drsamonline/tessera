@@ -65,6 +65,14 @@ class Projection:
             return
         object_name, record_id = canonical.parse_ref(ref)
 
+        # A tombstone removes the record from the projection. The event stays in
+        # the ledger, because the ledger records that the erasure happened; what
+        # it cannot do is remove the bytes already written. See docs/29.
+        if payload.get("tombstone") or event.get("action") == "record.retention_expired":
+            self._drop(object_name, record_id)
+            self.applied += 1
+            return
+
         record = payload.get("record")
         if isinstance(record, dict):
             self._upsert(object_name, record_id, record, event)
@@ -89,6 +97,10 @@ class Projection:
             temporal.setdefault(field, []).append((
                 record.get("valid_from", ""), event.get("timestamp", ""), value,
             ))
+
+    def _drop(self, object_name: str, record_id: str) -> None:
+        self.state.get(object_name, {}).pop(record_id, None)
+        self.temporal.get(object_name, {}).pop(record_id, None)
 
     def _patch(self, object_name: str, record_id: str, field: str, value, event: dict) -> None:
         rows = self.state.setdefault(object_name, {}).setdefault(record_id, {})
