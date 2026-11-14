@@ -51,6 +51,11 @@ what it is not: it runs at a reference scale of a few thousand records on one pr
 the load model above. The thresholds it enforces are separate regression numbers, not these targets.
 [23-stage-one.md](23-stage-one.md#measurement).
 
+## Local-first sync
+
+The replica, the outbox and the convergence rule are implemented and tested:
+[30-local-first-sync.md](30-local-first-sync.md). The browser client is not.
+
 ## Security
 
 Three layers, all enforced at query execution rather than in controllers:

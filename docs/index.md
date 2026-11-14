@@ -47,6 +47,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 27 | [API and contracts](27-api-and-contracts.md) | all | The HTTP surface, OpenAPI 3.1, the 10 MCP tools |
 | 28 | [Access control](28-access-control.md) | 1 | Object, field and row rules, enforced at one gate |
 | 29 | [Compliance](29-compliance.md) | 1 | Consent, DSAR, retention, audit export, and R-07 |
+| 30 | [Local-first sync](30-local-first-sync.md) | 1 | One protocol, offline writes, guaranteed convergence |
 
 ## Audit
 

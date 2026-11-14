@@ -31,6 +31,7 @@ without ambiguity.
 | `tessera/workforce.py` | 480 | Seats, occupants, tasks, signed handoff, escalation, revocation | [05-workforce.md](05-workforce.md) |
 | `tessera/access.py` | 200 | Object, field and row rules; the one gate every read path calls | [28-access-control.md](28-access-control.md) |
 | `tessera/compliance.py` | 400 | Consent, DSAR, retention, signed audit export, erasure | [29-compliance.md](29-compliance.md) |
+| `tessera/sync.py` | 230 | Local-first replica, outbox, cursor, field-level LWW, convergence | [30-local-first-sync.md](30-local-first-sync.md) |
 | `tessera/api.py` | 380 | The HTTP surface: routing, bearer auth, scopes, redaction, audit | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/openapi.py` | 400 | The generated OpenAPI 3.1 document and its two validators | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/mcp.py` | 280 | Ten tools, each with a schema, a scope and an audit action | [27-api-and-contracts.md](27-api-and-contracts.md) |
@@ -68,7 +69,8 @@ identically. They now do. Specifically:
   suite, but only against recorded transports speaking documented shapes. No tenant, no token, no real traffic.
 - No production gateway, no MCP transport. The HTTP surface, the OpenAPI document and the ten tool
   definitions exist: [27-api-and-contracts.md](27-api-and-contracts.md).
-- No web application, no mobile client, no local-first sync.
+- No web or mobile client. The local-first sync protocol exists and is tested:
+  [30-local-first-sync.md](30-local-first-sync.md).
 - No workforce scheduler, queue persistence or capacity model. The seat, handoff, escalation and
   revocation rules are implemented: [26-workforce.md](26-workforce.md).
 - No push subscription, no backpressure accounting, no interface for a blocked field.

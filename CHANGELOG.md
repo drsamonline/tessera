@@ -6,6 +6,25 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.11.0] - 2026-11-14
+
+### Added
+
+- `tessera/sync.py` - the local-first protocol: a replica that writes locally and immediately, an outbox, a
+  cursor, and field-level last-writer-wins over a Lamport counter with a replica-id tiebreak.
+- Every accepted operation is written to the ledger, so the sync stream and the audit trail cannot disagree.
+- [docs/30-local-first-sync.md](docs/30-local-first-sync.md).
+- 19 more tests (373 total), including a thousand mutations across three replicas converging to one state, and
+  the same operations applied forward, reversed and shuffled producing one fingerprint.
+
+### Note
+
+The losing write in a conflict is outranked, not deleted: both values stay in the operation log. The replica
+state holds one value because an interface has to render something; the mesh's conflict resolver is where a
+human decides.
+
+There is no deletion in the sync protocol yet. Deleting a record is a field write today, which is wrong.
+
 ## [1.10.0] - 2026-11-14
 
 ### Added
