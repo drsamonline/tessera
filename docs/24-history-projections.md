@@ -96,6 +96,26 @@ The revert is itself in the history, so the next `diff` shows it. A history you 
 - `verify()` re-hashes every file and reports what changed. A hand-edited mirror file is caught.
 - Rebuilding from the same ledger produces the same bytes; `test_mirror_is_rebuildable` asserts it.
 
+## Incremental, because O(n) per request is not a design
+
+`Projection(log, tenant, incremental=True)` keeps a byte offset and reads only what arrived since the last
+refresh. `build()` still replays from the start, because the rebuildability test needs exactly that and a
+projection that is only ever incremental is a projection nobody has checked.
+
+| Operation | 2,000 events |
+|---|---|
+| `projection.rebuild_full` | 57.6 ms |
+| `projection.refresh_cold` (reads the file once) | 96.3 ms |
+| `projection.refresh_incremental` (10 new events) | **0.6 ms** |
+
+Verification has the same shape. `verify(anchor={"sequence": n, "hash": h})` continues the chain from a
+checkpoint instead of the genesis event, which is what makes a verification job that runs hourly possible at a
+million events.
+
+The trade is stated in the test rather than the prose: **an anchored verify cannot see a rewrite before its own
+anchor**. `test_tampering_before_the_anchor_is_not_caught_and_that_is_the_trade` asserts the limitation, and the
+external anchor in [11-history-authority.md](11-history-authority.md) is what closes it.
+
 ## What this does not do
 
 - **No git binary.** The checkpoint log is git-shaped - content hashes, parent links, diff, revert by

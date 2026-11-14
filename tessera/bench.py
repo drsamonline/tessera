@@ -22,7 +22,7 @@ import tempfile
 import time
 from datetime import datetime, timezone
 
-from . import canonical, ledger, metrics, routing
+from . import canonical, ledger, metrics, projection, routing
 from .connectors import SimulatedConnector
 from .mesh import Mesh, Node
 from .observability import REGISTRY, check_against_targets
@@ -91,6 +91,22 @@ def run(records: int = 2000) -> dict:
     for _ in range(min(records, 2000)):
         with REGISTRY.timer("metrics.trust_score"):
             metrics.trust_score(observations, now=now)
+
+    # Incremental projection against a full rebuild, on the same log.
+    # The cold refresh reads the whole file and is not the interesting number;
+    # the steady-state refresh applies only what arrived since, and that is what
+    # a request path pays. Both are measured so the comparison is honest.
+    live = projection.Projection(log, TENANT, incremental=True)
+    with REGISTRY.timer("projection.refresh_cold"):
+        live.refresh()
+    for _ in range(10):
+        log.append(TENANT, "system", "contact.upsert", {"email": "late@example.com"},
+                   canonical_ref=canonical.make_ref("Contact", payloads[0]["id"]),
+                   source_node_id="bench")
+    with REGISTRY.timer("projection.refresh_incremental"):
+        live.refresh()
+    with REGISTRY.timer("projection.rebuild_full"):
+        projection.Projection(log, TENANT).build()
 
     # a mesh with two nodes and a slice of the same records
     mesh = Mesh(TENANT, None)

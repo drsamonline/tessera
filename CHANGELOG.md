@@ -6,6 +6,26 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.13.0] - 2026-11-14
+
+### Fixed
+
+- **O-06.** The projection rebuilt from the log on every read. `EventLog.read_from(offset)` plus
+  `Projection(incremental=True).refresh()` reads only the bytes that arrived. At 2,000 events: **57.6 ms rebuild
+  against 0.6 ms incremental**.
+- **O-05.** `ledger.verify` re-read the whole file. `verify(anchor=...)` continues the chain from a checkpoint
+  hash, which is what makes an hourly verification job possible at a million events.
+
+### Added
+
+- 13 more tests (400 total), including the one that asserts what an anchored verify **cannot** catch: a rewrite
+  before its own anchor. That limitation is the trade, and the external anchor is what closes it.
+
+### Note
+
+`build()` still replays from the start and the rebuildability test still uses it. A projection that is only ever
+incremental is a projection nobody has checked.
+
 ## [1.12.0] - 2026-11-14
 
 ### Fixed

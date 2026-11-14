@@ -43,9 +43,22 @@ one timestamp precision and never reverted to a checkpoint that predated a recor
 | O-09 | Minor | `api` | No rate limiting on authentication attempts | Belongs to the transport, and there is no transport |
 | O-10 | Minor | `openapi.validate` | Does not check that every `{parameter}` in a path is declared | The real spec validator does, and it is the optional check |
 
+## Closed since this review
+
+| # | What was wrong | Fix | Evidence |
+|---|---|---|---|
+| O-05 | `ledger.verify` re-read the whole file: O(n) per call | `verify(anchor=...)` continues the chain from a checkpoint hash | `test_a_clean_log_verifies_from_an_anchor` |
+| O-06 | The projection rebuilt from the log on every read | `EventLog.read_from(offset)` plus `Projection(incremental=True).refresh()` reads only the bytes that arrived | 57.6 ms rebuild against **0.6 ms** incremental at 2,000 events |
+
+An anchored verify cannot see a rewrite **before** its own anchor, and the test asserts that limitation rather
+than hiding it: `test_tampering_before_the_anchor_is_not_caught_and_that_is_the_trade`. That is why the anchor
+must come from somewhere the database owner does not control - the external anchor in
+[11-history-authority.md](11-history-authority.md) - and why a full verify is still the weekly job.
+
 ## Verdict
 
-**Ship as a reference implementation. Block for production.**
+**Ship as a reference implementation. Block for production.** Two of the five unblock conditions have closed
+since the review; three remain.
 
 | Gate | Result | Why |
 |---|---|---|
@@ -57,8 +70,7 @@ one timestamp precision and never reverted to a checkpoint that predated a recor
 
 ### Unblock conditions for production
 
-1. O-05 and O-06: incremental verification and projection. Without them the product does not meet its own load
-   model, and the benchmark already demonstrates the failure.
+1. ~~O-05 and O-06: incremental verification and projection~~ - closed, 0.6 ms against 57.6 ms.
 2. O-01: the conformance suite must not write to the node it is certifying.
 3. O-02: a duplicate external record on a retry is a data-integrity defect, not an inconvenience.
 4. O-07: deletion, because a CRM without delete is not a CRM.

@@ -40,9 +40,14 @@ def _fingerprint(state: dict) -> str:
 class Projection:
     """Materialised state, built by replaying the ledger."""
 
-    def __init__(self, log, tenant_id: str):
+    def __init__(self, log, tenant_id: str, incremental: bool = False):
         self.log = log
         self.tenant_id = tenant_id
+        # `incremental=True` keeps a byte offset and reads only what arrived since
+        # the last refresh. `build()` always replays from the start, which is what
+        # the rebuildability test needs and what a request path must not do.
+        self.incremental = incremental
+        self.offset = 0
         # object -> record id -> field -> value
         self.state: dict[str, dict[str, dict]] = {}
         # object -> record id -> field -> [(valid_from, tx_time, value)]
@@ -53,9 +58,24 @@ class Projection:
     # -- building ---------------------------------------------------------
     def build(self) -> "Projection":
         self.state, self.temporal, self.applied, self.skipped = {}, {}, 0, 0
+        self.offset = 0
         for event in self.log.events(self.tenant_id):
             self.apply(event)
+        self.offset = getattr(self.log, "size", lambda: 0)()
         return self
+
+    def refresh(self) -> int:
+        """Apply only the events that arrived since the last call. Returns the count.
+
+        A projection built with `incremental=True` starts empty; call `refresh()`
+        before reading from it. `build()` remains the way to replay from scratch,
+        and the rebuildability test still uses it, because a projection that is
+        only ever incremental is a projection nobody has checked.
+        """
+        events, self.offset = self.log.read_from(self.offset, self.tenant_id)
+        for event in events:
+            self.apply(event)
+        return len(events)
 
     def apply(self, event: dict) -> None:
         payload = event.get("payload") or {}

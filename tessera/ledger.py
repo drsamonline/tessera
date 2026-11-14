@@ -77,6 +77,33 @@ class EventLog:
                 self._heads[tenant] = event["hash"]
                 self._seq[tenant] = event["sequence"]
 
+    def read_from(self, offset: int = 0, tenant_id: str | None = None):
+        """Yield events from a byte offset, plus the offset to resume from.
+
+        This is what makes a projection incremental: an append-only file has a
+        stable prefix, so a worker that remembers where it stopped reads only the
+        bytes that arrived since. Without it every read replays the whole log,
+        which is O(n) per request and does not survive a million events. (O-05,
+        O-06 in docs/31-code-review.md)
+        """
+        if not os.path.exists(self.path):
+            return [], offset
+        out = []
+        with open(self.path, "rb") as f:
+            f.seek(offset)
+            for raw in f:
+                line = raw.decode("utf-8").strip()
+                if not line:
+                    continue
+                event = json.loads(line)
+                if tenant_id is None or event["tenant_id"] == tenant_id:
+                    out.append(event)
+            new_offset = f.tell()
+        return out, new_offset
+
+    def size(self) -> int:
+        return os.path.getsize(self.path) if os.path.exists(self.path) else 0
+
     def events(self, tenant_id: str | None = None):
         """Yield stored events in write order, optionally for one tenant."""
         if not os.path.exists(self.path):
@@ -142,18 +169,35 @@ class EventLog:
         return event
 
     # -- verification ------------------------------------------------------
-    def verify(self, tenant_id: str | None = None) -> tuple[bool, list[str]]:
+    def verify(self, tenant_id: str | None = None,
+               anchor: dict | None = None) -> tuple[bool, list[str]]:
         """Recompute the chain. Returns (ok, problems).
 
-        Checks, per tenant: sequence continuity from 1, linkage to the previous
-        hash, and that the stored hash matches the stored body.
+        Checks, per tenant: sequence continuity, linkage to the previous hash, and
+        that the stored hash matches the stored body.
+
+        `anchor` is `{"sequence": n, "hash": h}` from a checkpoint, and it makes
+        the check incremental: events at or before the anchor are skipped and the
+        chain is continued from a hash already known to be good.
+
+        **An incremental check cannot see a rewrite before the anchor.** That is
+        the trade, and it is why the anchor must come from somewhere the database
+        owner does not control - the external anchor in
+        docs/11-history-authority.md. A full verify is still the thing to run
+        weekly.
         """
         problems: list[str] = []
         last_hash: dict[str, str] = {}
         last_seq: dict[str, int] = {}
+        if anchor:
+            for tenant in ([tenant_id] if tenant_id else list(self._heads)):
+                last_hash[tenant] = anchor["hash"]
+                last_seq[tenant] = anchor["sequence"]
 
         for event in self.events(tenant_id):
             tenant = event["tenant_id"]
+            if anchor and event["sequence"] <= anchor["sequence"]:
+                continue
             expected_seq = last_seq.get(tenant, 0) + 1
             if event["sequence"] != expected_seq:
                 problems.append(
