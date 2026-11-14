@@ -6,6 +6,27 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.24.0] - 2026-11-14
+
+### Added
+
+- `tessera/mobile.py` - deliverable 17. `KeyVault` derives a key with PBKDF2-HMAC-SHA256 and writes only a salt and
+  a verifier; `OfflineOutbox` is an append-only, fsync'd queue that survives a kill; `sync_after_absence` replays a
+  week of absence and drains only on acknowledgement.
+- [docs/41-offline-mobile.md](docs/41-offline-mobile.md).
+- 22 more tests (682 total).
+
+### Fixed
+
+- **R-16.** `OfflineOutbox._replay()` tolerated a torn final line from a kill mid-write and `pending()` did not, so
+  reopening an outbox worked and reading it crashed. Both skip it now.
+
+### Not something to ship
+
+The symmetric layer is HMAC-SHA256 in counter mode with encrypt-then-MAC: a reference construction written because
+this repository has no dependencies and no AEAD. Not constant-time, not audited. A real client uses AES-GCM or
+XChaCha20-Poly1305 from a vetted library. `KeyVault` is the part worth keeping.
+
 ## [1.23.0] - 2026-11-14
 
 ### Added
