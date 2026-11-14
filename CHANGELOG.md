@@ -6,6 +6,28 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.23.0] - 2026-11-14
+
+### Added
+
+- `tessera/design.py` - deliverable 11. Two token themes, a measured WCAG contrast check over ten pairs in both
+  themes, a 1.25 type scale, two densities as a multiplier, seven component specifications, 83 icons on a 24px grid
+  with an SVG renderer, and a ten-row WCAG matrix of which two checks are automated.
+- [docs/40-design-system.md](docs/40-design-system.md).
+- 30 more tests (660 total).
+
+### Fixed
+
+- The type scale was `12, 14, 16, 20, 25…`, which is a scale somebody eyeballed. The test that asserts every step is
+  1.25 caught it; the scale is now `12, 15, 19, 23, 29, 37, 46, 57`.
+- Both themes were adjusted until every pair passed rather than declared to pass. The light accent is `#7A5512` and
+  not the dark theme's `#D9A441`, because that ochre on parchment is 2.1:1.
+
+### Honest boundary
+
+The icons are geometric placeholders, not a designed family. Eight of the ten WCAG checks need an interface and
+there is none; every unautomated row says "not run" in its status and a test asserts it stays that way.
+
 ## [1.22.0] - 2026-11-14
 
 ### Added

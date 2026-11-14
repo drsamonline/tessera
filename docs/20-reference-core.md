@@ -42,6 +42,7 @@ without ambiguity.
 | `tessera/migrate.py` | 300 | Auto-mapping, transform, rollback, shortcut translator, template gallery | [36-migration.md](36-migration.md) |
 | `tessera/learning.py` | 250 | Bootcamps, academy, coach, glossary, drip, persona changelog | [37-learning.md](37-learning.md) |
 | `tessera/store.py` | 300 | Postgres DDL, its validator, and a runnable SQLite store | [39-postgres.md](39-postgres.md) |
+| `tessera/design.py` | 400 | Tokens, measured contrast, density, components, 83 icons | [40-design-system.md](40-design-system.md) |
 | `scripts/check_docs.py` | 120 | The gate that keeps this documentation and the landing page current | [38-deployment.md](38-deployment.md) |
 | `tessera/api.py` | 380 | The HTTP surface: routing, bearer auth, scopes, redaction, audit | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/openapi.py` | 400 | The generated OpenAPI 3.1 document and its two validators | [27-api-and-contracts.md](27-api-and-contracts.md) |
