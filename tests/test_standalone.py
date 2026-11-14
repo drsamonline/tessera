@@ -78,3 +78,46 @@ class TestStandalone(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestDemoReferences(unittest.TestCase):
+    """A dangling reference renders as a company nobody has, which looks like a bug in the screen."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.api = api.demo_api()
+        cls.headers = {"Authorization": "Bearer demo-token"}
+
+    def ids(self, object_name):
+        response = self.api.handle(api.Request(
+            method="GET", path=f"/v1/objects/{object_name}", query={},
+            headers=self.headers, body=None))
+        return response.body.get("ids", [])
+
+    def record(self, object_name, record_id):
+        response = self.api.handle(api.Request(
+            method="GET", path=f"/v1/objects/{object_name}/{record_id}", query={},
+            headers=self.headers, body=None))
+        return response.body["record"]
+
+    def test_every_deal_points_at_a_company_that_exists(self):
+        company_refs = {f"Company:{cid}" for cid in self.ids("Company")}
+        self.assertTrue(company_refs)
+        for deal_id in self.ids("Deal"):
+            deal = self.record("Deal", deal_id)
+            self.assertIn(deal["company_ref"], company_refs,
+                          f"deal {deal['name']} points at a company that is not there")
+
+    def test_every_contact_points_at_a_company_that_exists(self):
+        company_refs = {f"Company:{cid}" for cid in self.ids("Company")}
+        for contact_id in self.ids("Contact"):
+            contact = self.record("Contact", contact_id)
+            self.assertIn(contact["company_ref"], company_refs)
+
+    def test_a_contact_and_its_deals_share_a_company(self):
+        contacts = self.ids("Contact")
+        deals = self.ids("Deal")
+        contact = self.record("Contact", contacts[0])
+        deal = self.record("Deal", deals[0])
+        self.assertEqual(contact["company_ref"], deal["company_ref"],
+                         "the demo's first contact and first deal should be the same account")

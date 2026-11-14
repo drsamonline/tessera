@@ -6,6 +6,16 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.35.1] - 2026-11-15
+
+### Fixed
+
+- **Every demo deal pointed at a company that did not exist.** The deals were seeded with `company_ref` values in the
+  old id shape, so `Company:018f0000-…-c0000000c0000001` named nothing. The console's new Related card showed
+  "No deals for this company" against a company that had one.
+- Three tests now assert referential integrity across the demo data: every deal and every contact points at a company
+  that exists, and the first contact and first deal share an account.
+
 ## [1.35.0] - 2026-11-14
 
 ### Added

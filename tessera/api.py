@@ -533,10 +533,13 @@ def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
         support.seed("Contact", dict(record, email=support_email,
                                      full_name=name.upper() if suffix == "c004" else name))
 
-    deals = [("Acme renewal", 4_500_000, "proposal", "c0000001"),
-             ("Globex expansion", 12_000_000, "negotiation", "c0000002"),
-             ("Initech pilot", 800_000, "scoping", "c0000003"),
-             ("Umbrella services", 3_100_000, "closed_won", "c0000004")]
+    # The company suffix must be the same shape the Company ids use, or the
+    # reference points at nothing: "Company:<uuid>" with a malformed uuid is a
+    # dangling pointer that renders as a company nobody has.
+    deals = [("Acme renewal", 4_500_000, "proposal", "0001"),
+             ("Globex expansion", 12_000_000, "negotiation", "0002"),
+             ("Initech pilot", 800_000, "scoping", "0003"),
+             ("Umbrella services", 3_100_000, "closed_won", "0004")]
     for index, (name, amount, stage, company) in enumerate(deals, start=1):
         record = dict(base, id=uid("d0", f"{index:04d}"), name=name, amount_minor=amount,
                       currency="INR", stage=stage,
