@@ -127,9 +127,9 @@ written back to the node that owns it, and the chain verifies.
 
 ## What is still not here
 
-- **HubSpot, Salesforce and Zendesk.** The contract exists, the suite exists, the connectors do not. A real
-  connector is `SimulatedConnector` with an HTTP client where the dictionary is, and it must pass the same
-  sixteen checks before it ships.
+- **Live provider integrations.** HubSpot, Salesforce and Zendesk connectors now exist and pass the same
+  sixteen checks, but against recorded transports rather than live tenants:
+  [22-providers.md](22-providers.md).
 - **Push subscription.** `subscribe()` raises.
 - **Backpressure and rate-limit accounting.** The breaker exists; a token bucket per node does not.
 - **Conflict blocking in the interface.** A blocked field is reported by `unified_view()`; nothing renders it.
@@ -143,7 +143,7 @@ Deliverable 3 is closer and still partial.
 | Criterion | State |
 |---|---|
 | Canonical schema with 10 objects | Met |
-| Four connectors pass one shared conformance suite | **Not met** - the suite exists, two of the four connectors exist, and neither is a real SaaS connector |
+| Four connectors pass one shared conformance suite | **Met** - native, HubSpot, Salesforce and Zendesk. The three providers are tested against recorded transports that speak their documented shapes, not against live tenants |
 | Ledger chain verifies | Met |
 | A same-field conflict resolves deterministically and is logged | Met |
 | Routing returns a term-by-term breakdown | Met |

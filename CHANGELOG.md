@@ -6,6 +6,25 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.4.0] - 2026-11-14
+
+### Added
+
+- `tessera/transport.py` - the HTTP seam, the status-to-taxonomy mapping shared by both transports, and a
+  recording transport that applies the same mapping so a fixture exercises the production path.
+- `tessera/providers/` - HubSpot (CRM v3), Salesforce (REST v60) and Zendesk (Support v2), each with its own
+  field map, cursor shape and write envelope, behind one contract.
+- An identity decision, recorded rather than assumed: the canonical id is a UUIDv5 derived from the provider id
+  in a node-scoped namespace, remembered in an identity map, so a node can be replaced without rewriting
+  history. Tenant policy fields are stamped by the connector, not read from the provider.
+- [docs/22-providers.md](docs/22-providers.md).
+- 21 more tests (169 total). All four connectors pass the same sixteen-check conformance suite.
+
+### Caveat
+
+The three provider connectors have never been run against a live account. Their field names, endpoints and
+cursors come from public documentation and are exercised through recorded transports that speak those shapes.
+
 ## [1.3.0] - 2026-11-14
 
 ### Added

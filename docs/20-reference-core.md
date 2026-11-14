@@ -20,6 +20,8 @@ without ambiguity.
 | `tessera/connectors.py` | 220 | Native and simulated connectors, plus a deliberately broken one | &mdash; |
 | `tessera/conformance.py` | 260 | Sixteen checks that a connector must pass, tested against nine deliberate violations | [16-acceptance-criteria.md](16-acceptance-criteria.md) |
 | `tessera/mesh.py` | 260 | Registration, sync, unified view, write-back, activation event | [03-mesh.md](03-mesh.md) |
+| `tessera/transport.py` | 130 | The HTTP seam, the status-to-taxonomy mapping, a recording transport for tests | &mdash; |
+| `tessera/providers/` | 470 | HubSpot, Salesforce and Zendesk connectors over the seam | [22-providers.md](22-providers.md) |
 | `tessera/cli.py` | 340 | Two demonstrations that exercise all of the above end to end | &mdash; |
 
 No dependencies. Standard library only. No network calls. No model, no service, no container.
@@ -50,8 +52,8 @@ identically. They now do. Specifically:
 
 ## What it does not do
 
-- No real connectors. HubSpot, Salesforce and Zendesk are specified and not built; the contract they must
-  satisfy, and the suite that proves it, are in [21-connectors-and-mesh.md](21-connectors-and-mesh.md).
+- No live provider integration. HubSpot, Salesforce and Zendesk connectors exist and pass the conformance
+  suite, but only against recorded transports speaking documented shapes. No tenant, no token, no real traffic.
 - No HTTP surface, no OpenAPI, no MCP tools.
 - No web application, no mobile client, no local-first sync.
 - No workforce runtime: no queue, no scheduler, no revocation polling, no handoff transport.
@@ -82,7 +84,7 @@ Zero of 22 deliverables are fully met. Four are partly met, and the part that is
 | Deliverable | Status | What is done | What is missing |
 |---|---|---|---|
 | 2 - Models for v1 objects | Partial | The canonical schema for 10 objects with validation and hashing | Django models, migrations, row-level security, bi-temporal columns |
-| 3 - Federation layer | Partial | Canonical schema, ledger, conflict resolution, routing, the connector contract, the conformance suite, mesh sync, the unified view, write-back to the declared owner | All four real connectors, push subscription, backpressure, per-field sync modes |
+| 3 - Federation layer | Partial | Canonical schema, ledger, conflict resolution, routing, the connector contract, the conformance suite, four connectors, mesh sync, the unified view, write-back to the declared owner | Live provider integration, push subscription, backpressure, per-field sync modes |
 | 7 - Graph sidecar and RVS | Partial | The score, implemented twice, agreeing to six decimals | The graph, the sidecar, the service |
 | 9 - Compliance substrate | Partial | Consent states, lawful bases and purposes enforced at validation | DSAR lifecycle, retention engine, audit export, three-layer access control |
 
