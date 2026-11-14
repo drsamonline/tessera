@@ -1,5 +1,6 @@
-# Three checks: the internal link checker, the reference core's test suite, and the
-# jargon lint - which blocks a release by constraint 17 in docs/17-constraints.md.
+# Four checks: the internal link checker, the reference core's test suite, the
+# jargon lint (constraint 17 in docs/17-constraints.md) and the docs freshness gate
+# (docs/38-deployment.md) - every push updates the documentation and the landing page.
 name: docs
 
 on:
@@ -33,3 +34,5 @@ jobs:
         run: python3 -m unittest discover -s tests -t . -v
       - name: Jargon lint
         run: python3 -m tessera.jargon
+      - name: Docs freshness
+        run: python3 scripts/check_docs.py

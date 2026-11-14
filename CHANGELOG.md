@@ -6,6 +6,30 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.21.0] - 2026-11-14
+
+### Added
+
+- **Deliverable 1.** `Dockerfile` (python:3.12-slim, non-root uid 10001, a healthcheck that makes a real request),
+  `docker-compose.yml` (read-only root, `cap_drop: ALL`, no new privileges) and `deploy/k8s.yaml` (namespace,
+  config, secret, deployment, service, with probes and a hardened security context).
+- `python3 -m tessera.api` - the container's entry point, with `TESSERA_HOST`, `TESSERA_PORT` and `TESSERA_TOKEN`
+  from the environment and no default token in the image.
+- `scripts/check_docs.py` - the gate behind the rule that every push updates the documentation and the landing
+  page. It is wired into CI and into the pre-finish checklist in AGENTS.md.
+- [docs/38-deployment.md](docs/38-deployment.md).
+- 13 more tests (610 total), seven of which make real HTTP requests against a live socket.
+
+### Changed
+
+- `serve()` was split so `handler_for(api)` returns the handler class. A server testable only through its own
+  process is a server nobody tests.
+
+### Fixed
+
+- `VERSION` said 1.1.0 while the changelog was at 1.20.0, and the landing page's document count had been wrong
+  since the previous push. The new gate found both on its first run.
+
 ## [1.20.0] - 2026-11-14
 
 ### Added

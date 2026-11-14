@@ -1,0 +1,26 @@
+# One service, one port, one healthcheck. A demo that needs a database to say
+# hello is a demo nobody runs.
+services:
+  tessera:
+    build: .
+    image: tessera:local
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      TESSERA_HOST: "0.0.0.0"
+      TESSERA_PORT: "8080"
+      # Set a real token before exposing this anywhere. The image has no default.
+      TESSERA_TOKEN: "${TESSERA_TOKEN:-demo-token}"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=2).status == 200 else 1)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

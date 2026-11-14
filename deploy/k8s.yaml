@@ -1,0 +1,109 @@
+# Kubernetes manifests for the reference core.
+#
+# Deliberately one Deployment and one Service. The product's own deployment story
+# is four profiles (docs/13-deployment-profiles.md); this is the smallest one that
+# runs, and pretending otherwise would put an untested manifest in the tree.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tessera
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tessera-config
+  namespace: tessera
+data:
+  TESSERA_HOST: "0.0.0.0"
+  TESSERA_PORT: "8080"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tessera-token
+  namespace: tessera
+type: Opaque
+stringData:
+  # Replace before applying. `kubectl create secret generic` from a file is the
+  # supported path; this placeholder exists so the manifest is complete.
+  TESSERA_TOKEN: "replace-me"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tessera
+  namespace: tessera
+  labels:
+    app: tessera
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tessera
+  template:
+    metadata:
+      labels:
+        app: tessera
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: tessera
+          image: tessera:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: tessera-config
+            - secretRef:
+                name: tessera-token
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tessera
+  namespace: tessera
+spec:
+  type: ClusterIP
+  selector:
+    app: tessera
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

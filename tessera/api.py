@@ -324,13 +324,14 @@ class Api:
 # A runnable server, for a human poking at it
 # ---------------------------------------------------------------------------
 
-def serve(api: Api, host: str = "127.0.0.1", port: int = 8080) -> None:
-    """`python3 -m tessera.api` starts this. Loopback only, no TLS, no CORS.
+def handler_for(api: Api):
+    """The request handler class for an Api.
 
-    That is deliberate: this is a development surface, and a development surface
-    that silently listens on 0.0.0.0 is how a prototype ends up on the internet.
+    Separate from `serve` so a test can bind a server to port 0 and make a real
+    HTTP request against it. A server that is only testable through its own
+    process is a server nobody tests.
     """
-    from http.server import BaseHTTPRequestHandler, HTTPServer
+    from http.server import BaseHTTPRequestHandler
     from urllib.parse import parse_qs, urlparse
 
     class Handler(BaseHTTPRequestHandler):
@@ -362,4 +363,78 @@ def serve(api: Api, host: str = "127.0.0.1", port: int = 8080) -> None:
         def log_message(self, fmt, *args):
             return
 
-    HTTPServer((host, port), Handler).serve_forever()
+    return Handler
+
+
+def serve(api: Api, host: str = "127.0.0.1", port: int = 8080) -> None:
+    """`python3 -m tessera.api` starts this. Loopback only, no TLS, no CORS.
+
+    That is deliberate: this is a development surface, and a development surface
+    that silently listens on 0.0.0.0 is how a prototype ends up on the internet.
+    A container overrides the host through TESSERA_HOST, and says so in the
+    deployment files rather than by changing the default here.
+    """
+    from http.server import HTTPServer
+
+    HTTPServer((host, port), handler_for(api)).serve_forever()
+
+
+def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
+             token: str = "demo-token") -> "Api":
+    """A running API with sample data, for the container and for `python -m`.
+
+    The token is printed by the entry point rather than baked into the image: a
+    demo that ships with a known credential in it is a demo that ends up on the
+    internet with a known credential in it.
+    """
+    import os
+    import tempfile
+
+    from .connectors import SimulatedConnector
+    from .ledger import EventLog
+    from .mesh import Mesh, Node
+    from .projection import Projection
+
+    path = os.path.join(tempfile.mkdtemp(prefix="tessera-demo-"), "ledger.jsonl")
+    log = EventLog(path)
+    mesh = Mesh(tenant_id, log)
+    crm = SimulatedConnector("hubspot", "sales", page_size=10)
+    support = SimulatedConnector("zendesk", "support", page_size=10)
+    record = {
+        "id": "018f0000-0000-7000-8000-00000000c001", "tenant_id": tenant_id,
+        "valid_from": "2026-11-01T09:00:00Z", "tx_time": "2026-11-01T09:00:01Z",
+        "consent_state": "granted", "lawful_basis": "consent", "purpose_id": "sales",
+        "retention_policy_id": "rp-24m", "full_name": "Asha Rao",
+        "email": "asha@example.com",
+    }
+    crm.seed("Contact", record)
+    support.seed("Contact", dict(record, email="asha.rao@example.com"))
+    mesh.register(Node("hubspot", crm, "sales", authority={"email": "authority"}, trust=0.8))
+    mesh.register(Node("zendesk", support, "support", trust=0.6))
+    mesh.sync("Contact")
+
+    tokens = {
+        token: Principal("demo", ("admin",), role="admin"),
+    }
+    return Api(tenant_id, tokens, log=log, mesh=mesh,
+               projection=Projection(log, tenant_id).build())
+
+
+def main() -> int:
+    """`python3 -m tessera.api` - the container's entry point."""
+    import os
+
+    host = os.environ.get("TESSERA_HOST", "127.0.0.1")
+    port = int(os.environ.get("TESSERA_PORT", "8080"))
+    token = os.environ.get("TESSERA_TOKEN", "")
+    api = demo_api(token=token or "demo-token")
+    if not token:
+        print("TESSERA_TOKEN is not set; serving with the demo token 'demo-token'")
+        print("This is a development surface. Do not expose it.")
+    print(f"listening on http://{host}:{port}")
+    serve(api, host=host, port=port)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

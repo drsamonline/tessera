@@ -57,3 +57,13 @@ There is no other check. Do not claim a document is verified unless that command
 - Do not introduce a second source of truth for a metric, an acceptance criterion or a decision.
 - Do not move a v2 or v3 item into v1 scope without changing [docs/06-roadmap.md](docs/06-roadmap.md) entry
   criteria in the same commit.
+
+## Before you call a change finished
+
+1. `python3 -m unittest discover -s tests -t .` - and read the count.
+2. `python3 scripts/linkcheck.py` - every relative link resolves.
+3. `python3 scripts/check_docs.py` - the documentation and the landing page match the tree.
+4. `python3 -m tessera.jargon` - no internal term reached user-facing text.
+5. `python3 -m tessera.bench --gate` - nothing got three times slower.
+
+A change that skips step 3 is not finished, however green steps 1 and 2 are.
