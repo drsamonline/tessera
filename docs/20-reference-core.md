@@ -33,6 +33,9 @@ without ambiguity.
 | `tessera/compliance.py` | 400 | Consent, DSAR, retention, signed audit export, erasure | [29-compliance.md](29-compliance.md) |
 | `tessera/sync.py` | 230 | Local-first replica, outbox, cursor, field-level LWW, convergence | [30-local-first-sync.md](30-local-first-sync.md) |
 | `tessera/automation.py` | 380 | Triggers, a parsed condition language, eleven actions, the proposal gate | [32-automation.md](32-automation.md) |
+| `tessera/bulk.py` | 230 | CSV import with dry run and rollback, bulk undo, backup and restore | [33-boring-and-escape.md](33-boring-and-escape.md) |
+| `tessera/views.py` | 170 | Saved views and the report builder, on the same filter grammar | [33-boring-and-escape.md](33-boring-and-escape.md) |
+| `tessera/escape.py` | 190 | Four escape hatches, role-gated and audited | [33-boring-and-escape.md](33-boring-and-escape.md) |
 | `tessera/api.py` | 380 | The HTTP surface: routing, bearer auth, scopes, redaction, audit | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/openapi.py` | 400 | The generated OpenAPI 3.1 document and its two validators | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/mcp.py` | 280 | Ten tools, each with a schema, a scope and an audit action | [27-api-and-contracts.md](27-api-and-contracts.md) |

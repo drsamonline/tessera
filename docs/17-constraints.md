@@ -35,3 +35,6 @@ wizard, point-in-time backup and restore, bulk operations with undo, list view c
 Raw SQL read-only, native schema export, direct API passthrough to any node, break-glass admin with audit.
 
 These exist because a buyer who cannot leave will not arrive.
+
+Five of the six boring features and all four escape hatches are implemented and tested:
+[33-boring-and-escape.md](33-boring-and-escape.md). The admin console is not built.

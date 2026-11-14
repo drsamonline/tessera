@@ -6,6 +6,31 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.16.0] - 2026-11-14
+
+### Added
+
+- `tessera/bulk.py` - CSV import with a mapping, a dry run and a rollback that tombstones the batch; bulk update
+  with undo; point-in-time backup and a restore that verifies before it overwrites.
+- `tessera/views.py` - saved list views and a report builder, both on the automation filter grammar rather than a
+  second one.
+- `tessera/escape.py` - four escape hatches: schema export, record export, a `SELECT`-shaped query, and
+  break-glass with a clock-driven expiry.
+- [docs/33-boring-and-escape.md](docs/33-boring-and-escape.md).
+- 41 more tests (494 total).
+
+### Fixed
+
+- The CSV dry run validated a payload without the defaults the commit applies, so a valid file reported as broken.
+  A preview that validates a different payload from the one that gets written is a preview nobody can trust.
+
+### Note
+
+The query hatch is not SQL and the doc says so: it is a `SELECT`-shaped grammar over the projection with the
+condition language in the `WHERE`. `DELETE`, `DROP`, `UPDATE` and a stacked statement are each refused by name.
+
+Every escape-hatch use is a ledger event, including a refused one.
+
 ## [1.15.0] - 2026-11-14
 
 ### Added

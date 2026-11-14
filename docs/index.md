@@ -50,6 +50,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 30 | [Local-first sync](30-local-first-sync.md) | 1 | One protocol, offline writes, guaranteed convergence |
 | 31 | [Code review](31-code-review.md) | all | 13 findings, 11 fixed, and the ship-or-block verdict |
 | 32 | [Automation](32-automation.md) | 2 | Triggers, a condition language that is not Python, and the approval gate |
+| 33 | [Boring features and escape hatches](33-boring-and-escape.md) | 1 | Import, undo, backup, views, reports, and four audited doors |
 
 ## Audit
 
