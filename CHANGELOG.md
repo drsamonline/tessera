@@ -6,6 +6,21 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.30.0] - 2026-11-14
+
+### Added
+
+- **CORS on the API.** `OPTIONS` answers `204` with an allowlist of development origins, `Authorization` and
+  `Content-Type` allowed, and `Vary: Origin`. Without it a browser client could not call the engine at all, which made
+  "the console talks to the engine" impossible rather than merely unimplemented.
+- [docs/46-cors.md](docs/46-cors.md), three tests, 712 in total.
+
+### Why an allowlist
+
+The API carries a bearer token in a header. `Access-Control-Allow-Origin: *` is how a malicious page replays a token
+from a victim's browser. `test_an_unknown_origin_gets_no_cors_header` asserts an unlisted origin gets no header, and
+`test_the_allowlist_is_not_a_wildcard` asserts the list cannot quietly become one.
+
 ## [1.29.0] - 2026-11-14
 
 ### Added

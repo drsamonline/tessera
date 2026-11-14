@@ -63,6 +63,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 43 | [Releasing](43-release.md) | all | The tag, the gate and the generated note |
 | 44 | [Archival and compaction](44-archival.md) | 1 | Segments, a header line, and a proof that survives |
 | 45 | [Smoke audit](45-smoke-audit.md) | all | One real call into every module, and what it proved |
+| 46 | [CORS](46-cors.md) | all | An allowlist, and the gap the API had |
 
 **Live:** the reference core runs in a browser, offline, at [drsamonline.github.io/tessera-app](https://drsamonline.github.io/tessera-app/) - source in [tessera-app](https://github.com/drsamonline/tessera-app).
 

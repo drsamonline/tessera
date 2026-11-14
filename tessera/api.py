@@ -65,8 +65,16 @@ class Response:
     body: dict
 
 
+DEFAULT_ALLOWED_ORIGINS = ("http://127.0.0.1:8080", "http://localhost:8080",
+                          "http://127.0.0.1:8000", "http://localhost:8000")
+
+
 class Api:
     """Route table plus auth plus audit. One object, no framework."""
+
+    # An allowlist, not "*": a wildcard on an API that carries a bearer token
+    # lets any page in the browser read a tenant's data.
+    allowed_origins = DEFAULT_ALLOWED_ORIGINS
 
     def __init__(self, tenant_id: str, tokens: dict[str, Principal], log=None,
                  mesh=None, projection=None, workforce=None, policy=None):
@@ -346,13 +354,40 @@ def handler_for(api: Api):
             request = Request(method=method, path=parsed.path,
                               query={k: v[0] for k, v in parse_qs(parsed.query).items()},
                               headers=dict(self.headers), body=body)
+            if method == "OPTIONS":
+                # A browser client on another origin cannot send an Authorization
+                # header without this. The API had no CORS story at all, which
+                # made "the console talks to the engine" impossible rather than
+                # merely unimplemented.
+                self.send_response(204)
+                self._cors()
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
+
             response = api.handle(request)
             payload = json.dumps(response.body).encode("utf-8")
             self.send_response(response.status)
+            self._cors()
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(payload)))
             self.end_headers()
             self.wfile.write(payload)
+
+        def _cors(self):
+            origin = self.headers.get("Origin")
+            allowed = api.allowed_origins
+            if not origin:
+                return
+            if "*" in allowed or origin in allowed:
+                self.send_header("Access-Control-Allow-Origin", origin)
+                self.send_header("Vary", "Origin")
+                self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
+                self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                self.send_header("Access-Control-Max-Age", "600")
+
+        def do_OPTIONS(self):
+            self._handle("OPTIONS")
 
         def do_GET(self):
             self._handle("GET")

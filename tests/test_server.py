@@ -142,3 +142,45 @@ class TestDeploymentArtefacts(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCors(unittest.TestCase):
+    """A browser client on another origin cannot send Authorization without this,
+    which made "the console talks to the engine" impossible rather than merely
+    unimplemented."""
+
+    @classmethod
+    def setUpClass(cls):
+        import threading
+        from http.server import ThreadingHTTPServer
+        from tessera import api as api_module
+        cls.api = api_module.demo_api()
+        cls.server = ThreadingHTTPServer(("127.0.0.1", 0), api_module.handler_for(cls.api))
+        cls.port = cls.server.server_address[1]
+        threading.Thread(target=cls.server.serve_forever, daemon=True).start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+
+    def _preflight(self, origin):
+        import urllib.request
+        request = urllib.request.Request(
+            f"http://127.0.0.1:{self.port}/v1/objects/Contact", method="OPTIONS",
+            headers={"Origin": origin, "Access-Control-Request-Method": "GET"})
+        with urllib.request.urlopen(request, timeout=5) as response:
+            return response.status, dict(response.headers)
+
+    def test_a_preflight_from_an_allowed_origin_is_answered(self):
+        status, headers = self._preflight("http://127.0.0.1:8080")
+        self.assertEqual(status, 204)
+        self.assertEqual(headers.get("Access-Control-Allow-Origin"), "http://127.0.0.1:8080")
+        self.assertIn("Authorization", headers.get("Access-Control-Allow-Headers", ""))
+
+    def test_an_unknown_origin_gets_no_cors_header(self):
+        _, headers = self._preflight("https://evil.example")
+        self.assertIsNone(headers.get("Access-Control-Allow-Origin"),
+                          "an allowlist that echoes any origin is not an allowlist")
+
+    def test_the_allowlist_is_not_a_wildcard(self):
+        self.assertNotIn("*", self.api.allowed_origins)
