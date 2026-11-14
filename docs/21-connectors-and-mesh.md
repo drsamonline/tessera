@@ -57,6 +57,12 @@ from tessera.conformance import assert_conforms
 assert_conforms(MyConnector())      # raises with a named list if anything fails
 ```
 
+### The suite writes, so it sandboxes
+
+`run_conformance(connector)` snapshots and restores a connector that supports `sandbox()`, because idempotency
+and round-trip need a record to write. A remote connector cannot sandbox: certify it against a sandbox tenant, or
+you are adding test records to a customer's CRM (O-01).
+
 ### The suite is tested against a broken connector
 
 `BrokenConnector` has nine modes, one per rule it can violate. The test file asserts that each mode fails the

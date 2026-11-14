@@ -49,8 +49,9 @@ class SalesforceConnector(ProviderConnector):
 
     def __init__(self, node_id: str, transport, tenant_id: str, token: str = "",
                  base_url: str = "https://example.my.salesforce.com", page_size: int = 2,
-                 policy: dict | None = None):
-        super().__init__(node_id, transport, tenant_id, base_url, page_size, policy)
+                 policy: dict | None = None, identity_path: str | None = None):
+        super().__init__(node_id, transport, tenant_id, base_url, page_size, policy,
+                         identity_path=identity_path)
         self.token = token
 
     def _headers(self) -> dict:

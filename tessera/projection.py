@@ -88,7 +88,8 @@ class Projection:
         # A tombstone removes the record from the projection. The event stays in
         # the ledger, because the ledger records that the erasure happened; what
         # it cannot do is remove the bytes already written. See docs/29.
-        if payload.get("tombstone") or event.get("action") == "record.retention_expired":
+        if (payload.get("tombstone")
+                or event.get("action") in ("record.retention_expired", "sync.delete")):
             self._drop(object_name, record_id)
             self.applied += 1
             return

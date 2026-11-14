@@ -25,6 +25,8 @@ The envelope is a real design decision, recorded rather than assumed:
 
 from __future__ import annotations
 
+import json
+import os
 import uuid
 from datetime import datetime, timezone
 
@@ -56,7 +58,8 @@ class ProviderConnector(Connector):
 
     def __init__(self, node_id: str, transport: Transport, tenant_id: str,
                  base_url: str = "", page_size: int = 2,
-                 policy: dict | None = None, category: str = "sales"):
+                 policy: dict | None = None, category: str = "sales",
+                 identity_path: str | None = None):
         self.node_id = node_id
         self.category = category
         self.transport = transport
@@ -67,6 +70,12 @@ class ProviderConnector(Connector):
         self._identity: dict[str, str] = {}      # external id -> canonical id
         self._reverse: dict[str, str] = {}       # canonical id -> external id
         self._idempotency: dict[str, str] = {}   # key -> external id
+        # Without a durable identity map, a restart forgets which external record
+        # belongs to which canonical id and the next write creates a duplicate.
+        # Idempotency keyed on the caller's key does not help: a retry with a new
+        # key is a new write. (O-02)
+        self.identity_path = identity_path
+        self._load_identity()
 
     # -- identity ---------------------------------------------------------
     def canonical_id(self, external_id: str) -> str:
@@ -84,6 +93,26 @@ class ProviderConnector(Connector):
     def _remember(self, external_id: str, canonical_id: str) -> None:
         self._identity[str(external_id)] = canonical_id
         self._reverse[canonical_id] = str(external_id)
+        self._save_identity()
+
+    def _load_identity(self) -> None:
+        if not self.identity_path or not os.path.exists(self.identity_path):
+            return
+        with open(self.identity_path, encoding="utf-8") as f:
+            data = json.load(f)
+        self._identity = dict(data.get("external_to_canonical", {}))
+        self._reverse = dict(data.get("canonical_to_external", {}))
+
+    def _save_identity(self) -> None:
+        if not self.identity_path:
+            return
+        directory = os.path.dirname(self.identity_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
+        with open(self.identity_path, "w", encoding="utf-8") as f:
+            json.dump({"external_to_canonical": self._identity,
+                       "canonical_to_external": self._reverse},
+                      f, indent=2, sort_keys=True)
 
     def _envelope(self, external_id: str, updated_at: str | None = None) -> dict:
         stamp = updated_at or _now_iso()

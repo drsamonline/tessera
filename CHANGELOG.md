@@ -6,6 +6,29 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.14.0] - 2026-11-14
+
+### Fixed
+
+The last three production blockers from the review, and the durability default.
+
+- **O-01.** The conformance suite wrote test records into the node it certified. It now snapshots and restores a
+  connector that supports `sandbox()`; a remote connector is certified against a sandbox tenant.
+- **O-02.** Idempotency was keyed on the caller's key, so a restart forgot which external record belonged to which
+  canonical id and the next write created a duplicate. `identity_path` persists the map.
+- **O-07.** No deletion in the sync protocol. A reserved `__deleted__` field makes a tombstone merge like any other
+  write. Resurrection is explicit, not a side effect of writing a field.
+- **R-12.** Durability now defaults to on. A deployment has to opt out, which is the right way round.
+
+### Added
+
+- 13 more tests (413 total).
+
+### Note
+
+All five unblock conditions from the review are closed. What remains is scope, not quality: twelve deliverables
+never started, no interface, no Postgres, no container.
+
 ## [1.13.0] - 2026-11-14
 
 ### Fixed

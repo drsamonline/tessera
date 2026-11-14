@@ -51,13 +51,13 @@ class LedgerError(Exception):
 class EventLog:
     """An append-only, hash-chained event log."""
 
-    def __init__(self, path: str, durable: bool = False):
+    def __init__(self, path: str, durable: bool = True):
         self.path = path
-        # `durable=True` fsyncs after every append. It costs a few milliseconds
-        # per write and it is the difference between "the ledger is the record"
-        # and "the ledger is the record until the machine loses power". Off by
-        # default so the test suite and the benchmark stay fast; on in any
-        # deployment that claims durability. (R-12)
+        # `durable=True` fsyncs after every append. It costs a fraction of a
+        # millisecond and it is the difference between "the ledger is the record"
+        # and "the ledger is the record until the machine loses power". It
+        # defaults to on: a deployment that wants speed over durability has to
+        # say so, which is the right way round. (R-12)
         self.durable = durable
         self._heads: dict[str, str] = {}      # tenant_id -> last event hash
         self._seq: dict[str, int] = {}        # tenant_id -> last sequence

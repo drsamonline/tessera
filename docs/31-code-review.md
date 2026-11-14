@@ -49,6 +49,10 @@ one timestamp precision and never reverted to a checkpoint that predated a recor
 |---|---|---|---|
 | O-05 | `ledger.verify` re-read the whole file: O(n) per call | `verify(anchor=...)` continues the chain from a checkpoint hash | `test_a_clean_log_verifies_from_an_anchor` |
 | O-06 | The projection rebuilt from the log on every read | `EventLog.read_from(offset)` plus `Projection(incremental=True).refresh()` reads only the bytes that arrived | 57.6 ms rebuild against **0.6 ms** incremental at 2,000 events |
+| O-01 | The conformance suite wrote test records into the node it certified | `sandbox=True` snapshots and restores a connector that supports it | `test_certifying_a_connector_does_not_pollute_it` |
+| O-02 | Idempotency was keyed on the caller's key, so a restart created a duplicate | `identity_path` persists the canonical-to-external map | `test_the_identity_survives_a_restart` |
+| O-07 | No deletion in the sync protocol | A reserved `__deleted__` field, so the merge rule needs no special case | `test_deletion_converges`, `test_deletion_reaches_the_ledger_and_the_projection` |
+| R-12 | Durability was opt-in | It is now the default; a deployment has to opt out | `test_durability_is_on_by_default` |
 
 An anchored verify cannot see a rewrite **before** its own anchor, and the test asserts that limitation rather
 than hiding it: `test_tampering_before_the_anchor_is_not_caught_and_that_is_the_trade`. That is why the anchor
@@ -57,8 +61,8 @@ must come from somewhere the database owner does not control - the external anch
 
 ## Verdict
 
-**Ship as a reference implementation. Block for production.** Two of the five unblock conditions have closed
-since the review; three remain.
+**Code gate: pass. Product gate: blocked on scope, not on quality.** All five unblock conditions from this
+review are closed. What remains is not a defect list - it is twelve deliverables that were never started.
 
 | Gate | Result | Why |
 |---|---|---|
@@ -68,13 +72,18 @@ since the review; three remain.
 | Documentation coverage | Pass | 31 documents, every module has a docstring naming the decision it implements |
 | Test coverage of the claims | Pass | 387 tests; every guarantee in the README has a named test |
 
-### Unblock conditions for production
+### Unblock conditions, all closed
 
-1. ~~O-05 and O-06: incremental verification and projection~~ - closed, 0.6 ms against 57.6 ms.
-2. O-01: the conformance suite must not write to the node it is certifying.
-3. O-02: a duplicate external record on a retry is a data-integrity defect, not an inconvenience.
-4. O-07: deletion, because a CRM without delete is not a CRM.
-5. R-12 turned on: durability is a deployment decision that must default to safe.
+| # | Condition | State |
+|---|---|---|
+| 1 | Incremental verification and projection (O-05, O-06) | Closed - 0.6 ms against 57.6 ms |
+| 2 | The suite must not write to the node it certifies (O-01) | Closed - sandbox by default |
+| 3 | A retry must not duplicate an external record (O-02) | Closed - durable identity map |
+| 4 | Deletion (O-07) | Closed - reserved tombstone field, explicit resurrection |
+| 5 | Durability defaults to safe (R-12) | Closed - opt out, not opt in |
+
+What is left is not quality. It is scope: twelve deliverables never started, no interface, no Postgres, no
+container.
 
 ## What the review says about the process
 

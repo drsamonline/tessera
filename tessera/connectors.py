@@ -83,6 +83,23 @@ class _StoreConnector(Connector):
         return 0.001 * count
 
     # -- test helpers -----------------------------------------------------
+    def sandbox(self):
+        """Snapshot the store and return a function that restores it.
+
+        Used by the conformance suite so certifying a connector does not leave
+        test records in it. A remote connector cannot do this, and says so
+        instead of pretending. (O-01)
+        """
+        import copy
+        records = copy.deepcopy(self._records)
+        idempotency = dict(self._idempotency)
+
+        def restore():
+            self._records = records
+            self._idempotency = idempotency
+
+        return restore
+
     def seed(self, object_name: str, payload: dict) -> str:
         problems = canonical.validate(object_name, payload)
         if problems:

@@ -164,13 +164,27 @@ class TestR12Durability(unittest.TestCase):
             os.fsync = real_fsync
             shutil.rmtree(d, ignore_errors=True)
 
-    def test_fsync_is_not_called_by_default(self):
+    def test_durability_is_on_by_default(self):
         d = tempfile.mkdtemp()
         calls = []
         real_fsync = os.fsync
         os.fsync = lambda fd: calls.append(fd)
         try:
             log = ledger.EventLog(os.path.join(d, "l.jsonl"))
+            self.assertTrue(log.durable, "a deployment has to opt out, not in")
+            log.append(TENANT, "system", "x", {"v": 1})
+            self.assertEqual(len(calls), 1)
+        finally:
+            os.fsync = real_fsync
+            shutil.rmtree(d, ignore_errors=True)
+
+    def test_durability_can_be_turned_off_explicitly(self):
+        d = tempfile.mkdtemp()
+        calls = []
+        real_fsync = os.fsync
+        os.fsync = lambda fd: calls.append(fd)
+        try:
+            log = ledger.EventLog(os.path.join(d, "l.jsonl"), durable=False)
             log.append(TENANT, "system", "x", {"v": 1})
             self.assertEqual(calls, [])
         finally:

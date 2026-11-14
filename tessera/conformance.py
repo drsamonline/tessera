@@ -70,8 +70,27 @@ def _contact(node_id: str, index: int) -> dict:
     }
 
 
-def run_conformance(connector, object_name: str = "Contact") -> Report:
-    """Run every check against `connector`. Returns a Report, never raises."""
+def run_conformance(connector, object_name: str = "Contact",
+                    sandbox: bool = True) -> Report:
+    """Run every check against `connector`. Returns a Report, never raises.
+
+    The suite **writes** - idempotency and round-trip need a record to write - so
+    `sandbox=True` (the default) snapshots and restores a connector that supports
+    it. A connector that cannot sandbox is certified against a sandbox tenant and
+    must say so in its own documentation; running this against production data is
+    a way to add test records to a customer's CRM. (O-01)
+    """
+    restore = None
+    if sandbox and hasattr(connector, "sandbox"):
+        restore = connector.sandbox()
+    try:
+        return _run(connector, object_name)
+    finally:
+        if restore is not None:
+            restore()
+
+
+def _run(connector, object_name: str) -> Report:
     report = Report(connector=connector.node_id or connector.__class__.__name__)
 
     # 1. capabilities

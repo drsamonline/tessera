@@ -60,6 +60,9 @@ Identity works the same way, and it is the more interesting half:
   rewriting history, which is the whole reason the identity spine exists.
 - The same external id in two nodes is two different records. The test asserts this, because it is the mistake
   a first implementation makes.
+- The map is persisted when `identity_path` is given. Without it a restart forgets which external record belongs
+  to which canonical id, and the next write creates a duplicate - which is a data-integrity defect rather than an
+  inconvenience (O-02).
 
 ## Conformance
 

@@ -71,6 +71,18 @@ Every accepted operation is written to the ledger as a `sync.op` event naming th
 question "who changed this and from where" is answered by the same structure that answers "what did we know at
 time T" - there is no second stream to reconcile.
 
+## Deletion
+
+A tombstone is a write to a reserved field, `__deleted__`, which means the merge rule needs no special case: a
+tombstone with a higher Lamport outranks a field write with a lower one, and the field values stay underneath it.
+
+**Resurrection is explicit.** `undelete()`, or a write to `__deleted__` with a higher Lamport. A plain field write
+does not resurrect a deleted record, because an implicit resurrection would let a stale client bring back a record
+somebody deliberately deleted - which is the failure a tombstone exists to prevent.
+
+`sync.delete` reaches the ledger and the projection drops the record on rebuild, so deletion is not a replica-only
+concept.
+
 ## What this is not
 
 - **Not a CRDT.** No merge function, no counters that combine. Field-level LWW is simpler, converges, and loses
@@ -80,8 +92,9 @@ time T" - there is no second stream to reconcile.
   counter value, and the replica-id tiebreak settles it deterministically rather than correctly.
 - **Not a mesh.** `converge()` runs two rounds, which is enough for a hub. A peer-to-peer mesh needs more rounds
   and a gossip design, which is a network question rather than a protocol one.
-- **No deletion.** There is no tombstone in the sync protocol. Deleting a record is a field write today, which is
-  wrong, and it is the next thing this module needs.
+- **No hard delete.** A tombstone hides a record and keeps its history, which is what an audit log requires and
+  what a data subject request may not accept. R-07 in [29-compliance.md](29-compliance.md) is the same tension
+  from the other side.
 - **No encryption.** The transport is a Python function call. TLS, compression and batching belong to the
   transport, and there is no transport.
 - **No browser client.** The replica is a Python object. OPFS SQLite and the SvelteKit client are specified and
@@ -96,4 +109,5 @@ time T" - there is no second stream to reconcile.
 | 1,000 concurrent mutations produce zero divergence | Met |
 | One protocol serves online and offline | Met |
 | A real client: OPFS SQLite, optimistic UI, browser | **Not met** |
-| Deletion, and encrypted transport | **Not met** |
+| Deletion | Met - tombstone with explicit resurrection |
+| Encrypted transport | **Not met** |

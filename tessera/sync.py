@@ -32,6 +32,18 @@ from dataclasses import dataclass, field
 from . import canonical
 
 
+# A reserved field. Deletion is a write to it, which means the merge rule needs
+# no special case: a tombstone with a higher Lamport outranks a field write with a
+# lower one, and the field values stay underneath it.
+#
+# Resurrection is therefore **explicit** - `undelete()`, or a write to the same
+# field with a higher Lamport - and not a side effect of writing any field. An
+# implicit resurrection would mean a stale client could bring back a record
+# somebody deliberately deleted, which is the failure a tombstone exists to
+# prevent. (O-07)
+DELETED = "__deleted__"
+
+
 def _fingerprint(state: dict) -> str:
     blob = json.dumps(state, sort_keys=True, separators=(",", ":"), default=str)
     return canonical.canonical_hash({"state": blob})
@@ -90,9 +102,24 @@ class Replica:
         self.outbox.append(op)
         return op
 
+    # -- deleting ---------------------------------------------------------
+    def delete(self, ref: str, actor: str = "human") -> Op:
+        """Tombstone a record. It is a field write, so it merges like one."""
+        return self.set(ref, DELETED, True, actor=actor)
+
+    def undelete(self, ref: str, actor: str = "human") -> Op:
+        return self.set(ref, DELETED, False, actor=actor)
+
+    def is_deleted(self, ref: str) -> bool:
+        cell = self.state.get(ref, {}).get(DELETED)
+        return bool(cell and cell[2] is True)
+
     # -- reading ----------------------------------------------------------
     def get(self, ref: str) -> dict:
-        return {name: cell[2] for name, cell in self.state.get(ref, {}).items()}
+        if self.is_deleted(ref):
+            return {}
+        return {name: cell[2] for name, cell in self.state.get(ref, {}).items()
+                if name != DELETED}
 
     def record(self, ref: str) -> dict:
         """The record as a canonical payload, with the envelope it needs."""
@@ -102,6 +129,9 @@ class Replica:
                    "purpose_id": "", "retention_policy_id": ""}
         payload.update(self.get(ref))
         return payload
+
+    def deleted_refs(self) -> list[str]:
+        return sorted(ref for ref in self.state if self.is_deleted(ref))
 
     def fingerprint(self) -> str:
         return _fingerprint({ref: self.get(ref) for ref in sorted(self.state)})
@@ -161,8 +191,9 @@ class SyncServer:
             self.ops.append(op)
             added += 1
             if self.log:
+                action = "sync.delete" if op.field_name == DELETED and op.value else "sync.op"
                 self.log.append(
-                    self.tenant_id, op.actor, "sync.op",
+                    self.tenant_id, op.actor, action,
                     {"op": op.id, "field": op.field_name, "value": op.value,
                      "lamport": op.lamport, "replica": op.replica_id},
                     canonical_ref=op.ref, source_node_id=op.replica_id,
