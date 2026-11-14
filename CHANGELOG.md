@@ -6,6 +6,20 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.28.0] - 2026-11-14
+
+### Added
+
+- `scripts/smoke.py` - one real call into every one of the 42 modules, printed as a table.
+  `42 ok, 0 failed`.
+- [docs/45-smoke-audit.md](docs/45-smoke-audit.md).
+
+### What it found
+
+No defects, and five places where a caller would have guessed a signature wrong: `DsarRequest` not `DsrRequest`,
+`Histogram` takes a name, `Seat` takes a version and a capability manifest. The signatures are the interface, and a
+smoke test is the cheapest way to find out that an interface is not the one you remember.
+
 ## [1.27.0] - 2026-11-14
 
 ### Added

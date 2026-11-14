@@ -138,6 +138,7 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/42-property-tests.md](docs/42-property-tests.md) | Four invariants, a replayable seed, and R-17 |
 | [docs/43-release.md](docs/43-release.md) | The tag, the gate and the generated note |
 | [docs/44-archival.md](docs/44-archival.md) | Segments, a header line, and a proof that survives |
+| [docs/45-smoke-audit.md](docs/45-smoke-audit.md) | One real call into every module |
 | `tests/` | 709 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
 
@@ -153,6 +154,7 @@ python3 -m tessera.bench --gate              # measure, and fail on a regression
 python3 -m tessera.jargon                    # the lint that blocks release
 python3 -m unittest discover -s tests -t .   # 709 tests
 python3 -m tessera.fuzz                      # four property suites
+python3 scripts/smoke.py                     # one call into every module
 python3 scripts/check_docs.py                # docs and landing page match the tree
 ```
 
