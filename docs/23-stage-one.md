@@ -40,8 +40,8 @@ not make it.
 Two mechanisms, deliberately separate:
 
 - **`TokenBucket`** - the node's declared rate, refilling continuously, capped at its burst.
-- **`NodeBudget`** - admission control on top: a token, an in-flight cap and a bounded queue. This is what stops
-  a fast producer from turning a slow node into an unbounded list in memory.
+- **`NodeBudget`** - admission control on top: a token and an in-flight cap. A bounded queue was removed
+  rather than faked: nothing in this runtime queues, so the limit could never fire (R-10, [31-code-review.md](31-code-review.md)).
 
 Both surface as `RateLimited`, carrying the wait. Not a new exception type: the taxonomy is closed at six
 ([02-architecture.md](02-architecture.md#failure-semantics)), and from the caller's position a node's throttle

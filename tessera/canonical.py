@@ -16,6 +16,7 @@ import hashlib
 import json
 import os
 import time
+from datetime import datetime, timezone
 
 SCHEMA_VERSION = "1.0.0"
 
@@ -223,6 +224,26 @@ def validate(object_name: str, payload: dict) -> list[str]:
         problems.append(f"{object_name}.lawful_basis: {basis!r} is not a lawful basis")
 
     return problems
+
+
+def parse_time(value: str) -> datetime:
+    """Parse an ISO-8601 timestamp into an aware datetime.
+
+    Timestamps in this system are written at two precisions - seconds by the
+    workforce layer, milliseconds by the ledger - and comparing them as strings
+    is wrong: "2026-11-14T05:20:44Z" sorts *after* "2026-11-14T05:20:44.582Z"
+    because "Z" is greater than ".". Every point-in-time comparison goes through
+    here so the two precisions compare as instants. (R-08)
+    """
+    if not isinstance(value, str):
+        raise ValueError(f"expected an ISO-8601 string, got {type(value).__name__}")
+    text = value.strip()
+    if text.endswith("Z"):
+        text = text[:-1] + "+00:00"
+    parsed = datetime.fromisoformat(text)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed
 
 
 def canonical_bytes(payload: dict) -> bytes:

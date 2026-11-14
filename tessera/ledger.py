@@ -51,8 +51,14 @@ class LedgerError(Exception):
 class EventLog:
     """An append-only, hash-chained event log."""
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, durable: bool = False):
         self.path = path
+        # `durable=True` fsyncs after every append. It costs a few milliseconds
+        # per write and it is the difference between "the ledger is the record"
+        # and "the ledger is the record until the machine loses power". Off by
+        # default so the test suite and the benchmark stay fast; on in any
+        # deployment that claims durability. (R-12)
+        self.durable = durable
         self._heads: dict[str, str] = {}      # tenant_id -> last event hash
         self._seq: dict[str, int] = {}        # tenant_id -> last sequence
         self._load()
@@ -127,6 +133,9 @@ class EventLog:
 
         with open(self.path, "a", encoding="utf-8") as f:
             f.write(json.dumps(event, sort_keys=True, separators=(",", ":")) + "\n")
+            f.flush()
+            if self.durable:
+                os.fsync(f.fileno())
 
         self._heads[tenant_id] = event["hash"]
         self._seq[tenant_id] = sequence
@@ -198,11 +207,12 @@ class EventLog:
         nowhere else. Returns {source_node_id: payload} for the last event each
         source wrote at or before `at`.
         """
+        horizon = canonical.parse_time(at)
         known: dict[str, dict] = {}
         for event in self.events(tenant_id):
             if event["canonical_ref"] != canonical_ref:
                 continue
-            if event["timestamp"] > at:
+            if canonical.parse_time(event["timestamp"]) > horizon:
                 # Not a `break`: the log is ordered by append, and a late-arriving
                 # event may carry an earlier timestamp than one already written.
                 # A point-in-time query therefore filters; it does not seek.

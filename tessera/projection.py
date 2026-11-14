@@ -128,12 +128,13 @@ class Projection:
         Uses transaction time, not valid time: this answers "what did we know",
         which is the question a dispute asks.
         """
+        horizon = canonical.parse_time(at)
         out = {}
         temporal = self.temporal.get(object_name, {}).get(record_id, {})
         for field, versions in temporal.items():
             seen = None
             for _valid_from, tx_time, value in versions:
-                if tx_time <= at:
+                if tx_time and canonical.parse_time(tx_time) <= horizon:
                     seen = value
             if seen is not None:
                 out[field] = seen
@@ -146,12 +147,13 @@ class Projection:
         this answer and leaves `as_of` alone, which is the whole point of
         keeping both.
         """
+        horizon = canonical.parse_time(valid_at)
         out = {}
         temporal = self.temporal.get(object_name, {}).get(record_id, {})
         for field, versions in temporal.items():
             seen = None
             for valid_from, _tx_time, value in versions:
-                if valid_from <= valid_at:
+                if valid_from and canonical.parse_time(valid_from) <= horizon:
                     seen = value
             if seen is not None:
                 out[field] = seen

@@ -76,12 +76,13 @@ class TestNodeBudget(unittest.TestCase):
             budget.admit()
         self.assertEqual(budget.rejected, 1)
 
-    def test_queue_cap_applies_backpressure(self):
-        budget = NodeBudget("hubspot", rate_per_minute=600, burst=5, max_queue=0)
-        budget.queued = 0
-        budget.max_queue = 0
-        with self.assertRaises(RateLimited):
-            budget.admit()
+    def test_there_is_no_queue_limit_because_nothing_queues(self):
+        # R-10: the limit was removed rather than left inert. A field that can
+        # never fire is worse than no field, because it is documented.
+        budget = NodeBudget("hubspot", rate_per_minute=600, burst=5)
+        self.assertFalse(hasattr(budget, "max_queue"))
+        self.assertFalse(hasattr(budget, "queued"))
+        self.assertNotIn("queued", budget.snapshot())
 
     def test_bucket_exhaustion_applies_backpressure(self):
         clock = Clock()

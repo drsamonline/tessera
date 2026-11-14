@@ -19,6 +19,7 @@ is the question an incident review actually asks.
 
 from __future__ import annotations
 
+import hmac
 import json
 import re
 from dataclasses import dataclass, field
@@ -41,6 +42,9 @@ class Principal:
     scopes: tuple[str, ...] = ("read",)
     role: str = "auditor"
     seat_id: str | None = None
+    # "human" or "agent". The audit trail records who acted; defaulting every
+    # caller to "human" made an agent's action indistinguishable from a person's. (R-11)
+    kind: str = "human"
 
     def can(self, scope: str) -> bool:
         return "admin" in self.scopes or scope in self.scopes
@@ -126,18 +130,34 @@ class Api:
     def _authenticate(self, request: Request, scope: str):
         header = request.headers.get("Authorization") or request.headers.get("authorization") or ""
         token = header[7:] if header.lower().startswith("bearer ") else ""
-        principal = self.tokens.get(token)
+        principal = self._principal_for(token)
         if principal is None:
             return None, Response(401, {"error": "unauthenticated"})
         if not principal.can(scope):
             return principal, Response(403, {"error": "forbidden", "scope": scope})
         return principal, None
 
+    def _principal_for(self, token: str) -> Principal | None:
+        """Compare every token in constant time.
+
+        A dict lookup returns early on the first differing byte, which is a timing
+        signal. It is a weak one and this is a development surface, but a token
+        comparison is not the place to be relaxed about it.
+        """
+        if not token:
+            return None
+        found = None
+        for candidate, principal in self.tokens.items():
+            if hmac.compare_digest(candidate, token):
+                found = principal
+        return found
+
     def _audit(self, request: Request, principal: Principal) -> None:
         if not self.log:
             return
         self.log.append(
-            self.tenant_id, "human" if principal.id else "system", "api.call",
+            self.tenant_id, principal.kind if principal.kind in ("human", "agent") else "system",
+            "api.call",
             {"route": request.path, "method": request.method,
              "principal": principal.id,
              "body_hash": canonical.canonical_hash(request.body or {})},

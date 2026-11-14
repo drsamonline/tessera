@@ -83,24 +83,27 @@ class TokenBucket:
 class NodeBudget:
     """Admission control for one node.
 
-    Three limits, each catching a different failure:
+    Two limits, each catching a different failure:
 
       * the bucket       the node's declared rate
       * max_in_flight    concurrency, so a slow node cannot be buried
-      * max_queue        memory, so a fast producer cannot grow the queue forever
 
-    `stats` is exposed rather than logged: a caller decides where it goes.
+    There was a third, `max_queue`, and it was removed rather than fixed: nothing
+    in this runtime queues, so the counter could never rise and the limit could
+    never fire. A limit that cannot fire is worse than no limit, because it
+    appears in the documentation and in the operator's mental model. A bounded
+    queue belongs to the caller that owns the work, not to the budget. (R-10)
+
+    `snapshot()` is exposed rather than logged: a caller decides where it goes.
     """
 
     node_id: str
     rate_per_minute: int = 100
     burst: int = 5
     max_in_flight: int = 4
-    max_queue: int = 32
     clock: object = time.monotonic
     bucket: TokenBucket = field(init=False)
     in_flight: int = field(default=0, init=False)
-    queued: int = field(default=0, init=False)
     admitted: int = field(default=0, init=False)
     rejected: int = field(default=0, init=False)
 
@@ -115,12 +118,6 @@ class NodeBudget:
                 f"{self.node_id}: {self.in_flight} requests already in flight "
                 f"(cap {self.max_in_flight})", retry_after=0.1,
             )
-        if self.queued >= self.max_queue:
-            self.rejected += 1
-            raise RateLimited(
-                f"{self.node_id}: queue full ({self.queued}/{self.max_queue})",
-                retry_after=round(self.bucket.wait_time(), 3) or 0.1,
-            )
         self.bucket.acquire()
         self.in_flight += 1
         self.admitted += 1
@@ -134,7 +131,6 @@ class NodeBudget:
             "node_id": self.node_id,
             "tokens": round(self.bucket.tokens, 3),
             "in_flight": self.in_flight,
-            "queued": self.queued,
             "admitted": self.admitted,
             "rejected": self.rejected,
         }

@@ -130,9 +130,15 @@ class Checkpointer:
                 after = target_records.get(record_id, {})
                 if before == after:
                     continue
+                # An empty target means the record did not exist at the
+                # checkpoint. Writing {"record": {}} would leave it in place with
+                # its old fields, so the revert would silently do nothing. (R-09)
+                payload = ({"record": after} if after
+                           else {"tombstone": True, "reason": "reverted to a checkpoint"})
                 self.log.append(
-                    self.tenant_id, actor, "record.revert",
-                    {"record": after},
+                    self.tenant_id, actor,
+                    "record.revert" if after else "record.reverted_away",
+                    payload,
                     canonical_ref=canonical.make_ref(object_name, record_id),
                     source_node_id="checkpoint",
                 )

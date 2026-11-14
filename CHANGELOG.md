@@ -6,6 +6,35 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.12.0] - 2026-11-14
+
+### Fixed
+
+A code review over 6,474 lines found 13 findings. Six are fixed here, each with a regression test that fails on
+the old code.
+
+- **R-08 (blocker).** Point-in-time queries compared ISO timestamps as strings. Two precisions are in use - seconds
+  by the workforce layer, milliseconds by the ledger - and `"…44Z"` sorts after `"…44.582Z"`. A query could return
+  a later state for an earlier instant. All comparisons now go through `canonical.parse_time`.
+- **R-09 (blocker).** `revert_to` wrote `{"record": {}}` for a record that did not exist at the checkpoint, which
+  the projection applied as a no-op. A revert that silently does nothing is worse than one that fails. It writes a
+  tombstone now.
+- **R-10.** `NodeBudget.max_queue` could never fire because nothing queues. The field is removed rather than faked.
+- **R-11.** Every API caller was recorded as `"human"` in the audit trail, including agents.
+- **R-12.** No `fsync`. The ledger is described as the record and was the record only until the machine lost power.
+  `EventLog(path, durable=True)`.
+- **R-13.** Token comparison returned early on the first differing byte. `hmac.compare_digest` now.
+
+### Added
+
+- [docs/31-code-review.md](docs/31-code-review.md) - the findings, the seven that remain open, and the verdict.
+- 14 more tests (387 total).
+
+### Verdict
+
+Ship as a reference implementation. Block for production until O-05 and O-06 (incremental verify and projection),
+O-01, O-02 and O-07 are closed.
+
 ## [1.11.0] - 2026-11-14
 
 ### Added
