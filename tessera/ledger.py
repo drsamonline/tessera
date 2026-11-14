@@ -35,6 +35,12 @@ from . import canonical
 
 GENESIS = "0" * 64
 
+# A compacted ledger begins with a *header line*, not an event: it has no sequence
+# and no hash of its own, because it describes where the chain now starts. Treating
+# it as an event made its sequence collide with the first surviving event, which is
+# a bug the archive tests found immediately. archive.py writes it.
+MARKER = "compaction_header"
+
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
@@ -73,6 +79,8 @@ class EventLog:
                 if not line:
                     continue
                 event = json.loads(line)
+                if MARKER in event:
+                    continue
                 tenant = event["tenant_id"]
                 self._heads[tenant] = event["hash"]
                 self._seq[tenant] = event["sequence"]
@@ -96,6 +104,8 @@ class EventLog:
                 if not line:
                     continue
                 event = json.loads(line)
+                if MARKER in event:
+                    continue          # a header is not an event
                 if tenant_id is None or event["tenant_id"] == tenant_id:
                     out.append(event)
             new_offset = f.tell()
@@ -114,6 +124,8 @@ class EventLog:
                 if not line:
                     continue
                 event = json.loads(line)
+                if MARKER in event:
+                    continue
                 if tenant_id is None or event["tenant_id"] == tenant_id:
                     yield event
 
@@ -168,6 +180,21 @@ class EventLog:
         self._seq[tenant_id] = sequence
         return event
 
+    def header(self) -> dict[str, dict]:
+        """The compaction header, per tenant, if this log has one."""
+        out: dict[str, dict] = {}
+        if not os.path.exists(self.path):
+            return out
+        with open(self.path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                blob = json.loads(line)
+                if MARKER in blob:
+                    out[blob["tenant_id"]] = blob
+        return out
+
     # -- verification ------------------------------------------------------
     def verify(self, tenant_id: str | None = None,
                anchor: dict | None = None) -> tuple[bool, list[str]]:
@@ -189,6 +216,12 @@ class EventLog:
         problems: list[str] = []
         last_hash: dict[str, str] = {}
         last_seq: dict[str, int] = {}
+        # A compacted log begins with a marker whose prev_event_hash is the head of
+        # the archived segment. Without seeding from it, every compacted ledger
+        # would report a broken link at its first event. (archive.py)
+        for tenant, header in self.header().items():
+            last_hash[tenant] = header["archived_tail"]
+            last_seq[tenant] = header["archived_through"]
         if anchor:
             for tenant in ([tenant_id] if tenant_id else list(self._heads)):
                 last_hash[tenant] = anchor["hash"]

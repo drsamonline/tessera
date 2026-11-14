@@ -9,7 +9,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <p>
 <a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
 <img alt="Status: specification + reference core" src="https://img.shields.io/badge/status-spec%20%2B%20reference%20core-1F3552">
-<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-692%20passing-2e7d32">
+<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-709%20passing-2e7d32">
 <img alt="Version 1.1" src="https://img.shields.io/badge/version-1.1-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
 <img alt="License: PolyForm Noncommercial 1.0.0" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2e7d32">
@@ -42,7 +42,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 > What does run: `tessera/`, a dependency-free reference implementation of the canonical schema, the ledger,
 > the metrics, routing, conflict resolution, the connector contract, the conformance suite, four connectors and
 > a working mesh, projections that rebuild from the ledger, the workforce layer, and an HTTP surface with an OpenAPI 3.1
-> contract, ten MCP tools, three-layer access control a compliance substrate and local-first sync. 692 tests, standard library only, no network.
+> contract, ten MCP tools, three-layer access control a compliance substrate and local-first sync. 709 tests, standard library only, no network.
 > An independent code review found 13 findings and fixed 11: [docs/31-code-review.md](docs/31-code-review.md).
 > [What it does and does not do](docs/20-reference-core.md).
 
@@ -137,7 +137,8 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/41-offline-mobile.md](docs/41-offline-mobile.md) | Key custody, a durable outbox, seven days of absence |
 | [docs/42-property-tests.md](docs/42-property-tests.md) | Four invariants, a replayable seed, and R-17 |
 | [docs/43-release.md](docs/43-release.md) | The tag, the gate and the generated note |
-| `tests/` | 692 tests, standard library `unittest`, no dependencies |
+| [docs/44-archival.md](docs/44-archival.md) | Segments, a header line, and a proof that survives |
+| `tests/` | 709 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
 
 ## Run it
@@ -150,7 +151,7 @@ python3 -m tessera.cli schema                # print and check both contracts
 python3 -m tessera.cli timeline              # what we knew vs what was true, then revert and mirror
 python3 -m tessera.bench --gate              # measure, and fail on a regression
 python3 -m tessera.jargon                    # the lint that blocks release
-python3 -m unittest discover -s tests -t .   # 692 tests
+python3 -m unittest discover -s tests -t .   # 709 tests
 python3 -m tessera.fuzz                      # four property suites
 python3 scripts/check_docs.py                # docs and landing page match the tree
 ```

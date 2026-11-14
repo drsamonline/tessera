@@ -6,6 +6,29 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.27.0] - 2026-11-14
+
+### Added
+
+- `tessera/archive.py` - segments with a checksummed manifest, compaction that replaces an archived prefix with a
+  header line, and `history()` that spans both halves without the caller knowing which is which.
+- [docs/44-archival.md](docs/44-archival.md).
+- 17 more tests (709 total).
+
+### Fixed
+
+The first design made the compaction marker an *event* with a sequence number, and its sequence collided with the
+first surviving event's. The archive tests found it on the first run (`expected 17, found 16`). A header line is not
+an event: it carries no sequence and no hash, because it describes where the chain now starts.
+
+Three readers had to learn that - `events()`, `read_from()` and `verify()` - and the projection test is the one that
+would have been missed by hand, because the projection and the archive were written weeks apart.
+
+### Note
+
+An audit log does not compact, it archives. Deleting old events is the one thing a hash-chained record must not do:
+the chain is the proof, and a proof with a hole in it is not a proof.
+
 ## [1.26.0] - 2026-11-14
 
 ### Added
