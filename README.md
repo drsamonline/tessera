@@ -9,7 +9,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <p>
 <a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
 <img alt="Status: specification + reference core" src="https://img.shields.io/badge/status-spec%20%2B%20reference%20core-1F3552">
-<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-169%20passing-2e7d32">
+<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-200%20passing-2e7d32">
 <img alt="Version 1.1" src="https://img.shields.io/badge/version-1.1-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
 <img alt="License: PolyForm Noncommercial 1.0.0" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2e7d32">
@@ -41,7 +41,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 >
 > What does run: `tessera/`, a dependency-free reference implementation of the canonical schema, the ledger,
 > the metrics, routing, conflict resolution, the connector contract, the conformance suite, four connectors and
-> a working mesh. 169 tests, standard library only, no network.
+> a working mesh. 200 tests, standard library only, no network.
 > [What it does and does not do](docs/20-reference-core.md).
 
 ---
@@ -115,7 +115,8 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/21-connectors-and-mesh.md](docs/21-connectors-and-mesh.md) | The connector contract, the conformance suite, the unified view |
 | `tessera/` | The reference core: schema, ledger, metrics, routing, conflict, connectors, mesh |
 | [docs/22-providers.md](docs/22-providers.md) | HubSpot, Salesforce and Zendesk behind a transport seam |
-| `tests/` | 169 tests, standard library `unittest`, no dependencies |
+| [docs/23-stage-one.md](docs/23-stage-one.md) | Sync modes, backpressure, the measurement harness |
+| `tests/` | 200 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
 
 ## Run it
@@ -123,7 +124,8 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 ```bash
 python3 -m tessera.cli demo                  # two systems, one contact, one ledger, tamper detection
 python3 -m tessera.cli mesh                  # three nodes, one picture, the activation event
-python3 -m unittest discover -s tests -t .   # 169 tests
+python3 -m tessera.bench --gate              # measure, and fail on a regression
+python3 -m unittest discover -s tests -t .   # 200 tests
 ```
 
 `demo` appends two writes from two systems, asks what each system knew at two different times, resolves the

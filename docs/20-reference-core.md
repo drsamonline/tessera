@@ -22,6 +22,9 @@ without ambiguity.
 | `tessera/mesh.py` | 260 | Registration, sync, unified view, write-back, activation event | [03-mesh.md](03-mesh.md) |
 | `tessera/transport.py` | 130 | The HTTP seam, the status-to-taxonomy mapping, a recording transport for tests | &mdash; |
 | `tessera/providers/` | 470 | HubSpot, Salesforce and Zendesk connectors over the seam | [22-providers.md](22-providers.md) |
+| `tessera/ratelimit.py` | 150 | Token bucket, per-node admission control, backpressure as `RateLimited` | [17-constraints.md](17-constraints.md), rule 15 |
+| `tessera/observability.py` | 130 | Bounded histograms, nearest-rank percentiles, a target gate | [04-core.md](04-core.md#performance) |
+| `tessera/bench.py` | 170 | The regression harness, and an honest statement of what it is not | &mdash; |
 | `tessera/cli.py` | 340 | Two demonstrations that exercise all of the above end to end | &mdash; |
 
 No dependencies. Standard library only. No network calls. No model, no service, no container.

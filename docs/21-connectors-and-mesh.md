@@ -104,8 +104,18 @@ source node, so the ledger and the store cannot drift apart without the chain sh
 `agreement` exists because two systems saying the same thing is not a conflict. Reporting it as one buries the
 real disagreements in noise, and a conflict log nobody reads is the same as no conflict log.
 
-`write_field()` refuses to guess. With no node declaring `authority` or `delegate` for a field, the write raises
-`PermissionError`. A mesh that picks a winner for you is a mesh that corrupts one of your systems politely.
+`write_field()` is governed by the four sync modes:
+
+| Modes across the nodes carrying the field | What happens |
+|---|---|
+| Any node declares `authority` or `delegate` | That node is written, and only it |
+| All nodes declare `mirror` | `PermissionError` - the mesh does not write to a mirror |
+| Some `mirror`, some undeclared | The mirror is skipped; the writable node takes it |
+| All `bidirectional` | The most trusted node is written, then the lowest id |
+
+A node that does not name a field is `bidirectional`: silence is not a claim of ownership, but it is also not a
+refusal to accept a write. A field mirrored from every node that carries it is refused outright, because writing
+to a mirror is how a federation starts lying to itself.
 
 ## The activation event, computed
 
@@ -147,4 +157,4 @@ Deliverable 3 is closer and still partial.
 | Ledger chain verifies | Met |
 | A same-field conflict resolves deterministically and is logged | Met |
 | Routing returns a term-by-term breakdown | Met |
-| Write-back with sync modes | Partial - write-back to the declared owner works, the four sync modes are modelled as authority modes and not enforced per field |
+| Write-back with sync modes | **Met** - the four modes govern every write; see [23-stage-one.md](23-stage-one.md) |

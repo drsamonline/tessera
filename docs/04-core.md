@@ -44,6 +44,13 @@ The unbounded claim "no perceptible slowdown as data grows" is replaced by a sca
 grows with the log of tenant record count and is re-tested at 1M, 5M and 20M records per tenant. A regression
 beyond 10% in any percentile fails CI. *(Closes B-06.)*
 
+### The harness
+
+`python3 -m tessera.bench --gate` measures the reference core and fails on a regression. It is explicit about
+what it is not: it runs at a reference scale of a few thousand records on one process, which says nothing about
+the load model above. The thresholds it enforces are separate regression numbers, not these targets.
+[23-stage-one.md](23-stage-one.md#measurement).
+
 ## Security
 
 Three layers, all enforced at query execution rather than in controllers:

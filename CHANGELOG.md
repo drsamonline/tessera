@@ -6,6 +6,32 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.5.0] - 2026-11-14
+
+### Added
+
+- `tessera/ratelimit.py` - token bucket, per-node admission control with in-flight and queue caps. Backpressure
+  surfaces as `RateLimited` rather than a seventh error type, because the taxonomy is closed and the caller's
+  response is the same either way.
+- `tessera/observability.py` - bounded histograms with nearest-rank percentiles and a target gate that treats an
+  absent measurement as `unmeasured`, never as passing.
+- `tessera/bench.py` - the regression harness, and a printed statement of what it is not.
+- `Mesh.sync()` now admits through the node budget before every call.
+- [docs/23-stage-one.md](docs/23-stage-one.md).
+
+### Changed
+
+- The four sync modes are enforced per field, not merely recorded. A field mirrored from every node that
+  carries it now refuses the write instead of silently accepting it.
+- A node that does not name a field is `bidirectional`. The source document did not state a default; this one
+  does, and records the choice.
+- Deliverable 3 is closed: all seven of its criteria are met.
+
+### Fixed
+
+- **R-05.** `Histogram.percentile()` returned 0.0 for an out-of-range argument instead of raising, and used a
+  rounding formula that reported p95 of 1..100 as 96. Nearest rank now, and the argument is validated first.
+
 ## [1.4.0] - 2026-11-14
 
 ### Added

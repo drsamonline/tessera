@@ -178,12 +178,45 @@ class TestWrite(MeshCase):
         ok, problems = self.log.verify()
         self.assertTrue(ok, problems)
 
-    def test_write_without_a_declared_owner_is_refused(self):
+    def test_bidirectional_field_writes_to_the_most_trusted_node(self):
         self.register_default()
         self.crm.seed("Contact", contact())
+        self.support.seed("Contact", contact())
+        self.mesh.sync("Contact")
+        # nobody declares ownership of full_name, so both are bidirectional
+        result = self.mesh.write_field("Contact", CONTACT, "full_name", "Someone Else")
+        self.assertEqual(result["node"], "hubspot", "trust 0.8 beats trust 0.6")
+        self.assertEqual(result["mode"], "bidirectional")
+
+    def test_a_field_mirrored_everywhere_is_refused(self):
+        self.mesh.register(Node("hubspot", self.crm, "sales",
+                                authority={"email": "mirror"}, trust=0.8))
+        self.mesh.register(Node("zendesk", self.support, "support",
+                                authority={"email": "mirror"}, trust=0.6))
+        self.crm.seed("Contact", contact())
+        self.support.seed("Contact", contact())
         self.mesh.sync("Contact")
         with self.assertRaises(PermissionError):
-            self.mesh.write_field("Contact", CONTACT, "full_name", "Someone Else")
+            self.mesh.write_field("Contact", CONTACT, "email", "x@example.com")
+
+    def test_a_mirror_node_is_skipped_in_favour_of_a_writable_one(self):
+        self.mesh.register(Node("hubspot", self.crm, "sales",
+                                authority={"email": "mirror"}, trust=0.9))
+        self.mesh.register(Node("zendesk", self.support, "support", trust=0.3))
+        self.crm.seed("Contact", contact())
+        self.support.seed("Contact", contact())
+        self.mesh.sync("Contact")
+        result = self.mesh.write_field("Contact", CONTACT, "email", "y@example.com")
+        self.assertEqual(result["node"], "zendesk",
+                         "the trusted node is a mirror, so the writable one takes it")
+
+    def test_field_modes_reports_every_node(self):
+        self.register_default()
+        self.crm.seed("Contact", contact())
+        self.support.seed("Contact", contact())
+        self.mesh.sync("Contact")
+        modes = self.mesh.field_modes("Contact", CONTACT, "email")
+        self.assertEqual(modes, {"hubspot": "authority", "zendesk": "bidirectional"})
 
     def test_write_that_breaks_the_schema_is_refused(self):
         self.register_default()

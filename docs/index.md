@@ -40,6 +40,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 20 | [Reference core](20-reference-core.md) | 0, 1, 2 | What is actually implemented, tested, and what is not |
 | 21 | [Connectors and mesh](21-connectors-and-mesh.md) | 0 | The connector contract, the conformance suite, the unified view |
 | 22 | [Provider connectors](22-providers.md) | 0 | HubSpot, Salesforce and Zendesk behind a transport seam |
+| 23 | [Stage one, complete](23-stage-one.md) | 0 | Sync modes, backpressure, measurement, and what closed |
 
 ## Audit
 

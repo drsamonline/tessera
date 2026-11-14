@@ -20,8 +20,9 @@ import json
 from dataclasses import dataclass, field
 
 from . import canonical, conflict
-from .connector import Connector, ConnectorError
+from .connector import Connector, ConnectorError, RateLimited
 from .ledger import EventLog
+from .ratelimit import Budgets, NodeBudget
 
 MAX_PAGES = 100
 
@@ -35,6 +36,7 @@ class Node:
     authority: dict[str, str] = field(default_factory=dict)  # field -> mode
     trust: float = 0.5
     cost_per_write: float = 0.0
+    budget: NodeBudget | None = None
 
 
 class Mesh:
@@ -42,6 +44,7 @@ class Mesh:
         self.tenant_id = tenant_id
         self.log = log
         self.nodes: dict[str, Node] = {}
+        self.budgets = Budgets()
         # object -> record id -> node id -> payload
         self._store: dict[str, dict[str, dict[str, dict]]] = {}
 
@@ -50,6 +53,10 @@ class Mesh:
         if node.id in self.nodes:
             raise ValueError(f"node {node.id!r} is already registered")
         self.nodes[node.id] = node
+        if node.budget is not None:
+            self.budgets.register(node.budget)
+        else:
+            self.budgets.register(NodeBudget(node_id=node.id))
 
     def nodes_for(self, object_name: str) -> list[Node]:
         out = []
@@ -74,10 +81,17 @@ class Mesh:
             bad = 0
             cursor, pages = None, 0
             while True:
+                budget = self.budgets.get(node.id)
+                try:
+                    budget.admit()
+                except RateLimited:
+                    break
                 try:
                     page = node.connector.read(object_name, cursor)
                 except ConnectorError:
                     break
+                finally:
+                    budget.release()
                 for record in page.records:
                     problems = canonical.validate(object_name, record)
                     if problems:
@@ -192,46 +206,79 @@ class Mesh:
         return sorted(self._store.get(object_name, {}))
 
     # -- write -------------------------------------------------------------
+    def field_modes(self, object_name: str, record_id: str, name: str) -> dict:
+        """The sync mode each node declares for one field.
+
+        A node that does not name the field is `bidirectional`: silence is not a
+        claim of ownership, but it is also not a refusal to accept a write.
+        """
+        candidates = self._store.get(object_name, {}).get(record_id, {})
+        if not candidates:
+            raise KeyError(f"no synced record {object_name}:{record_id}")
+        return {
+            node_id: self.nodes[node_id].authority.get(name, "bidirectional")
+            for node_id in candidates
+        }
+
     def write_field(self, object_name: str, record_id: str, name: str, value,
                     actor: str = "human") -> dict:
-        """Write one field to the node that owns it.
+        """Write one field, governed by the four sync modes.
 
-        The owner is the node whose authority map claims the field. With no
-        declared owner the write is refused: a mesh that guesses which system is
-        authoritative is a mesh that corrupts one of them.
+        `mirror`      the mesh never writes back. A field mirrored from every
+                      node that carries it is refused outright.
+        `authority`   the declared owner is written, and only it.
+        `delegate`    same, from the mesh's side.
+        `bidirectional` any node carrying the field may be written; the most
+                      trusted one is chosen, then the lowest id.
+
+        A mesh that guesses which system is authoritative corrupts one of them
+        politely, so an unresolved field is refused rather than guessed.
         """
-        owners = [
-            node for node in self.nodes.values()
-            if node.authority.get(name) in ("authority", "delegate")
-        ]
-        if not owners:
-            raise PermissionError(
-                f"no node declares authority for {object_name}.{name}; "
-                "declare one in the authority map before writing"
-            )
-        owner = owners[0]
+        modes = self.field_modes(object_name, record_id, name)
 
-        payload = dict(self._store[object_name][record_id][owner.id])
+        if all(mode == "mirror" for mode in modes.values()):
+            raise PermissionError(
+                f"{object_name}.{name} is mirrored from every node that carries it; "
+                "the mesh does not write to a mirror"
+            )
+
+        owners = [self.nodes[nid] for nid, mode in modes.items()
+                  if mode in ("authority", "delegate")]
+        if owners:
+            target = owners[0]
+        else:
+            writable = [self.nodes[nid] for nid, mode in modes.items()
+                        if mode == "bidirectional"]
+            if not writable:
+                raise PermissionError(
+                    f"no node accepts writes for {object_name}.{name}; "
+                    f"modes are {sorted(set(modes.values()))}"
+                )
+            target = sorted(writable, key=lambda n: (-n.trust, n.id))[0]
+
+        payload = dict(self._store[object_name][record_id][target.id])
         payload[name] = value
         problems = canonical.validate(object_name, payload)
         if problems:
             raise ValueError("; ".join(problems[:3]))
 
-        result = owner.connector.write(
+        result = target.connector.write(
             object_name, payload, f"{object_name}:{record_id}:{name}:{value}"
         )
         if not getattr(result, "ok", False):
-            raise ConnectorError(f"write to {owner.id} failed: {result.error}")
+            raise ConnectorError(f"write to {target.id} failed: {result.error}")
 
-        self._store[object_name][record_id][owner.id] = payload
+        self._store[object_name][record_id][target.id] = payload
         if self.log:
             self.log.append(
                 self.tenant_id, actor, f"{object_name.lower()}.{name}.write",
-                {"field": name, "value": value, "node": owner.id},
+                {"field": name, "value": value, "node": target.id,
+                 "mode": modes.get(target.id, "bidirectional")},
                 canonical_ref=canonical.make_ref(object_name, record_id),
-                source_node_id=owner.id,
+                source_node_id=target.id,
             )
-        return {"node": owner.id, "field": name, "value": value}
+        return {"node": target.id, "field": name, "value": value,
+                "mode": modes.get(target.id, "bidirectional")}
 
     # -- the activation event ---------------------------------------------
     def activation(self) -> dict:
