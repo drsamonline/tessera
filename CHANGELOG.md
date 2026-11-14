@@ -6,6 +6,29 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.17.0] - 2026-11-14
+
+### Added
+
+- `tessera/locale.py` - deliverable 15. A message catalogue of 28 keys in five locales with the jargon map as the
+  interface vocabulary, a declared length budget per key, locale-aware number, currency, date and time formatting
+  with a per-user timezone, an RTL direction flag and token mirror, and a rate table that converts on the
+  transaction date.
+- [docs/34-localisation.md](docs/34-localisation.md).
+- 31 more tests (525 total).
+
+### Fixed
+
+- **R-14.** `mirror()` compared token names against lowercase literals, so `paddingLeft` and `paddingRight` failed
+  every check and were copied through unchanged. An RTL layout that silently stayed LTR is the exact failure the
+  function exists to prevent; its own test caught it on the first run.
+
+### Honest boundary
+
+The rendering half of the criterion - "five locales render without truncation on twelve screens" - cannot run
+without screens. The length-budget check is what runs instead, and the doc says it is a proxy. No RTL language
+ships in v1; the mechanism does.
+
 ## [1.16.0] - 2026-11-14
 
 ### Added
