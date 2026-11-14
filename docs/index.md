@@ -56,6 +56,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 36 | [Migration wizard](36-migration.md) | 6 | Auto-mapping, transform, rollback, shortcuts, templates |
 | 37 | [Learning and onboarding](37-learning.md) | 7 | Bootcamps, academy, coach, glossary, drip |
 | 38 | [Deployment](38-deployment.md) | all | Container, compose, manifests, and the docs rule |
+| 39 | [Postgres and RLS](39-postgres.md) | 1 | The DDL, its four assertions, and what could not be run |
 
 ## Audit
 

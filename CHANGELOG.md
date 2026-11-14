@@ -6,6 +6,31 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.22.0] - 2026-11-14
+
+### Added
+
+- `tessera/store.py` - the Postgres DDL for all ten canonical objects, generated from the canonical schema, with
+  bi-temporal columns, `ENABLE` and `FORCE ROW LEVEL SECURITY`, and a tenant policy carrying both `USING` and
+  `WITH CHECK`.
+- `store.validate()` - reads the DDL back and asserts those four properties per table.
+- `store.SqliteStore` - the same contract, runnable, with tenant isolation on every statement.
+- [docs/39-postgres.md](docs/39-postgres.md).
+- 20 more tests (630 total).
+
+### Not done, and stated as such
+
+- **No Django models.** Django is not installed and the core has no dependencies; models that cannot be imported
+  would be untested code.
+- **The DDL has never been executed.** This environment ships the Postgres client and not the server - `initdb`,
+  `pg_ctl` and `postgres` are absent. The DDL is generated and read back, not applied.
+
+### Note
+
+`FORCE ROW LEVEL SECURITY` has its own test because without it the table owner - usually the application's own role -
+bypasses every policy. A policy with `USING` and no `WITH CHECK` has its own test too: `USING` filters reads and
+only `WITH CHECK` constrains writes.
+
 ## [1.21.0] - 2026-11-14
 
 ### Added
