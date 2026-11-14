@@ -16,6 +16,11 @@ that two engineers would implement identically. That is the largest single sourc
 | Term | Transform | Range |
 |---|---|---|
 | `capability_match` | `|required ∩ manifest| / |required|` | `[0,1]` |
+
+Every **term** is in `[0,1]`. The **total** is not: the cross-boundary penalty is subtracted with a weight of
+0.2, so the routing score lies in `[-0.20, 1.00]`. Clamping it to `[0,1]` would collapse every heavily-penalised
+candidate to a tie at zero, which is precisely when the ordering matters. (R-17, found by the property tests in
+[42-property-tests.md](42-property-tests.md).)
 | `authority_match` | 1.0 if the field's authority map gives this node authority or delegate; 0.5 if bidirectional; 0.2 if mirror | `[0,1]` |
 | `sla_headroom` | `clamp(0, 1, (deadline - now) / (deadline - assigned_at))` | `[0,1]` |
 | `utilization` | `1 - clamp(0, 1, current_load / capacity)` | `[0,1]` |

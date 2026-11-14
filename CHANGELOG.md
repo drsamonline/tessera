@@ -6,6 +6,23 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.25.0] - 2026-11-14
+
+### Added
+
+- `tessera/fuzz.py` - four property suites over the ledger, sync, conflict resolution and routing, with a replayable
+  seed and no dependency. `TestTheFuzzerHasTeeth` swaps in a verifier that always says yes and a resolver that
+  alternates its answer, and asserts both are caught.
+- [docs/42-property-tests.md](docs/42-property-tests.md).
+- 10 more tests (692 total).
+
+### Fixed
+
+- **R-17.** The routing score is not in `[0,1]`. Every term is, but the cross-boundary penalty is subtracted with a
+  weight of 0.2, so the total lies in `[-0.20, 1.00]`. The fuzzer found it on seed 2. The invariant and the
+  documentation changed rather than the arithmetic: clamping would collapse every heavily-penalised candidate to a
+  tie at zero, which is exactly when the ordering matters.
+
 ## [1.24.0] - 2026-11-14
 
 ### Added
