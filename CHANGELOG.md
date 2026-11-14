@@ -6,6 +6,29 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.19.0] - 2026-11-14
+
+### Added
+
+- `tessera/migrate.py` - deliverable 13. Auto-mapping from a source export's headers, a transform that joins
+  composites and scales money to minor units, a dry run, a rollback, a keyboard shortcut translator and a template
+  gallery.
+- [docs/36-migration.md](docs/36-migration.md).
+- 26 more tests (574 total).
+
+### Fixed
+
+- **R-15.** `Migration.commit()` cached the mapping from the first file it prepared, so a second migration on the
+  same object silently reused the wrong headers and imported nothing. It re-derives the map from the file it is
+  given.
+- The wizard no longer auto-maps a source `Owner` column to `owner_seat_id`. A source owner is a name or a foreign
+  identifier, not a canonical seat uuid, and the guess produced a column that failed validation on every row.
+
+### Coverage
+
+Field coverage on all three source exports is 100%; the unmapped source columns are listed rather than hidden, and
+provider identifiers are reported separately as source ids.
+
 ## [1.18.0] - 2026-11-14
 
 ### Added
