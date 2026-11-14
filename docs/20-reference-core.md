@@ -25,7 +25,10 @@ without ambiguity.
 | `tessera/ratelimit.py` | 150 | Token bucket, per-node admission control, backpressure as `RateLimited` | [17-constraints.md](17-constraints.md), rule 15 |
 | `tessera/observability.py` | 130 | Bounded histograms, nearest-rank percentiles, a target gate | [04-core.md](04-core.md#performance) |
 | `tessera/bench.py` | 170 | The regression harness, and an honest statement of what it is not | &mdash; |
-| `tessera/cli.py` | 340 | Two demonstrations that exercise all of the above end to end | &mdash; |
+| `tessera/projection.py` | 190 | Current and bi-temporal state, rebuildability as a test | [11-history-authority.md](11-history-authority.md) |
+| `tessera/checkpoint.py` | 170 | Chained snapshots, diff, revert by compensation | [11-history-authority.md](11-history-authority.md) |
+| `tessera/mirror.py` | 160 | Markdown projection, manifest of hashes, lag as a count | [25-deterministic-features.md](25-deterministic-features.md) |
+| `tessera/cli.py` | 480 | Three demonstrations that exercise all of the above end to end | &mdash; |
 
 No dependencies. Standard library only. No network calls. No model, no service, no container.
 

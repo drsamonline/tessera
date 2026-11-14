@@ -41,6 +41,8 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 21 | [Connectors and mesh](21-connectors-and-mesh.md) | 0 | The connector contract, the conformance suite, the unified view |
 | 22 | [Provider connectors](22-providers.md) | 0 | HubSpot, Salesforce and Zendesk behind a transport seam |
 | 23 | [Stage one, complete](23-stage-one.md) | 0 | Sync modes, backpressure, measurement, and what closed |
+| 24 | [Projections and checkpoints](24-history-projections.md) | 1 | Bi-temporal views, rebuild, revert by compensation, the mirror |
+| 25 | [Deterministic features](25-deterministic-features.md) | all | What works with every model switched off, and what does not yet |
 
 ## Audit
 

@@ -2,6 +2,7 @@
 
     python3 -m tessera.cli demo [--keep]
     python3 -m tessera.cli mesh
+    python3 -m tessera.cli timeline
     python3 -m tessera.cli verify <ledger.jsonl>
     python3 -m tessera.cli anchor <ledger.jsonl> <anchor.jsonl>
     python3 -m tessera.cli history <ledger.jsonl> <tenant_id> <canonical_ref>
@@ -18,7 +19,7 @@ import sys
 import tempfile
 from datetime import datetime, timedelta, timezone
 
-from . import canonical, conflict, conformance, ledger, metrics, routing
+from . import canonical, checkpoint, conflict, conformance, ledger, metrics, mirror, projection, routing
 from .connectors import NativeConnector, SimulatedConnector
 from .mesh import Mesh, Node
 
@@ -245,6 +246,91 @@ def cmd_mesh(args) -> int:
     return 0
 
 
+def cmd_timeline(args) -> int:
+    """The ledger is the authority; everything else is rebuilt from it."""
+    tmpdir = tempfile.mkdtemp(prefix="tessera-timeline-")
+    log = ledger.EventLog(os.path.join(tmpdir, "ledger.jsonl"))
+    ref = canonical.make_ref("Contact", CONTACT_ID)
+
+    def record(**over):
+        base = {
+            "id": CONTACT_ID, "tenant_id": TENANT, "valid_from": "2026-11-01T09:00:00Z",
+            "tx_time": "2026-11-01T09:00:01Z", "consent_state": "granted",
+            "lawful_basis": "consent", "purpose_id": "sales-outreach",
+            "retention_policy_id": "rp-24m", "full_name": "Asha Rao",
+            "email": "asha@example.com",
+        }
+        base.update(over)
+        return base
+
+    _rule("1. Three writes, in the order the ledger saw them")
+    log.append(TENANT, "system", "contact.sync",
+               {"record": record(email="asha@example.com", valid_from="2026-11-01T09:00:00Z")},
+               canonical_ref=ref, source_node_id="hubspot", timestamp="2026-11-01T09:00:00Z")
+    log.append(TENANT, "system", "contact.sync",
+               {"record": record(email="a.rao@example.com", valid_from="2026-11-03T09:00:00Z")},
+               canonical_ref=ref, source_node_id="zendesk", timestamp="2026-11-03T09:00:00Z")
+    # a correction that arrives late, and is true earlier than it was learned
+    log.append(TENANT, "human", "contact.correct",
+               {"record": record(email="asha.rao@example.com", valid_from="2026-11-02T09:00:00Z")},
+               canonical_ref=ref, source_node_id="hubspot", timestamp="2026-11-10T09:00:00Z")
+    for event in log.events(TENANT):
+        print(f"  seq {event['sequence']}  {event['timestamp']}  {event['actor']:<6} "
+              f"{event['action']:<16} {event['payload']['record']['email']}")
+
+    _rule("2. What we knew, at a transaction time")
+    proj = projection.Projection(log, TENANT).build()
+    for at in ("2026-11-02T00:00:00Z", "2026-11-05T00:00:00Z", "2026-11-11T00:00:00Z"):
+        print(f"  knew at {at}  {proj.as_of('Contact', CONTACT_ID, at).get('email')}")
+
+    _rule("3. What was true, at a valid time")
+    for at in ("2026-11-01T12:00:00Z", "2026-11-02T12:00:00Z", "2026-11-04T12:00:00Z"):
+        print(f"  true at {at}  {proj.valid_at('Contact', CONTACT_ID, at).get('email')}")
+    print()
+    print("  the 10 November correction is true on 2 November but was not known until the 10th")
+    print("  two questions, two answers, one ledger")
+
+    _rule("4. The projection is rebuildable")
+    result = proj.verify_rebuildable()
+    print(f"  rebuildable  {result['rebuildable']}")
+    print(f"  fingerprint  {result['live_fingerprint'][:16]}...")
+    print(f"  events       {result['events_applied']} applied, {result['events_skipped']} skipped")
+
+    _rule("5. Checkpoints: diff and revert without rewriting history")
+    cp = checkpoint.Checkpointer(log, TENANT, os.path.join(tmpdir, "cp.jsonl"), every=1)
+    cp.write()
+    log.append(TENANT, "human", "contact.sync",
+               {"record": record(email="wrong@example.com")},
+               canonical_ref=ref, source_node_id="hubspot", timestamp="2026-11-12T09:00:00Z")
+    cp.write()
+    diff = cp.diff(0, 1)
+    print(f"  diff 0->1    changed: {diff['changed']}")
+    before = sum(1 for _ in log.events())
+    cp.revert_to(0)
+    after = sum(1 for _ in log.events())
+    print(f"  revert       {before} events before, {after} after - it appends, it never deletes")
+    print(f"  email now    {projection.Projection(log, TENANT).build().get('Contact', CONTACT_ID)['email']}")
+    ok, problems = log.verify()
+    print(f"  chain        {'OK' if ok else 'BROKEN'}")
+    for problem in problems:
+        print(f"  {problem}")
+
+    _rule("6. The Markdown mirror, and how far behind it is")
+    mirror_dir = os.path.join(tmpdir, "mirror")
+    md = mirror.MarkdownMirror(log, TENANT, mirror_dir)
+    written = md.mirror()
+    print(f"  files        {written['files']} at sequence {written['sequence']}")
+    print(f"  lag          {md.lag_events()} events")
+    log.append(TENANT, "system", "contact.sync", {"record": record(email="later@example.com")},
+               canonical_ref=ref, source_node_id="zendesk")
+    print(f"  lag now      {md.lag_events()} events, visible rather than assumed")
+    print(f"  verify       {md.verify()['ok']}")
+
+    print()
+    print(f"workspace {tmpdir}")
+    return 0
+
+
 def cmd_verify(args) -> int:
     ok, problems = ledger.EventLog(args.path).verify()
     print("OK" if ok else "BROKEN")
@@ -277,6 +363,9 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("demo", help="run the end-to-end demonstration")
     p.add_argument("--keep", action="store_true", help="keep the temporary ledger")
     p.set_defaults(func=cmd_demo)
+
+    p = sub.add_parser("timeline", help="projection, point-in-time, checkpoints, mirror")
+    p.set_defaults(func=cmd_timeline)
 
     p = sub.add_parser("mesh", help="run the federation demonstration")
     p.set_defaults(func=cmd_mesh)

@@ -101,9 +101,13 @@ class Mesh:
                         record["id"], {})[node.id] = record
                     stored += 1
                     if self.log:
+                        # The record travels with the event, not just its field
+                        # names. docs/11-history-authority.md requires every
+                        # projection to be rebuildable from the ledger, and a
+                        # ledger holding field names cannot rebuild anything.
                         self.log.append(
                             self.tenant_id, "system", f"{object_name.lower()}.sync",
-                            {"fields": sorted(record)},
+                            {"record": record},
                             canonical_ref=canonical.make_ref(object_name, record["id"]),
                             source_node_id=node.id,
                         )

@@ -41,6 +41,12 @@ true by external anchoring. *(Closes C-04.)*
   the anchor identifies the divergence point, and the range is replayed from the last good anchor.
 - Customers receive a verification endpoint that proves their ledger range against the public anchors.
 
+## Implemented, and tested
+
+The ruling is no longer only a paragraph. `tessera/projection.py` builds state and both point-in-time views from
+the ledger and proves the build is reproducible; `tessera/checkpoint.py` reverts by appending; `tessera/mirror.py`
+exposes lag as a count. [24-history-projections.md](24-history-projections.md).
+
 ## What is not claimed
 
 The ledger does not prove that an action was correct, lawful or wise. It proves that the action was recorded,

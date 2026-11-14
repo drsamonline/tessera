@@ -6,6 +6,26 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.6.0] - 2026-11-14
+
+### Added
+
+- `tessera/projection.py` - current state and both point-in-time views (transaction time and valid time) from one
+  pass over the ledger, with `verify_rebuildable()` enforcing the history ruling.
+- `tessera/checkpoint.py` - chained snapshots, diff between checkpoints, and revert by compensation: a revert
+  appends, it never deletes.
+- `tessera/mirror.py` - the Markdown projection with a manifest of hashes and lag expressed as a count of events.
+- `python3 -m tessera.cli timeline` - the demonstration, including the divergence between what was known and
+  what was true.
+- [docs/24-history-projections.md](docs/24-history-projections.md).
+- 22 more tests (222 total).
+
+### Fixed
+
+- **R-06.** `Mesh.sync()` wrote field *names* into the ledger rather than the record, so the ledger could not
+  rebuild the store - the one thing docs/11-history-authority.md requires of it. Events now carry the record.
+  Events that carry no data are counted as skipped rather than guessed at.
+
 ## [1.5.0] - 2026-11-14
 
 ### Added
