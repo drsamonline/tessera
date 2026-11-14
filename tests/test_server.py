@@ -61,13 +61,17 @@ class TestOverRealHttp(ServerCase):
         status, body = self.get("/v1/objects/Contact")
         self.assertEqual(status, 200)
         self.assertEqual(body["object"], "Contact")
-        self.assertEqual(len(body["ids"]), 1, "the demo projection is built")
+        # The demo seeds six people, not one: a single record cannot show the
+        # mesh disagreeing with itself.
+        self.assertGreaterEqual(len(body["ids"]), 6, "the demo projection is built")
 
     def test_the_unified_view_answers(self):
-        status, body = self.get(
-            "/v1/mesh/view/Contact/018f0000-0000-7000-8000-00000000c001")
+        _, listing = self.get("/v1/objects/Contact")
+        first = listing["ids"][0]
+        status, body = self.get(f"/v1/mesh/view/Contact/{first}")
         self.assertEqual(status, 200)
         self.assertIn("email", body["fields"])
+        self.assertTrue(body["nodes"], "the view names its sources")
 
     def test_an_unknown_route_is_404(self):
         status, _ = self.get("/nope")

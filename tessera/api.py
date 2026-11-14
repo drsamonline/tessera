@@ -464,20 +464,69 @@ def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
     path = os.path.join(tempfile.mkdtemp(prefix="tessera-demo-"), "ledger.jsonl")
     log = EventLog(path)
     mesh = Mesh(tenant_id, log)
-    crm = SimulatedConnector("hubspot", "sales", page_size=10)
+    crm = SimulatedConnector("hubspot", "sales",
+                             objects=("Contact", "Company", "Deal", "Activity"), page_size=10)
     support = SimulatedConnector("zendesk", "support", page_size=10)
-    record = {
-        "id": "018f0000-0000-7000-8000-00000000c001", "tenant_id": tenant_id,
-        "valid_from": "2026-11-01T09:00:00Z", "tx_time": "2026-11-01T09:00:01Z",
-        "consent_state": "granted", "lawful_basis": "consent", "purpose_id": "sales",
-        "retention_policy_id": "rp-24m", "full_name": "Asha Rao",
-        "email": "asha@example.com",
-    }
-    crm.seed("Contact", record)
-    support.seed("Contact", dict(record, email="asha.rao@example.com"))
-    mesh.register(Node("hubspot", crm, "sales", authority={"email": "authority"}, trust=0.8))
+    erp = SimulatedConnector("netsuite", "erp",
+                             objects=("Contact", "Company", "Deal"), page_size=10)
+
+    # One contact with one conflict is a unit test. A demo needs enough records
+    # that the mesh has something to disagree about, and it needs them in the
+    # canonical schema - a Contact has a name, an email, a phone and a company
+    # reference, and nothing else. Stages and amounts live on Deal, which is why
+    # this seeds three objects rather than inventing fields on one.
+    base = {"tenant_id": tenant_id, "valid_from": "2026-11-01T09:00:00Z",
+            "tx_time": "2026-11-01T09:00:01Z", "consent_state": "granted",
+            "lawful_basis": "consent", "purpose_id": "sales",
+            "retention_policy_id": "rp-24m"}
+
+    def uid(prefix, suffix):
+        # 8-4-4-4-12, and the last group must be twelve hex characters: the
+        # validator counts hex now, not dashes (O-04).
+        return f"018f0000-0000-7000-8000-{prefix}000000{suffix.zfill(4)}"
+
+    companies = [("Acme Industrial", "acme.example"), ("Globex", "globex.example"),
+                 ("Initech", "initech.example"), ("Umbrella", "umbrella.example")]
+    for index, (name, domain) in enumerate(companies, start=1):
+        record = dict(base, id=uid("c0", f"{index:04d}"), name=name, domain=domain,
+                      industry="manufacturing")
+        crm.seed("Company", record)
+
+    people = [
+        ("c001", "Asha Rao", "asha@acme.example", "asha.rao@acme.example", "0001"),
+        ("c002", "Ravi Kumar", "ravi@globex.example", "ravi@globex.example", "0002"),
+        ("c003", "Meera Iyer", "meera@initech.example", "m.iyer@initech.example", "0003"),
+        ("c004", "Daniel Okafor", "daniel@umbrella.example", "daniel@umbrella.example", "0004"),
+        ("c005", "Priya Nair", "priya@acme.example", "priya.nair@acme.example", "0001"),
+        ("c006", "Tom Fernandes", "tom@globex.example", "tom@globex.example", "0002"),
+    ]
+    for suffix, name, crm_email, support_email, company in people:
+        record = dict(base, id=uid("c1", suffix[1:]), full_name=name, email=crm_email,
+                      phone="+91 90000 00001", company_ref=f"Company:{uid('c0', company)}")
+        crm.seed("Contact", record)
+        # support sees the same person with a different spelling, and one record
+        # in capitals: a demo where every system agrees teaches nothing
+        support.seed("Contact", dict(record, email=support_email,
+                                     full_name=name.upper() if suffix == "c004" else name))
+
+    deals = [("Acme renewal", 4_500_000, "proposal", "c0000001"),
+             ("Globex expansion", 12_000_000, "negotiation", "c0000002"),
+             ("Initech pilot", 800_000, "scoping", "c0000003"),
+             ("Umbrella services", 3_100_000, "closed_won", "c0000004")]
+    for index, (name, amount, stage, company) in enumerate(deals, start=1):
+        record = dict(base, id=uid("d0", f"{index:04d}"), name=name, amount_minor=amount,
+                      currency="INR", stage=stage,
+                      company_ref=f"Company:{uid('c0', company)}")
+        crm.seed("Deal", record)
+        if index != 3:
+            erp.seed("Deal", dict(record, amount_minor=amount))
+
+    mesh.register(Node("hubspot", crm, "sales", authority={"email": "authority", "stage": "authority"},
+                       trust=0.8))
     mesh.register(Node("zendesk", support, "support", trust=0.6))
-    mesh.sync("Contact")
+    mesh.register(Node("netsuite", erp, "erp", authority={"amount_minor": "authority"}, trust=0.75))
+    for object_name in ("Company", "Contact", "Deal"):
+        mesh.sync(object_name)
 
     tokens = {
         token: Principal("demo", ("admin",), role="admin"),

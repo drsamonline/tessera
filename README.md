@@ -61,6 +61,23 @@ in that mesh, not the product. Adoption is additive: the first result arrives be
 The design constraint that shapes everything else: one founder and a five-thousand-person organisation run the
 same code paths. That bounds the architecture, not the customer list.
 
+## Run it
+
+```bash
+git clone https://github.com/drsamonline/tessera-app ../tessera-app
+python3 -m tessera.demo
+```
+
+```
+  API       http://127.0.0.1:8081   token demo-token
+  Console   http://127.0.0.1:8080
+  Open      http://127.0.0.1:8080/index.html?engine=http://127.0.0.1:8081&token=demo-token
+```
+
+Both halves, free ports, the console's origin added to the CORS allowlist, one link that works. The seed is six
+contacts, four companies and four deals across three systems — enough to show agreement, authority, a case-only
+difference and a record one system has never seen. [What the demo data contains](docs/47-running-it.md).
+
 ## Does it actually conform?
 
 [CONFORMANCE.md](CONFORMANCE.md) is generated, not written: `scripts/conformance_report.py` runs the sixteen-check
@@ -161,6 +178,7 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/46-cors.md](docs/46-cors.md) | The allowlist, and the gap it exposed |
 | [CONFORMANCE.md](CONFORMANCE.md) | Four connectors, sixteen checks, generated |
 | [docs/diagrams/](docs/diagrams/) | Architecture and escalation, as SVG |
+| [docs/47-running-it.md](docs/47-running-it.md) | One command, one link |
 | [**tessera-app**](https://github.com/drsamonline/tessera-app) | The console: this core, in a browser, offline |
 | `tests/` | 721 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |

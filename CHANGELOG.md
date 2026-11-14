@@ -6,6 +6,29 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.34.0] - 2026-11-14
+
+### Added
+
+- **`python3 -m tessera.demo`** — starts the API and the console together, picks free ports, adds the console's origin
+  to the CORS allowlist, and prints one link that works. Five manual steps was how a demonstration got abandoned at
+  step three.
+- **A demo seed worth looking at.** Six contacts, four companies and four deals across three simulated systems, in the
+  canonical schema: agreement, authority, a case-only difference, and a record one system has never seen. The previous
+  seed was one contact with one conflict, which is a unit test.
+- [docs/47-running-it.md](docs/47-running-it.md).
+
+### Fixed
+
+- **The demo seed used fields Contact does not have.** `stage`, `amount_minor` and `owner_seat_id` are on `Deal` and
+  nowhere else; the seed was inventing them. It now creates three objects rather than bending one.
+- **`SimulatedConnector` was constructed without the objects it serves**, so seeding a Deal raised `KeyError`.
+
+### Found by running it
+
+The first `tessera.demo` picked a free console port and then had the engine refuse that origin — the allowlist named
+8080 and the console had landed on 48566. The command now sets the allowlist from the port it actually chose.
+
 ## [1.33.0] - 2026-11-14
 
 ### Added
