@@ -6,6 +6,23 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.31.0] - 2026-11-14
+
+### Fixed
+
+The five findings the review left open. Each one is a behaviour, not a style, and each has a test:
+
+- **O-03** a connector failure surfaced as `500`; `ConnectorError` now maps to `502 connector_failure`.
+- **O-04** the uuid check accepted `"------------------------------------"` because it counted dashes instead of hex.
+  It is 8-4-4-4-12 now, and a `Z` inside a group is refused.
+- **O-08** `field_priority` returned `recent[0]` — whichever candidate the caller happened to pass first. Sorted by
+  node id, so the rule is a total order across callers and across a re-run.
+- **O-09** no rate limit on auth attempts. Ten failures in sixty seconds from one client, then `429`. An API that
+  answers a wrong token as fast as a right one is an oracle.
+- **O-10** the structural validator ignored `{placeholders}` in paths; every one must be a declared path parameter.
+
+**13 findings, 13 closed.** The review register is empty. 721 tests.
+
 ## [1.30.0] - 2026-11-14
 
 ### Added

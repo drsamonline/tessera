@@ -290,6 +290,17 @@ def validate(document: dict) -> list[str]:
         methods = [m for m in item if m in ("get", "post", "put", "patch", "delete")]
         if not methods:
             problems.append(f"path {path!r} has no operation")
+        # every {placeholder} in a path must be declared as a path parameter, or
+        # a client cannot know what to put there. (O-10)
+        declared = {param.get("name") for param in (item.get("parameters") or [])
+                    if param.get("in") == "path"}
+        for method in methods:
+            for param in item[method].get("parameters") or []:
+                if param.get("in") == "path":
+                    declared.add(param.get("name"))
+        for placeholder in re.findall(r"\{([^}]+)\}", path):
+            if placeholder not in declared:
+                problems.append(f"path {path!r}: {{{placeholder}}} has no path parameter")
         for method in methods:
             op = item[method]
             where = f"{method.upper()} {path}"

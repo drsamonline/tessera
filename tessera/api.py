@@ -25,6 +25,7 @@ import re
 from dataclasses import dataclass, field
 
 from . import access, canonical
+from .connector import ConnectorError
 
 SCOPES = ("read", "write", "workforce", "audit", "admin")
 
@@ -76,6 +77,24 @@ class Api:
     # lets any page in the browser read a tenant's data.
     allowed_origins = DEFAULT_ALLOWED_ORIGINS
 
+    # A token is a password. Ten wrong attempts in a minute from one client is
+    # not a user with a typo, and an API that answers them as fast as it answers
+    # a correct one is an oracle. (O-09)
+    AUTH_FAILURE_LIMIT = 10
+    AUTH_FAILURE_WINDOW_SECONDS = 60
+
+    def _auth_refused(self, client: str) -> bool:
+        import time as _time
+        now = _time.monotonic()
+        recent = [t for t in self._auth_failures.get(client, [])
+                  if now - t < self.AUTH_FAILURE_WINDOW_SECONDS]
+        self._auth_failures[client] = recent
+        return len(recent) >= self.AUTH_FAILURE_LIMIT
+
+    def _auth_failed(self, client: str) -> None:
+        import time as _time
+        self._auth_failures.setdefault(client, []).append(_time.monotonic())
+
     def __init__(self, tenant_id: str, tokens: dict[str, Principal], log=None,
                  mesh=None, projection=None, workforce=None, policy=None):
         self.tenant_id = tenant_id
@@ -86,6 +105,7 @@ class Api:
         self.projection = projection
         self.workforce = workforce
         self.routes = self._routes()
+        self._auth_failures: dict[str, list[float]] = {}
 
     # -- routing ----------------------------------------------------------
     def _routes(self):
@@ -136,10 +156,16 @@ class Api:
         return Response(404, {"error": "not_found", "path": request.path})
 
     def _authenticate(self, request: Request, scope: str):
+        client = (request.headers.get("X-Forwarded-For")
+                  or request.headers.get("X-Real-IP") or "local")
+        if self._auth_refused(client):
+            return None, Response(429, {"error": "too_many_attempts",
+                                        "retry_after": self.AUTH_FAILURE_WINDOW_SECONDS})
         header = request.headers.get("Authorization") or request.headers.get("authorization") or ""
         token = header[7:] if header.lower().startswith("bearer ") else ""
         principal = self._principal_for(token)
         if principal is None:
+            self._auth_failed(client)
             return None, Response(401, {"error": "unauthenticated"})
         if not principal.can(scope):
             return principal, Response(403, {"error": "forbidden", "scope": scope})
@@ -282,6 +308,11 @@ class Api:
             return Response(404, {"error": "not_found"})
         except ValueError as exc:
             return Response(422, {"error": "invalid_record", "detail": str(exc)})
+        except ConnectorError as exc:
+            # the failure is upstream, not ours: 502 tells a caller to retry or
+            # fall back, 500 tells them we are broken. (O-03)
+            return Response(502, {"error": "connector_failure",
+                                  "detail": type(exc).__name__})
         return Response(200, dict(result, principal=principal.id))
 
     def _assign(self, request: Request, **_) -> Response:

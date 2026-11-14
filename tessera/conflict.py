@@ -122,8 +122,13 @@ def resolve(
         return record
 
     # 4. field priority
+    # `recent[0]` was whatever the caller happened to pass first, which is a
+    # total order only by accident. Sort by node id so the rule is deterministic
+    # across callers and across a re-run. (O-08)
     if field_priority and field in field_priority:
-        record.update(rule="field_priority", winner=recent[0].node_id, value=recent[0].value)
+        ordered = sorted(recent, key=lambda c: c.node_id)
+        record.update(rule="field_priority", winner=ordered[0].node_id,
+                      value=ordered[0].value)
         return record
 
     # 5. human review - the field blocks, the record does not

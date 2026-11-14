@@ -15,6 +15,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import time
 from datetime import datetime, timezone
 
@@ -60,6 +61,9 @@ def uuid7_timestamp(value: str) -> int:
 # ---------------------------------------------------------------------------
 # Schema
 # ---------------------------------------------------------------------------
+_UUID_RE = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-"
+                      r"[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
+
 # Field kinds: "str", "int", "num", "bool", "uuid", "time" (ISO-8601 str),
 # "ref" (a canonical reference, "<Object>:<uuid>"), "list", "dict".
 # "req" marks a required field; everything else is optional.
@@ -177,7 +181,10 @@ _KIND_CHECKS = {
     "int": lambda v: isinstance(v, int) and not isinstance(v, bool),
     "num": lambda v: isinstance(v, (int, float)) and not isinstance(v, bool),
     "bool": lambda v: isinstance(v, bool),
-    "uuid": lambda v: isinstance(v, str) and len(v) == 36 and v.count("-") == 4,
+    # Shape only, but the right shape: 8-4-4-4-12 hex. The old check accepted
+    # "------------------------------------" because it counted dashes instead of
+    # hex digits. (O-04)
+    "uuid": lambda v: bool(_UUID_RE.match(v)) if isinstance(v, str) else False,
     "time": lambda v: isinstance(v, str) and ("T" in v or v.endswith("Z")),
     "ref": lambda v: isinstance(v, str) and ":" in v,
     "list": lambda v: isinstance(v, list),

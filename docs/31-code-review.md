@@ -59,6 +59,18 @@ than hiding it: `test_tampering_before_the_anchor_is_not_caught_and_that_is_the_
 must come from somewhere the database owner does not control - the external anchor in
 [11-history-authority.md](11-history-authority.md) - and why a full verify is still the weekly job.
 
+## All five minors closed
+
+| # | What was wrong | Fix | Test |
+|---|---|---|---|
+| O-03 | A connector failure surfaced as `500` | `ConnectorError` maps to `502 connector_failure` | `test_a_failing_connector_is_a_bad_gateway` |
+| O-04 | The uuid check accepted `"------------------------------------"` — it counted dashes | 8-4-4-4-12 hex, and a `Z` in a group is refused | `test_thirty_six_dashes_is_not_a_uuid` |
+| O-08 | `field_priority` returned `recent[0]`, which was whichever candidate the caller passed first | Sorted by node id, so the rule is a total order | `test_the_same_set_in_a_different_order_resolves_the_same_way` |
+| O-09 | No rate limit on auth attempts — an API that answers as fast as it answers correctly is an oracle | 10 failures in 60s per client, then `429` | `test_ten_wrong_tokens_then_429` |
+| O-10 | The structural validator ignored `{placeholders}` in paths | Every placeholder must be a declared path parameter | `test_a_placeholder_without_a_parameter_is_reported` |
+
+**13 findings, 13 closed.** The review register is empty.
+
 ## Verdict
 
 **Code gate: pass. Product gate: blocked on scope, not on quality.** All five unblock conditions from this
