@@ -48,7 +48,8 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 28 | [Access control](28-access-control.md) | 1 | Object, field and row rules, enforced at one gate |
 | 29 | [Compliance](29-compliance.md) | 1 | Consent, DSAR, retention, audit export, and R-07 |
 | 30 | [Local-first sync](30-local-first-sync.md) | 1 | One protocol, offline writes, guaranteed convergence |
-| 31 | [Code review](31-code-review.md) | all | 13 findings, 6 fixed, and the ship-or-block verdict |
+| 31 | [Code review](31-code-review.md) | all | 13 findings, 11 fixed, and the ship-or-block verdict |
+| 32 | [Automation](32-automation.md) | 2 | Triggers, a condition language that is not Python, and the approval gate |
 
 ## Audit
 

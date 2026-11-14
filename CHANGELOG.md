@@ -6,6 +6,29 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.15.0] - 2026-11-14
+
+### Added
+
+- `tessera/automation.py` - deliverable 6. Five triggers, a condition language with a tokenizer and a
+  recursive-descent parser, eleven actions, and the approval gate.
+- [docs/32-automation.md](docs/32-automation.md).
+- 40 more tests (453 total).
+
+### The gate
+
+A `Proposal` cannot be registered with the engine at all: `Engine.register` refuses anything that is not a
+compiled `Workflow`, so an AI-authored playbook has no path to execution that does not pass through a named human
+approval. An author may not approve its own proposal, and a condition that does not parse fails at compile time
+rather than at 3am.
+
+### The condition language is not Python
+
+A condition is data written by a customer or by a model on their behalf. It is tokenized and parsed against a
+fixed grammar - no `eval`, no call syntax, no statement syntax, dunder identifiers refused, depth bounded at 24.
+A missing field raises rather than evaluating false, because a condition that silently passes on a misspelled
+field name is a workflow that quietly stopped working.
+
 ## [1.14.0] - 2026-11-14
 
 ### Fixed

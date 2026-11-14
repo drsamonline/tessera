@@ -32,6 +32,7 @@ without ambiguity.
 | `tessera/access.py` | 200 | Object, field and row rules; the one gate every read path calls | [28-access-control.md](28-access-control.md) |
 | `tessera/compliance.py` | 400 | Consent, DSAR, retention, signed audit export, erasure | [29-compliance.md](29-compliance.md) |
 | `tessera/sync.py` | 230 | Local-first replica, outbox, cursor, field-level LWW, convergence | [30-local-first-sync.md](30-local-first-sync.md) |
+| `tessera/automation.py` | 380 | Triggers, a parsed condition language, eleven actions, the proposal gate | [32-automation.md](32-automation.md) |
 | `tessera/api.py` | 380 | The HTTP surface: routing, bearer auth, scopes, redaction, audit | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/openapi.py` | 400 | The generated OpenAPI 3.1 document and its two validators | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/mcp.py` | 280 | Ten tools, each with a schema, a scope and an audit action | [27-api-and-contracts.md](27-api-and-contracts.md) |

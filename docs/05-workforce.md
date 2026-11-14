@@ -90,3 +90,6 @@ Agents cannot approve their own proposals, touch consent, or modify pipeline set
 `assign_to_seat` is the only bridge to the workforce layer, and the workflow engine never knows an occupant's
 type. AI-authored playbooks are proposals; a human approves them; they compile to a deterministic workflow with
 no AI call on the execution path.
+
+Implemented: [32-automation.md](32-automation.md). The condition language is parsed, never `eval`ed, and a
+proposal cannot be registered with the engine at all.
