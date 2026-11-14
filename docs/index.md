@@ -60,6 +60,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 40 | [Design system](40-design-system.md) | 6 | Tokens, measured contrast, density, 83 icons, the WCAG matrix |
 | 41 | [Offline mobile](41-offline-mobile.md) | 6 | Key custody, a durable outbox, seven days of absence |
 | 42 | [Property tests](42-property-tests.md) | all | Four invariants, a replayable seed, and R-17 |
+| 43 | [Releasing](43-release.md) | all | The tag, the gate and the generated note |
 
 ## Audit
 

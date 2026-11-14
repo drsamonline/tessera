@@ -6,6 +6,21 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.26.0] - 2026-11-14
+
+### Added
+
+- `scripts/release_notes.py` - the release body generated from the tree: a preamble that says what this is and what
+  it is not, the gate table, a stats block counted rather than typed, and the newest changelog section.
+- [docs/43-release.md](docs/43-release.md) - the process, and what a release note must not do.
+- The first tagged release, `v1.25.0`. It is the first *tagged* one, not the first version: the changelog runs from
+  1.10 because each of those was a real change.
+
+### Note
+
+A hand-written note drifts from the tree within two releases. A generated one can only drift if the generator does,
+and the generator reads the tree.
+
 ## [1.25.0] - 2026-11-14
 
 ### Added

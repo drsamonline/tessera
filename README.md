@@ -136,6 +136,7 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/40-design-system.md](docs/40-design-system.md) | Tokens, measured contrast, 83 icons, the WCAG matrix |
 | [docs/41-offline-mobile.md](docs/41-offline-mobile.md) | Key custody, a durable outbox, seven days of absence |
 | [docs/42-property-tests.md](docs/42-property-tests.md) | Four invariants, a replayable seed, and R-17 |
+| [docs/43-release.md](docs/43-release.md) | The tag, the gate and the generated note |
 | `tests/` | 692 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
 
