@@ -40,6 +40,7 @@ without ambiguity.
 | `tessera/jargon.py` | 110 | The lint that blocks a release on an internal term | [35-jargon-and-plugins.md](35-jargon-and-plugins.md) |
 | `tessera/plugins.py` | 210 | Allowlist, pinned hash, signature, static scan, permissions | [35-jargon-and-plugins.md](35-jargon-and-plugins.md) |
 | `tessera/migrate.py` | 300 | Auto-mapping, transform, rollback, shortcut translator, template gallery | [36-migration.md](36-migration.md) |
+| `tessera/learning.py` | 250 | Bootcamps, academy, coach, glossary, drip, persona changelog | [37-learning.md](37-learning.md) |
 | `tessera/api.py` | 380 | The HTTP surface: routing, bearer auth, scopes, redaction, audit | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/openapi.py` | 400 | The generated OpenAPI 3.1 document and its two validators | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/mcp.py` | 280 | Ten tools, each with a schema, a scope and an audit action | [27-api-and-contracts.md](27-api-and-contracts.md) |

@@ -6,6 +6,22 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.20.0] - 2026-11-14
+
+### Added
+
+- `tessera/learning.py` - deliverable 14 and the structure of 19. Four role bootcamps that each end at the
+  activation event, five academy videos and a sandbox all linked from the coach, a thirteen-term glossary, the
+  day 0/3/7/30 drip, and a persona changelog.
+- [docs/37-learning.md](docs/37-learning.md).
+- 23 more tests (597 total).
+
+### Fixed
+
+- The message catalogue carried ten of the thirteen interface vocabulary terms. `Activity`, `Unified data model`,
+  `Workflow chain` and `History` had no `term.*` key, so the product could not say four of the words it uses. The
+  glossary cross-check caught it; all four now exist in five locales and the jargon lint stayed clean.
+
 ## [1.19.0] - 2026-11-14
 
 ### Added

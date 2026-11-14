@@ -127,6 +127,17 @@ CATALOGUE: dict[str, dict[str, str]] = {
                                  "fr": "Sante de la relation",
                                  "de": "Beziehungszustand",
                                  "pt": "Saude do relacionamento"},
+    "term.activity": {"en": "Activity", "es": "Actividad", "fr": "Activite",
+                      "de": "Aktivitaet", "pt": "Atividade"},
+    "term.data_model": {"en": "Unified data model", "es": "Modelo de datos unificado",
+                        "fr": "Modele de donnees unifie",
+                        "de": "Einheitliches Datenmodell",
+                        "pt": "Modelo de dados unificado"},
+    "term.workflow_chain": {"en": "Workflow chain", "es": "Cadena de flujo",
+                            "fr": "Chaine de flux", "de": "Workflow-Kette",
+                            "pt": "Cadeia de fluxo"},
+    "term.history": {"en": "History", "es": "Historial", "fr": "Historique",
+                     "de": "Verlauf", "pt": "Historico"},
     "term.calculated": {"en": "How this was calculated",
                         "es": "Como se calculo", "fr": "Comment ceci a ete calcule",
                         "de": "Wie dies berechnet wurde",
@@ -145,7 +156,8 @@ BUDGETS = {
     "term.connected_system": 30, "term.workspace": 28, "term.position": 22,
     "term.member": 20, "term.context_brief": 30, "term.handoff_rules": 28,
     "term.trust_level": 26, "term.training_mode": 26, "term.relationship_health": 34,
-    "term.calculated": 34,
+    "term.calculated": 34, "term.activity": 22, "term.data_model": 34,
+    "term.workflow_chain": 30, "term.history": 22,
 }
 
 

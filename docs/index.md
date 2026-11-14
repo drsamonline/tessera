@@ -54,6 +54,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 34 | [Localisation](34-localisation.md) | 6 | Five locales, RTL mechanism, historical rates, timezones |
 | 35 | [Jargon lint and plugins](35-jargon-and-plugins.md) | 6 | A lint that blocks release, and four gates on a plugin |
 | 36 | [Migration wizard](36-migration.md) | 6 | Auto-mapping, transform, rollback, shortcuts, templates |
+| 37 | [Learning and onboarding](37-learning.md) | 7 | Bootcamps, academy, coach, glossary, drip |
 
 ## Audit
 
