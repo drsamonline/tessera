@@ -29,7 +29,8 @@ without ambiguity.
 | `tessera/checkpoint.py` | 170 | Chained snapshots, diff, revert by compensation | [11-history-authority.md](11-history-authority.md) |
 | `tessera/mirror.py` | 160 | Markdown projection, manifest of hashes, lag as a count | [25-deterministic-features.md](25-deterministic-features.md) |
 | `tessera/workforce.py` | 480 | Seats, occupants, tasks, signed handoff, escalation, revocation | [05-workforce.md](05-workforce.md) |
-| `tessera/api.py` | 320 | The HTTP surface: routing, bearer auth, scopes, audit emission | [27-api-and-contracts.md](27-api-and-contracts.md) |
+| `tessera/access.py` | 200 | Object, field and row rules; the one gate every read path calls | [28-access-control.md](28-access-control.md) |
+| `tessera/api.py` | 380 | The HTTP surface: routing, bearer auth, scopes, redaction, audit | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/openapi.py` | 400 | The generated OpenAPI 3.1 document and its two validators | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/mcp.py` | 280 | Ten tools, each with a schema, a scope and an audit action | [27-api-and-contracts.md](27-api-and-contracts.md) |
 | `tessera/cli.py` | 700 | Five demonstrations that exercise all of the above end to end | &mdash; |
@@ -72,8 +73,8 @@ identically. They now do. Specifically:
 - No push subscription, no backpressure accounting, no interface for a blocked field.
 - No database. The ledger is a JSON Lines file; Postgres with row-level security is the production target and
   is not implemented.
-- No access control. Field-level, row-level and object-level enforcement are specified and absent, which means
-  **nothing in this repository is safe to run against real customer data**.
+- No database-level access control. Object, field and row rules are enforced in Python on every read path
+  ([28-access-control.md](28-access-control.md)); Postgres RLS is specified and absent.
 
 ## Three defects found by implementing the specification
 

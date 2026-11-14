@@ -18,7 +18,10 @@ Every control names its enforcement point and carries one test. A control withou
 | MFA | Second factor required before any session token is issued | Token request without a factor is refused |
 | Agent passport | Signed, expiring credential checked on every agent action | An expired passport cannot act |
 | Break-glass | Named role, time-boxed, every use written to the ledger | Expiry revokes access without operator action |
-| Field-level security | Query execution, not controller | Denied field absent from API, export and MCP output |
+| Field-level security | One gate on every read path | Denied field absent from API, export, MCP, history, as-of and the unified view |
+| Row-level security | The same gate | An owner-scoped role sees only its own records, and gets 404 rather than 403 |
+
+Implemented: [28-access-control.md](28-access-control.md).
 
 ## Observability and operations
 

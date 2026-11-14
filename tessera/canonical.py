@@ -73,6 +73,8 @@ _ENVELOPE = {
     "lawful_basis": ("str", True),
     "purpose_id": ("str", True),
     "retention_policy_id": ("str", True),
+    # any record can be owned by a seat; row-level access control depends on it
+    "owner_seat_id": ("uuid", False),
 }
 
 CONSENT_STATES = ("granted", "withdrawn", "pending", "not_required")
@@ -86,7 +88,6 @@ SCHEMA: dict[str, dict[str, tuple[str, bool]]] = {
         "email": ("str", False),
         "phone": ("str", False),
         "company_ref": ("ref", False),
-        "owner_seat_id": ("uuid", False),
     },
     "Company": {
         **_ENVELOPE,

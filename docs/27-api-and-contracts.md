@@ -29,6 +29,7 @@ copy of the data with weaker access control.
 | GET | `/v1/objects/{object}/{id}/history` | read |
 | GET | `/v1/objects/{object}/{id}/as-of?at=` | read |
 | GET | `/v1/mesh/view/{object}/{id}` | read |
+| GET | `/v1/objects/{object}/export` | read |
 | POST | `/v1/objects/{object}/{id}/fields/{field}` | write |
 | POST | `/v1/tasks` | workforce |
 | POST | `/v1/tasks/{id}/escalate` | workforce |
@@ -112,5 +113,5 @@ internet with a bearer token in a shell history.
 |---|---|
 | OpenAPI validates against 3.1 | Met - structurally always, fully when the validator is installed |
 | All 10 MCP tools carry schema, auth scope and audit emission | Met |
-| Every MCP tool passes the FLS and RLS tests from deliverable 9 | **Not met** - there is no field-level or row-level access control to pass |
+| Every MCP tool passes the FLS and RLS tests from deliverable 9 | **Met** - the tools dispatch through the same gate as every other read path: [28-access-control.md](28-access-control.md) |
 | An MCP server a client can connect to | **Not met** - in-process dispatch only |

@@ -6,6 +6,30 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.9.0] - 2026-11-14
+
+### Added
+
+- `tessera/access.py` - object, field and row rules, enforced at one gate that every read path calls: the API,
+  the export, the history, the point-in-time view, the unified view and every MCP tool.
+- An export route, redacted by the same gate. An export that forgets the policy is the classic leak: the screen
+  hides a column and the CSV does not.
+- [docs/28-access-control.md](docs/28-access-control.md).
+- 20 more tests (320 total), six of them asserting a denied field is absent from six different surfaces.
+
+### Changed
+
+- `owner_seat_id` moved from `Contact` into the shared canonical envelope. Row-level access control needs it on
+  every object, and a rule that only works for contacts is not a rule.
+- A principal with no declared role is an auditor: reads every row, edits nothing. A default of `admin` would be
+  convenient and wrong.
+- A rep reading a record it does not own gets 404, not 403. A 403 confirms the record exists.
+
+### Note
+
+Deliverable 18 is now fully met: the MCP tools pass the field and row access tests because they dispatch through
+the same gate as everything else.
+
 ## [1.8.0] - 2026-11-14
 
 ### Added

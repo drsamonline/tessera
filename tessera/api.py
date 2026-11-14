@@ -23,15 +23,24 @@ import json
 import re
 from dataclasses import dataclass, field
 
-from . import canonical
+from . import access, canonical
 
 SCOPES = ("read", "write", "workforce", "audit", "admin")
 
 
 @dataclass
 class Principal:
+    """A caller. `scopes` gate the route; `role` gates the data.
+
+    Both are needed and they answer different questions. A scope says "may this
+    caller reach the endpoint"; a role says "may this caller see this field of
+    this record". Collapsing them is how a read scope ends up granting access to
+    every column in the tenant.
+    """
     id: str
     scopes: tuple[str, ...] = ("read",)
+    role: str = "auditor"
+    seat_id: str | None = None
 
     def can(self, scope: str) -> bool:
         return "admin" in self.scopes or scope in self.scopes
@@ -56,8 +65,9 @@ class Api:
     """Route table plus auth plus audit. One object, no framework."""
 
     def __init__(self, tenant_id: str, tokens: dict[str, Principal], log=None,
-                 mesh=None, projection=None, workforce=None):
+                 mesh=None, projection=None, workforce=None, policy=None):
         self.tenant_id = tenant_id
+        self.policy = policy or access.DEFAULT_POLICY
         self.tokens = tokens
         self.log = log
         self.mesh = mesh
@@ -70,6 +80,7 @@ class Api:
         return [
             ("GET", r"^/health$", None, self._health),
             ("GET", r"^/v1/objects/(?P<object>[A-Za-z]+)$", "read", self._list),
+            ("GET", r"^/v1/objects/(?P<object>[A-Za-z]+)/export$", "read", self._export),
             ("GET", r"^/v1/objects/(?P<object>[A-Za-z]+)/(?P<id>[0-9a-f\-]{36})$",
              "read", self._get),
             ("GET", r"^/v1/objects/(?P<object>[A-Za-z]+)/(?P<id>[0-9a-f\-]{36})/history$",
@@ -146,23 +157,56 @@ class Api:
     def _list(self, request: Request, object: str) -> Response:
         if object not in canonical.SCHEMA:
             return Response(404, {"error": "unknown_object", "object": object})
-        return Response(200, {"object": object, "ids": sorted(self._store().get(object, {}))})
+        principal = request.query["_principal"]
+        if not self.policy.can_touch_object(principal, object):
+            return Response(403, {"error": "forbidden_object", "object": object})
+        visible = self.policy.filter_rows(principal, object, self._store().get(object, {}))
+        return Response(200, {"object": object, "ids": sorted(visible)})
+
+    def _export(self, request: Request, object: str) -> Response:
+        """The export path, redacted by the same gate as the read path.
+
+        An export that forgets the policy is the classic leak: the screen hides a
+        column and the CSV does not.
+        """
+        if object not in canonical.SCHEMA:
+            return Response(404, {"error": "unknown_object", "object": object})
+        principal = request.query["_principal"]
+        if not self.policy.can_touch_object(principal, object):
+            return Response(403, {"error": "forbidden_object", "object": object})
+        visible = self.policy.filter_rows(principal, object, self._store().get(object, {}))
+        return Response(200, {"object": object, "count": len(visible),
+                              "records": [visible[key] for key in sorted(visible)]})
 
     def _get(self, request: Request, object: str, id: str) -> Response:
+        principal = request.query["_principal"]
         record = self._store().get(object, {}).get(id)
         if record is None:
             return Response(404, {"error": "not_found"})
-        return Response(200, {"object": object, "id": id, "record": record})
+        try:
+            visible = self.policy.redact_or_deny(principal, object, record)
+        except access.AccessDenied:
+            return Response(404, {"error": "not_found"})
+        return Response(200, {"object": object, "id": id, "record": visible})
 
     def _history(self, request: Request, object: str, id: str) -> Response:
         if not self.log:
             return Response(503, {"error": "no_ledger"})
+        principal = request.query["_principal"]
+        denied = self.policy.denied_fields(principal, object)
         ref = canonical.make_ref(object, id)
         rows = self.log.history(self.tenant_id, ref)
-        return Response(200, {"object": object, "id": id, "events": [
-            {"sequence": r["sequence"], "timestamp": r["timestamp"], "actor": r["actor"],
-             "action": r["action"], "hash": r["hash"]} for r in rows
-        ]})
+        events = []
+        for r in rows:
+            payload = r.get("payload") or {}
+            # history carries records too; a denied field must not leak through it
+            if isinstance(payload.get("record"), dict):
+                payload = dict(payload, record={
+                    k: v for k, v in payload["record"].items() if k not in denied})
+            events.append({"sequence": r["sequence"], "timestamp": r["timestamp"],
+                           "actor": r["actor"], "action": r["action"],
+                           "hash": r["hash"], "payload": payload})
+        return Response(200, {"object": object, "id": id, "events": events})
 
     def _as_of(self, request: Request, object: str, id: str) -> Response:
         at = request.query.get("at")
@@ -170,8 +214,10 @@ class Api:
             return Response(400, {"error": "missing_parameter", "parameter": "at"})
         if self.projection is None:
             return Response(503, {"error": "no_projection"})
+        principal = request.query["_principal"]
+        record = self.projection.as_of(object, id, at)
         return Response(200, {"object": object, "id": id, "at": at,
-                              "record": self.projection.as_of(object, id, at)})
+                              "record": self.policy.redact(principal, object, record)})
 
     def _unified(self, request: Request, object: str, id: str) -> Response:
         if self.mesh is None:
@@ -180,6 +226,14 @@ class Api:
             view = self.mesh.unified_view(object, id)
         except KeyError:
             return Response(404, {"error": "not_found"})
+        principal = request.query["_principal"]
+        hidden = {name for name in view["fields"]
+                  if not self.policy.can_read_field(principal, object, name)}
+        if hidden:
+            view = dict(view)
+            view["fields"] = {k: v for k, v in view["fields"].items() if k not in hidden}
+            view["conflicts"] = [c for c in view.get("conflicts", [])
+                                 if c.get("field") not in hidden]
         return Response(200, view)
 
     def _write_field(self, request: Request, object: str, id: str, field_name: str) -> Response:
@@ -189,6 +243,8 @@ class Api:
         if "value" not in body:
             return Response(400, {"error": "missing_field", "field": "value"})
         principal = request.query["_principal"]
+        if not self.policy.can_edit_field(principal, object, field_name):
+            return Response(403, {"error": "forbidden_field", "field": field_name})
         try:
             result = self.mesh.write_field(object, id, field_name, body["value"],
                                            actor="human")

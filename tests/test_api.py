@@ -56,7 +56,7 @@ class Case(unittest.TestCase):
 
         self.tokens = {
             "reader": Principal("reader", ("read",)),
-            "writer": Principal("writer", ("read", "write")),
+            "writer": Principal("writer", ("read", "write"), role="manager"),
             "worker": Principal("worker", ("read", "workforce")),
             "auditor": Principal("auditor", ("audit",)),
             "root": Principal("root", ("admin",)),

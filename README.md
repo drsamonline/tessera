@@ -9,7 +9,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <p>
 <a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
 <img alt="Status: specification + reference core" src="https://img.shields.io/badge/status-spec%20%2B%20reference%20core-1F3552">
-<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-300%20passing-2e7d32">
+<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-320%20passing-2e7d32">
 <img alt="Version 1.1" src="https://img.shields.io/badge/version-1.1-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
 <img alt="License: PolyForm Noncommercial 1.0.0" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2e7d32">
@@ -42,7 +42,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 > What does run: `tessera/`, a dependency-free reference implementation of the canonical schema, the ledger,
 > the metrics, routing, conflict resolution, the connector contract, the conformance suite, four connectors and
 > a working mesh, projections that rebuild from the ledger, the workforce layer, and an HTTP surface with an OpenAPI 3.1
-> contract and ten MCP tools. 300 tests, standard library only, no network.
+> contract, ten MCP tools and three-layer access control. 320 tests, standard library only, no network.
 > [What it does and does not do](docs/20-reference-core.md).
 
 ---
@@ -120,7 +120,8 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/24-history-projections.md](docs/24-history-projections.md) | Bi-temporal views, checkpoints, the mirror |
 | [docs/26-workforce.md](docs/26-workforce.md) | Seats, signed handoff, escalation, revocation |
 | [docs/27-api-and-contracts.md](docs/27-api-and-contracts.md) | The HTTP surface, OpenAPI 3.1, the 10 MCP tools |
-| `tests/` | 300 tests, standard library `unittest`, no dependencies |
+| [docs/28-access-control.md](docs/28-access-control.md) | Object, field and row rules at one gate |
+| `tests/` | 320 tests, standard library `unittest`, no dependencies |
 | [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
 
 ## Run it
@@ -132,7 +133,7 @@ python3 -m tessera.cli workforce             # seats, a signed handoff, revocati
 python3 -m tessera.cli schema                # print and check both contracts
 python3 -m tessera.cli timeline              # what we knew vs what was true, then revert and mirror
 python3 -m tessera.bench --gate              # measure, and fail on a regression
-python3 -m unittest discover -s tests -t .   # 300 tests
+python3 -m unittest discover -s tests -t .   # 320 tests
 ```
 
 `demo` appends two writes from two systems, asks what each system knew at two different times, resolves the

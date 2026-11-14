@@ -39,6 +39,14 @@ OPERATIONS = [
         "responses": {200: "ObjectList", 404: "Error"},
     },
     {
+        "method": "get", "path": "/v1/objects/{object}/export", "operation_id": "exportObjects",
+        "pattern": r"^/v1/objects/(?P<object>[A-Za-z]+)/export$", "scope": "read",
+        "summary": "Every visible record of one object type, redacted by the same gate as a read.",
+        "parameters": [{"name": "object", "in": "path", "required": True,
+                        "schema": {"type": "string"}}],
+        "responses": {200: "ObjectList", 403: "Error"},
+    },
+    {
         "method": "get", "path": "/v1/objects/{object}/{id}", "operation_id": "getRecord",
         "pattern": r"^/v1/objects/(?P<object>[A-Za-z]+)/(?P<id>[0-9a-f\-]{36})$",
         "scope": "read",
