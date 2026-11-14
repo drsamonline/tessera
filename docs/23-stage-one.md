@@ -82,6 +82,10 @@ that makes the ledger three times slower is caught before it ships. The threshol
 `check_against_targets()` treats a missing or empty histogram as `unmeasured`, never as passing. A gate that
 treats absence as success is not a gate.
 
+The `ledger.append` threshold moved from 5 ms to 15 ms when durability became the default (R-12): the measurement
+now includes an fsync. It is still an order of magnitude inside the 120 ms server-side target in
+[04-core.md](04-core.md), and the number moved because the behaviour moved - not because the gate was inconvenient.
+
 ### Why it is not in CI yet
 
 The gate runs locally. On a shared CI runner the numbers move by an order of magnitude between machines, and a

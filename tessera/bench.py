@@ -31,8 +31,14 @@ TENANT = "018f0000-0000-7000-8000-000000000001"
 
 # Regression thresholds at reference scale, in milliseconds. Not the load-model
 # targets; a smaller number than docs/04 because the scale is a thousandth of it.
+#
+# `ledger.append` includes an fsync, because durability is on by default (R-12).
+# The threshold was 5 ms while durability was opt-in; it moved when the behaviour
+# moved, deliberately, and it is still an order of magnitude inside the 120 ms
+# server-side target in docs/04. A threshold that stays put while the code changes
+# underneath it is a threshold nobody is reading.
 REGRESSION_TARGETS = {
-    "ledger.append": {"p95": 5.0},
+    "ledger.append": {"p95": 15.0},
     "canonical.validate": {"p95": 1.0},
     "routing.score": {"p95": 1.0},
     "mesh.unified_view": {"p95": 20.0},
