@@ -6,6 +6,32 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.41.0] - 2026-11-15
+
+### Added
+
+- **[docs/51-controls.md](docs/51-controls.md)** — six IT general controls, each mapped to the code that implements it,
+  the test that evidences it, and the gap where neither exists. Method is the one used for ICFR testing: control
+  objective, design versus operating effectiveness, evidence that stands alone, deficiency classification.
+
+### The classification, which is the point of the document
+
+| Finding | Classified as | Why |
+|---|---|---|
+| Anchoring is not scheduled | Deficiency | The anchor code exists and is never taken |
+| No route-completeness test | Deficiency | The control works; the test of it has a hole |
+| Erasure is not cryptographic | **Significant deficiency** for a DPDP deployment | An erasure request cannot be fully honoured |
+| No crash test | Deficiency | Operating effectiveness is asserted, not evidenced |
+| RLS never executed | **Significant deficiency** in a per-tenant deployment | Isolation rests on SQL that has never run |
+
+Aggregated, the last two bear on the same objective and fail in the same direction: the code is written, the execution
+is not. That is the finding.
+
+### What it says it is not
+
+Not an opinion on materiality, not an attestation, and not complete — change management, vendor management, backup and
+physical security are absent because none of them exists yet.
+
 ## [1.40.0] - 2026-11-15
 
 ### Fixed
