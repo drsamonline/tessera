@@ -1,5 +1,8 @@
 # Security Policy
 
+Version: 1.1 — 15 November 2026. Added the tenancy and deletion surfaces, and the known limits of a reference
+implementation.
+
 > **Status:** Active (process statement only)
 > **Last verified:** 2026-11-14
 

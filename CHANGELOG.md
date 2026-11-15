@@ -6,6 +6,19 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.39.0] - 2026-11-15
+
+### Fixed
+
+- **`PRIVACY.md` described a repository that no longer exists.** Version 1.0 said "this repository is documentation,
+  it runs nowhere, collects nothing and has no users, and no code here makes a network request". That stopped being
+  true when `python3 -m tessera.api` and `python3 -m tessera.demo` landed. Version 1.1 states what the code actually
+  does: binds `127.0.0.1`, processes only what you give it, contacts nothing.
+- **The breach-notification citation was unverified.** 1.0 cited "DPDP Rules 2025 rule 7"; the reference used while
+  drafting says rule 6. Neither is asserted now — the section 8(6) obligation is stated, the rule number is flagged
+  for a lawyer.
+- `SECURITY.md` gained the tenancy and deletion surfaces and the known limits of a reference implementation.
+
 ## [1.38.0] - 2026-11-15
 
 ### Added
