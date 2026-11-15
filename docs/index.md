@@ -1,9 +1,37 @@
 # Documentation index
 
-> The published landing page is at <https://drsamonline.github.io/tessera/>. It links back into these
-> documents on GitHub, because GitHub Pages serves this folder without a markdown renderer.
+> The published landing page is at <https://drsamonline.github.io/tessera/>. It links back into these documents on
+> GitHub, because GitHub Pages serves this folder without a markdown renderer.
 
-Status legend used across this repository:
+**Fifty-two documents.** You do not need to read fifty-two. Start with the four below, then jump to the section for the
+thing you are trying to do.
+
+## Read these four
+
+| Document | Why |
+|---|---|
+| [Product definition](01-product.md) | What the product is, who it is for, and the one event that means it worked |
+| [Architecture](02-architecture.md) | The layer model, the boundaries, and how it fails |
+| [Running it](47-running-it.md) | One command, one link. Run it before you read the design |
+| [CLAIMS.md](../CLAIMS.md) | Every public claim and the command that checks it — including the four that are not verified |
+
+## By task
+
+**"I want to run it."** [Running it](47-running-it.md) · [Releasing](43-release.md) · [the console](https://github.com/drsamonline/tessera-app)
+
+**"I want to understand the design."** [Architecture](02-architecture.md) · [Federation mesh](03-mesh.md) · [CRM core](04-core.md) · [Workforce](05-workforce.md) · [History authority](11-history-authority.md)
+
+**"I want to know whether it is true."** [CLAIMS.md](../CLAIMS.md) · [CONFORMANCE.md](../CONFORMANCE.md) · [Code review](31-code-review.md) · [Smoke audit](45-smoke-audit.md) · [Controls](51-controls.md) · [Postgres and RLS](39-postgres.md)
+
+**"I want to deploy it."** [Deployment](38-deployment.md) · [Postgres and RLS](39-postgres.md) · [Deployment profiles](13-deployment.md) · [CORS](46-cors.md) · [Tenancy](50-tenancy.md)
+
+**"I want to change the code."** [AGENTS.md](../AGENTS.md) · [Build sequence](15-build-sequence.md) · [Property tests](42-property-tests.md) · [Releasing](43-release.md) · [Reference core](20-reference-core.md)
+
+**"I am auditing it."** [Acceptance criteria](16-acceptance-criteria.md) · [Assumptions](18-assumptions.md) · [Open decisions](19-open-decisions.md) · [Controls](51-controls.md) · [defect register](audit/defect-register.md) · [Invention register](14-invention-register.md)
+
+**"I am buying it."** [Product definition](01-product.md) · [Standalone mode](48-standalone.md) · [Deletion](49-deletion.md) · [Compliance](29-compliance.md) · [PRIVACY](../PRIVACY.md) · [SECURITY](../SECURITY.md)
+
+## Status legend
 
 | Label | Meaning |
 |---|---|
@@ -12,11 +40,13 @@ Status legend used across this repository:
 | **Proposed** | Written as an option, not adopted |
 | **Roadmap** | Deliberately deferred; entry criteria written, no v1 obligation |
 
-Everything below is **Frozen** unless the document says otherwise on its first line.
+Everything is **Frozen** unless the document says otherwise on its first line.
 
-## Reading order
+## The full list
 
-| # | Document | Layer | Why read it |
+Ordered by the number in the filename, which is the order they were written and the order a reviewer can follow.
+
+| # | Document | Layer | What it holds |
 |---|---|---|---|
 | 01 | [Product definition](01-product.md) | &mdash; | Customers, the activation event, what is out of scope |
 | 02 | [Architecture](02-architecture.md) | all | Layer model, boundaries, failure semantics |

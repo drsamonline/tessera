@@ -158,49 +158,16 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 
 | Path | What it holds |
 |---|---|
-| [docs/index.md](docs/index.md) | Reading order, status legend, full map |
-| [docs/01-product.md](docs/01-product.md) | Product definition, customers, activation event |
-| [docs/02-architecture.md](docs/02-architecture.md) | Layer model, boundaries, failure semantics |
-| [docs/03-mesh.md](docs/03-mesh.md) | Layer 0 in full: objects, connectors, routing, conflicts |
-| [docs/10-metrics.md](docs/10-metrics.md) | Every score in the product, defined once |
-| [docs/11-history-authority.md](docs/11-history-authority.md) | Which history mechanism is authoritative |
-| [docs/12-ai-contract.md](docs/12-ai-contract.md) | The non-negotiables, each with its test |
-| [docs/16-acceptance-criteria.md](docs/16-acceptance-criteria.md) | 22 deliverables, 22 testable criteria |
-| [docs/audit/defect-register.md](docs/audit/defect-register.md) | 43 defects with impact and fix |
-| [docs/20-reference-core.md](docs/20-reference-core.md) | What is implemented, tested, and what is not |
-| [docs/21-connectors-and-mesh.md](docs/21-connectors-and-mesh.md) | The connector contract, the conformance suite, the unified view |
-| `tessera/` | The reference core: schema, ledger, metrics, routing, conflict, connectors, mesh |
-| [docs/22-providers.md](docs/22-providers.md) | HubSpot, Salesforce and Zendesk behind a transport seam |
-| [docs/23-stage-one.md](docs/23-stage-one.md) | Sync modes, backpressure, the measurement harness |
-| [docs/24-history-projections.md](docs/24-history-projections.md) | Bi-temporal views, checkpoints, the mirror |
-| [docs/26-workforce.md](docs/26-workforce.md) | Seats, signed handoff, escalation, revocation |
-| [docs/27-api-and-contracts.md](docs/27-api-and-contracts.md) | The HTTP surface, OpenAPI 3.1, the 10 MCP tools |
-| [docs/28-access-control.md](docs/28-access-control.md) | Object, field and row rules at one gate |
-| [docs/29-compliance.md](docs/29-compliance.md) | Consent, DSAR, retention, audit export - and R-07 |
-| [docs/30-local-first-sync.md](docs/30-local-first-sync.md) | One protocol, offline writes, guaranteed convergence |
-| [docs/31-code-review.md](docs/31-code-review.md) | The review: 13 findings and a ship-or-block verdict |
-| [docs/32-automation.md](docs/32-automation.md) | Triggers, a condition language, the approval gate |
-| [docs/33-boring-and-escape.md](docs/33-boring-and-escape.md) | Import, undo, backup, views, reports, four audited doors |
-| [docs/34-localisation.md](docs/34-localisation.md) | Five locales, RTL mechanism, historical rates |
-| [docs/35-jargon-and-plugins.md](docs/35-jargon-and-plugins.md) | A lint that blocks release, four gates on a plugin |
-| [docs/36-migration.md](docs/36-migration.md) | Auto-mapping, transform, rollback, templates |
-| [docs/37-learning.md](docs/37-learning.md) | Bootcamps, academy, coach, glossary, drip |
-| [docs/38-deployment.md](docs/38-deployment.md) | Container, compose, manifests, and the docs rule |
-| [docs/39-postgres.md](docs/39-postgres.md) | The Postgres DDL, its four assertions, and what could not be run |
-| [docs/40-design-system.md](docs/40-design-system.md) | Tokens, measured contrast, 83 icons, the WCAG matrix |
-| [docs/41-offline-mobile.md](docs/41-offline-mobile.md) | Key custody, a durable outbox, seven days of absence |
-| [docs/42-property-tests.md](docs/42-property-tests.md) | Four invariants, a replayable seed, and R-17 |
-| [docs/43-release.md](docs/43-release.md) | The tag, the gate and the generated note |
-| [docs/44-archival.md](docs/44-archival.md) | Segments, a header line, and a proof that survives |
-| [docs/45-smoke-audit.md](docs/45-smoke-audit.md) | One real call into every module |
-| [docs/46-cors.md](docs/46-cors.md) | The allowlist, and the gap it exposed |
+| `tessera/` | The reference implementation: canonical schema, ledger, metrics, routing, conflict resolution, connectors, mesh, API |
+| `docs/` | Fifty-two documents — the specification, the audits, and the evidence |
+| [docs/index.md](docs/index.md) | **The map.** Read these four, then jump to the task you have |
 | [CONFORMANCE.md](CONFORMANCE.md) | Four connectors, sixteen checks, generated |
-| [CLAIMS.md](CLAIMS.md) | Every public claim, and the command that checks it |
-| [docs/diagrams/](docs/diagrams/) | Architecture and escalation, as SVG |
-| [docs/47-running-it.md](docs/47-running-it.md) | One command, one link |
-| [**tessera-app**](https://github.com/drsamonline/tessera-app) | The console: this core, in a browser, offline |
-| `tests/` | 748 tests, standard library `unittest`, no dependencies |
-| [deliverables/](deliverables) | The same specification as PDF, DOCX and XLSX |
+| [CLAIMS.md](CLAIMS.md) | Every public claim and the command that checks it |
+| [AGENTS.md](AGENTS.md) | What an agent needs before touching the code |
+| `scripts/` | The gates: docs freshness, links, claims, conformance, DDL, smoke |
+| [deliverables/](deliverables/) | The same specification as PDF, DOCX and XLSX, for circulation |
+
+The full document inventory is in [docs/index.md](docs/index.md) — one place, so there is one list to keep true.
 
 ## Two ways to run it
 

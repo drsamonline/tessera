@@ -6,6 +6,28 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.43.0] - 2026-11-15
+
+### Changed
+
+- **`docs/index.md` leads with the task, not the number.** It was a flat 52-row table in filename order — a wall that
+  told a reader nothing about where to start. It now opens with **four documents to read first**, then six task entry
+  points ("I want to run it", "I want to know whether it is true", "I am auditing it"), then the full list for anyone who
+  wants it. Every link preserved; nothing dropped.
+- **The README stopped duplicating the inventory.** Its "What is in this repository" table listed fourteen documents,
+  which was a second index that could drift from the first. It is now a short shape-of-the-repository table pointing at
+  `docs/index.md` for the detail. One list, one place to keep true.
+
+### Why
+
+A 52-row table is not thorough, it is unread — by people and by models. The failure mode of documentation is not
+missing pages, it is a page nobody starts from.
+
+### Verified
+
+Every one of the 52 documents is linked from the index; no link points at a file that does not exist; `linkcheck`,
+`check_docs` and `check_claims` all pass.
+
 ## [1.42.0] - 2026-11-15
 
 ### Fixed
