@@ -6,6 +6,22 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.42.0] - 2026-11-15
+
+### Fixed
+
+- **`AGENTS.md` said this repository has "no implementation code, no build system and no test suite".** It has 40
+  modules, 748 tests and a demo command. An agent reading that file would have refused to work on the code that was
+  there — an instruction file that describes a repository you cannot see is worse than no instruction file.
+- The corrected file adds **the verification gate**: the command that proves each claim, and the rule that a check you
+  have not seen fail is not a check.
+
+### The count
+
+Five false claims have now been found in this project's own documents in one day — the privacy policy that said the
+repository ran nowhere, the review that claimed framing was closed, three README sentences saying nothing runs or is
+measured, and this. Every one described a system that no longer existed. The gate is the cheapest defence available.
+
 ## [1.41.0] - 2026-11-15
 
 ### Added
