@@ -6,6 +6,27 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.37.0] - 2026-11-15
+
+### Added
+
+- **Tenant routing.** `TenantRouter` picks the tenant from the bearer token; each tenant has its own `Mesh`, its own
+  ledger file and its own `Projection`. `python3 -m tessera.demo --tenants 2` runs two isolated customers in one
+  process and prints a token for each.
+- [docs/50-tenancy.md](docs/50-tenancy.md), eight tests in `tests/test_tenants.py`.
+
+### Why isolation by construction
+
+One mesh with a `tenant_id` column is one forgotten `WHERE` away from a breach, and the predicate is forgotten in the
+query nobody wrote a test for. Separate objects per tenant cannot leak through a missing filter, because there is no
+shared table to filter.
+
+### Fixed
+
+- **The demo's two tenants held identical record ids.** Legal — uniqueness is per tenant — and unreadable in a log with
+  two tenants interleaved. Demo ids are now namespaced by the tenant's tail.
+- **The multi-tenant demo link used the single-tenant token**, so the one screen somebody tries first returned `401`.
+
 ## [1.36.0] - 2026-11-15
 
 ### Added

@@ -39,6 +39,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--token", default="demo-token")
     parser.add_argument("--standalone", action="store_true",
                         help="no external CRM: the native store is the system of record")
+    parser.add_argument("--tenants", type=int, default=1,
+                        help="how many isolated tenants to run in this process (default 1)")
     args = parser.parse_args(argv)
 
     console = pathlib.Path(args.console).expanduser().resolve()
@@ -49,7 +51,22 @@ def main(argv: list[str] | None = None) -> int:
 
     from . import api as api_module
 
-    service = api_module.demo_api(token=args.token, standalone=args.standalone)
+    if args.tenants > 1:
+        from .tenants import multi_tenant_api
+        ids = [f"018f0000-0000-7000-8000-{index:012d}" for index in range(1, args.tenants + 1)]
+        tokens = {f"{args.token}-{index}": (tenant, api_module.Principal(
+            f"p{index}", ("admin",), role="admin"))
+            for index, tenant in enumerate(ids, start=1)}
+        service = multi_tenant_api(
+            ids, tokens,
+            lambda tenant, tenant_tokens: api_module.demo_api(
+                tenant_id=tenant, token=tenant_tokens[0], standalone=args.standalone))
+        print(f"  Tenants   {args.tenants} isolated", flush=True)
+        first_token = list(tokens)[0]
+        for token, (tenant, _principal) in tokens.items():
+            print(f"            {tenant[-4:]}  token {token}", flush=True)
+    else:
+        service = api_module.demo_api(token=args.token, standalone=args.standalone)
     api_port = free_port(args.api_port)
     console_port = free_port(args.console_port)
 
@@ -71,8 +88,12 @@ def main(argv: list[str] | None = None) -> int:
     static.daemon_threads = True
     threading.Thread(target=static.serve_forever, daemon=True).start()
 
+    # In multi-tenant mode each tenant has its own token, and a link that used
+    # the single-tenant token would 401 - the sort of detail that makes a demo
+    # look broken on the one screen somebody tries first.
+    console_token = args.token if args.tenants == 1 else list(tokens)[0]
     link = (f"http://127.0.0.1:{console_port}/index.html"
-            f"?engine=http://127.0.0.1:{api_port}&token={args.token}")
+            f"?engine=http://127.0.0.1:{api_port}&token={console_token}")
     mode = "standalone — the native store is the system of record" if args.standalone \
         else "federated — three simulated systems of record"
     print(f"  Mode      {mode}", flush=True)

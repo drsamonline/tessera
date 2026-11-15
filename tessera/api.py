@@ -532,10 +532,15 @@ def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
             "lawful_basis": "consent", "purpose_id": "sales",
             "retention_policy_id": "rp-24m"}
 
+    # Ids are namespaced by tenant: two tenants seeding the same demo would
+    # otherwise hold identical ids, which is legal (uniqueness is per tenant) and
+    # a nightmare to read in a log with two tenants interleaved.
+    tenant_tail = tenant_id[-2:]
+
     def uid(prefix, suffix):
         # 8-4-4-4-12, and the last group must be twelve hex characters: the
         # validator counts hex now, not dashes (O-04).
-        return f"018f0000-0000-7000-8000-{prefix}000000{suffix.zfill(4)}"
+        return f"018f0000-0000-7000-8000-{prefix}{tenant_tail}0000{suffix.zfill(4)}"
 
     companies = [("Acme Industrial", "acme.example"), ("Globex", "globex.example"),
                  ("Initech", "initech.example"), ("Umbrella", "umbrella.example")]

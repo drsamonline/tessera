@@ -67,6 +67,7 @@ Everything below is **Frozen** unless the document says otherwise on its first l
 | 47 | [Running it](47-running-it.md) | all | One command, one link, and what the demo data shows |
 | 48 | [Standalone mode](48-standalone.md) | all | A layer and a CRM, and what each means |
 | 49 | [Deletion](49-deletion.md) | all | Tombstone, reason, and what is not destroyed |
+| 50 | [Tenancy](50-tenancy.md) | all | Isolation by construction, and what is not done |
 | — | [CONFORMANCE.md](../CONFORMANCE.md) | all | Four connectors, sixteen checks, generated |
 
 **Live:** the reference core runs in a browser, offline, at [drsamonline.github.io/tessera-app](https://drsamonline.github.io/tessera-app/) - source in [tessera-app](https://github.com/drsamonline/tessera-app).
