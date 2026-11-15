@@ -6,6 +6,26 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.45.0] - 2026-11-15
+
+### Changed
+
+- **Dual licensing.** [COMMERCIAL.md](COMMERCIAL.md) adds a paid commercial licence alongside PolyForm Noncommercial
+  1.0.0. The free grant is unchanged; the `LICENSE` header now points at the commercial terms.
+- **[docs/53-licensing.md](docs/53-licensing.md)** — why dual and not permissive, why not fully proprietary, what the
+  free licence still permits, and the four questions that must be settled before the first invoice.
+
+### Why not permissive, and why not proprietary
+
+MIT or Apache would let anyone sell this, including a competitor with a sales team; on a product whose only moat is
+engineering that is a donation. A closed licence would make the 748 tests, the generated conformance report and the
+claim register unverifiable — and unverifiable evidence is marketing.
+
+### What is deliberately not published
+
+No price list. A published price is a commitment this project cannot keep before there is a customer, a support model or
+a deployment to price against.
+
 ## [1.44.0] - 2026-11-15
 
 ### Added

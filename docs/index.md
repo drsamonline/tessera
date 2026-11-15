@@ -102,6 +102,7 @@ Ordered by the number in the filename, which is the order they were written and 
 | 50 | [Tenancy](50-tenancy.md) | all | Isolation by construction, and what is not done |
 | 51 | [Controls](51-controls.md) | all | Six IT general controls, and how each is tested |
 | 52 | [Brief conformance](52-brief-conformance.md) | all | The twenty original deliverables, and every deviation |
+| 53 | [Licensing](53-licensing.md) | all | Dual licensing: why, and what it does not grant |
 | — | [CONFORMANCE.md](../CONFORMANCE.md) | all | Four connectors, sixteen checks, generated |
 
 **Live:** the reference core runs in a browser, offline, at [drsamonline.github.io/tessera-app](https://drsamonline.github.io/tessera-app/) - source in [tessera-app](https://github.com/drsamonline/tessera-app).

@@ -12,7 +12,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <img alt="Tests: 748 passing" src="https://img.shields.io/badge/tests-748%20passing-2e7d32">
 <img alt="Version 1.39.0" src="https://img.shields.io/badge/version-1.39.0-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
-<img alt="License: PolyForm Noncommercial 1.0.0" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2e7d32">
+<img alt="License: dual — noncommercial free, commercial by agreement" src="https://img.shields.io/badge/license-dual%20%C2%B7%20noncommercial%20free%20%C2%B7%20commercial%20by%20agreement-2e7d32">
 </p>
 
 <p>
@@ -25,7 +25,8 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <a href="https://drsamonline.github.io/">All projects</a>
 </p>
 
-<p><sub>PolyForm Noncommercial 1.0.0 &copy; 2026 Dr. Sohil Momin</sub></p>
+<p><sub>Dual-licensed: free for noncommercial use under PolyForm Noncommercial 1.0.0, commercial by agreement &mdash;
+<a href="COMMERCIAL.md">COMMERCIAL.md</a> &middot; &copy; 2026 Dr. Sohil Momin</sub></p>
 
 </div>
 
