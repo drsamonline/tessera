@@ -6,6 +6,26 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.38.0] - 2026-11-15
+
+### Added
+
+- **The Postgres DDL is parsed by Postgres's own parser.** `scripts/validate_ddl.py` runs every statement through
+  **libpg_query** via `pglast`: 61 statements, 10 tables, 10 policies, all valid Postgres syntax.
+- Three tests, including one that asserts the parser *rejects* a broken statement — a check that cannot fail is not a
+  check.
+
+### What this closes, and what it does not
+
+| Question | Status |
+|---|---|
+| Is it valid Postgres syntax? | **Proven** |
+| Does it have the promised properties? | Proven, by the structural validator |
+| Does it run against a real server? | **Still never executed** |
+
+Constraints, extensions, roles and privilege resolution happen on the server, not in the parser. `docs/39-postgres.md`
+now states that distinction with the actual output instead of a claim.
+
 ## [1.37.0] - 2026-11-15
 
 ### Added

@@ -73,3 +73,30 @@ Three tests are worth naming:
 2. Replace the generated DDL with Django migrations once the models exist, keeping `validate()` as the gate - the
    assertion does not care which tool produced the SQL.
 3. Point `SqliteStore`'s callers at a Postgres store and delete the SQLite path, or keep it as the test double.
+
+## Update, 15 November 2026: the syntax is now a fact
+
+The DDL is parsed by **libpg_query** — the parser the Postgres server itself uses — through `pglast`.
+
+```
+$ python3 scripts/validate_ddl.py
+pglast v8.8 · 61 statements · 10 tables · 10 policies
+OK — every statement parses as valid Postgres syntax
+Not proven: that it runs. Constraints, extensions and privileges are resolved by
+the server, not the parser.
+```
+
+That closes half of the gap and leaves the other half open on purpose.
+
+| Question | Answered by | Status |
+|---|---|---|
+| Is it valid Postgres syntax? | `pglast`, the server's own parser | **Yes, proven** |
+| Does it have the properties we promised? | `store.validate()`, regex-based | Yes, proven |
+| Does it run against a real server? | A server | **No. Still never executed** |
+
+The test that matters here is `test_the_parser_rejects_a_broken_statement`: a check that cannot fail is not a check,
+and a validator that has never rejected anything is a validator nobody should trust.
+
+What the parser cannot see: whether `pgcrypto` is available, whether the role in `SET tessera.tenant_id` exists,
+whether `FORCE ROW LEVEL SECURITY` behaves as expected against a table owner, and whether the policies permit what
+they claim to permit. Those need a server.
