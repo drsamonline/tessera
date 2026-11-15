@@ -6,6 +6,22 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.46.0] - 2026-11-15
+
+### Added
+
+- **[DEVELOPMENT.md](DEVELOPMENT.md)** — the status, and the gate to leave it. Six boxes, none of them a documentation
+  task: execute the DDL, sweep a live connector, launch the APK, finish or defer the nine partial deliverables, sign four
+  decisions, answer four licensing questions.
+- **A banner on the README and the landing page**, so the status is the first thing read rather than a footnote.
+- **Every GitHub release is now flagged pre-release.** A build number is not a stability promise, and the release page
+  was the one surface still implying otherwise.
+
+### What this does not change
+
+The code. 748 tests still pass. This is a statement about maturity, not about correctness — and the honest version of
+"it works" is "it works, and four things about it have never been checked against reality".
+
 ## [1.45.0] - 2026-11-15
 
 ### Changed

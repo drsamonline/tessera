@@ -1,3 +1,9 @@
+> ## Status: under development
+>
+> **Not finished, not released.** Published so the work can be inspected, not adopted. Version numbers are build
+> numbers. Every GitHub release is flagged pre-release. Four claims in [CLAIMS.md](CLAIMS.md) are unverified, nine
+> deliverables are partial, and the gate to leave this state is in [DEVELOPMENT.md](DEVELOPMENT.md).
+
 <div align="center">
 
 <h1>TESSERA</h1>
