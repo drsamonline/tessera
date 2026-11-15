@@ -6,6 +6,22 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.36.0] - 2026-11-15
+
+### Added
+
+- **`DELETE /v1/objects/{object}/{id}`** — tombstone a record. An event is appended with `tombstone: true`, the
+  projection stops serving the record, and the reason is kept forever. A reason is required: `400 reason_required`.
+- **A tombstone index rebuilt from the ledger**, so a tombstone outlives the process that wrote it, and deleting twice
+  is `409 already_tombstoned` rather than a second event.
+- [docs/49-deletion.md](docs/49-deletion.md), six tests.
+
+### What it does not do
+
+Nothing is destroyed. An append-only hash chain cannot un-write a hash without breaking every hash after it;
+destroying the bytes while keeping the chain intact is crypto-shredding, which needs a crypto dependency the engine
+does not have. **R-07 stays open** and says so, rather than being closed with a lie.
+
 ## [1.35.1] - 2026-11-15
 
 ### Fixed

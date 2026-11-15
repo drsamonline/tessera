@@ -47,6 +47,17 @@ OPERATIONS = [
         "responses": {201: "ObjectList", 422: "Error", 503: "Error"},
     },
     {
+        "method": "delete", "path": "/v1/objects/{object}/{id}", "operation_id": "tombstoneRecord",
+        "pattern": r"^/v1/objects/(?P<object>[A-Za-z]+)/(?P<id>[0-9a-f\-]{36})$",
+        "scope": "write",
+        "summary": "Tombstone a record. Nothing is destroyed; a stated reason is required.",
+        "parameters": [
+            {"name": "object", "in": "path", "required": True, "schema": {"type": "string"}},
+            {"name": "id", "in": "path", "required": True, "schema": {"type": "string"}},
+        ],
+        "responses": {200: "ObjectList", 400: "Error", 404: "Error"},
+    },
+    {
         "method": "get", "path": "/v1/objects/{object}/export", "operation_id": "exportObjects",
         "pattern": r"^/v1/objects/(?P<object>[A-Za-z]+)/export$", "scope": "read",
         "summary": "Every visible record of one object type, redacted by the same gate as a read.",

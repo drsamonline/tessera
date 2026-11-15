@@ -51,6 +51,9 @@ class Mesh:
         self.log = log
         self.nodes: dict[str, Node] = {}
         self.budgets = Budgets()
+        # Seeded from the ledger on first use, because a tombstone outlives the
+        # process that wrote it.
+        self._tombstones: set[tuple[str, str]] | None = None
         # object -> record id -> node id -> payload
         self._store: dict[str, dict[str, dict[str, dict]]] = {}
 
@@ -282,6 +285,55 @@ class Mesh:
                                      "node": target.id, "principal": actor})
         self.sync(object_name)
         return {"object": object_name, "id": record["id"], "node": target.id}
+
+    def tombstone(self, object_name: str, record_id: str, reason: str,
+                  actor: str = "human") -> dict:
+        """Mark a record as deleted, with the reason stated.
+
+        Nothing is destroyed. The ledger records that the record was tombstoned,
+        by whom and why; the projection stops serving it; the bytes that were
+        already written stay written. That is the honest limit of deletion in an
+        append-only chain (docs/29), and a reason is required because a deletion
+        without one is indistinguishable from an accident six months later.
+        """
+        if not reason or not reason.strip():
+            raise ValueError("a reason is required to tombstone a record")
+        record = self.store_get(object_name, record_id)
+        if record is None:
+            raise KeyError(f"{object_name}/{record_id} is not in the mesh")
+        if self.log is None:
+            raise ValueError("a mesh with no ledger cannot tombstone")
+        from . import canonical as canonical_module
+
+        self.log.append(
+            tenant_id=self.tenant_id, actor="human", action="record.tombstoned",
+            payload={"tombstone": True, "object": object_name, "id": record_id,
+                     "reason": reason.strip(), "principal": actor},
+            canonical_ref=canonical_module.make_ref(object_name, record_id),
+        )
+        self._tombstone_index().add((object_name, record_id))
+        return {"object": object_name, "id": record_id, "tombstoned": True,
+                "reason": reason.strip()}
+
+    def _tombstone_index(self) -> set[tuple[str, str]]:
+        if self._tombstones is None:
+            found: set[tuple[str, str]] = set()
+            if self.log is not None:
+                for event in self.log.events(self.tenant_id):
+                    payload = event.get("payload") or {}
+                    if event.get("action") == "record.tombstoned" and payload.get("id"):
+                        found.add((payload.get("object", ""), payload["id"]))
+            self._tombstones = found
+        return self._tombstones
+
+    def is_tombstoned(self, object_name: str, record_id: str) -> bool:
+        return (object_name, record_id) in self._tombstone_index()
+
+    def store_get(self, object_name: str, record_id: str) -> dict | None:
+        """The record as the mesh last saw it, or None if it was tombstoned."""
+        if self.is_tombstoned(object_name, record_id):
+            return None
+        return (self._store.get(object_name, {}) or {}).get(record_id)
 
     def write_field(self, object_name: str, record_id: str, name: str, value,
                     actor: str = "human") -> dict:

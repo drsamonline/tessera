@@ -121,3 +121,64 @@ class TestDemoReferences(unittest.TestCase):
         deal = self.record("Deal", deals[0])
         self.assertEqual(contact["company_ref"], deal["company_ref"],
                          "the demo's first contact and first deal should be the same account")
+
+
+class TestTombstone(unittest.TestCase):
+    """Deletion in an append-only chain: the projection forgets, the ledger does not."""
+
+    def setUp(self):
+        self.api = api.demo_api(standalone=True)
+        self.headers = {"Authorization": "Bearer demo-token"}
+
+    def call(self, method, path, body=None):
+        return self.api.handle(api.Request(method=method, path=path, query={},
+                                           headers=self.headers, body=body))
+
+    def a_contact(self):
+        return self.call("GET", "/v1/objects/Contact").body["ids"][0]
+
+    def test_a_reason_is_required(self):
+        contact = self.a_contact()
+        for body in ({}, {"reason": ""}, {"reason": "   "}):
+            response = self.call("DELETE", f"/v1/objects/Contact/{contact}", body)
+            self.assertEqual(response.status, 400, body)
+            self.assertEqual(response.body["error"], "reason_required")
+
+    def test_a_tombstoned_record_leaves_the_list(self):
+        contact = self.a_contact()
+        before = len(self.call("GET", "/v1/objects/Contact").body["ids"])
+        self.call("DELETE", f"/v1/objects/Contact/{contact}",
+                  {"reason": "duplicate of an existing contact"})
+        after = self.call("GET", "/v1/objects/Contact").body["ids"]
+        self.assertEqual(len(after), before - 1)
+        self.assertNotIn(contact, after)
+
+    def test_a_tombstoned_record_is_gone_from_a_read(self):
+        contact = self.a_contact()
+        self.call("DELETE", f"/v1/objects/Contact/{contact}", {"reason": "duplicate"})
+        self.assertEqual(self.call("GET", f"/v1/objects/Contact/{contact}").status, 404)
+
+    def test_the_ledger_keeps_the_record_and_the_reason(self):
+        contact = self.a_contact()
+        self.call("DELETE", f"/v1/objects/Contact/{contact}",
+                  {"reason": "duplicate of an existing contact"})
+        events = [event for event in self.api.log.events()
+                  if event["action"] == "record.tombstoned"]
+        self.assertTrue(events, "the tombstone is an event, not an absence")
+        self.assertEqual(events[-1]["payload"]["reason"], "duplicate of an existing contact")
+        self.assertTrue(events[-1]["payload"]["tombstone"])
+
+    def test_deleting_twice_is_a_conflict_not_a_second_tombstone(self):
+        contact = self.a_contact()
+        self.call("DELETE", f"/v1/objects/Contact/{contact}", {"reason": "duplicate"})
+        second = self.call("DELETE", f"/v1/objects/Contact/{contact}", {"reason": "again"})
+        self.assertEqual(second.status, 409)
+        tombstones = [event for event in self.api.log.events()
+                      if event["action"] == "record.tombstoned"]
+        self.assertEqual(len(tombstones), 1)
+
+    def test_an_unknown_record_is_404(self):
+        response = self.call("DELETE",
+                             "/v1/objects/Contact/018f0000-0000-7000-8000-0000000000ff",
+                             {"reason": "never existed"})
+        self.assertEqual(response.status, 404)

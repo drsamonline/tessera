@@ -122,6 +122,8 @@ class Api:
             ("GET", r"^/v1/mesh/view/(?P<object>[A-Za-z]+)/(?P<id>[0-9a-f\-]{36})$",
              "read", self._unified),
             ("POST", r"^/v1/objects/(?P<object>[A-Za-z]+)$", "write", self._create),
+            ("DELETE", r"^/v1/objects/(?P<object>[A-Za-z]+)/(?P<id>[0-9a-f\-]{36})$",
+             "write", self._delete),
             ("POST", r"^/v1/objects/(?P<object>[A-Za-z]+)/(?P<id>[0-9a-f\-]{36})"
                      r"/fields/(?P<field_name>[A-Za-z_]+)$", "write", self._write_field),
             ("POST", r"^/v1/tasks$", "workforce", self._assign),
@@ -312,6 +314,29 @@ class Api:
             self.projection.refresh()
         return Response(201, dict(result, principal=principal.id))
 
+    def _delete(self, request: Request, object: str, id: str) -> Response:
+        """Tombstone a record. Nothing is destroyed; the reason is required."""
+        if self.mesh is None:
+            return Response(503, {"error": "no_mesh"})
+        body = request.body or {}
+        reason = (body.get("reason") or "").strip()
+        if not reason:
+            return Response(400, {"error": "reason_required",
+                                  "detail": "a deletion without a stated reason is "
+                                            "indistinguishable from an accident"})
+        principal = request.query["_principal"]
+        if self.mesh.is_tombstoned(object, id):
+            return Response(409, {"error": "already_tombstoned"})
+        try:
+            result = self.mesh.tombstone(object, id, reason, actor=principal.id)
+        except KeyError:
+            return Response(404, {"error": "not_found"})
+        except ValueError as exc:
+            return Response(400, {"error": "cannot_tombstone", "detail": str(exc)})
+        if self.projection is not None:
+            self.projection.refresh()
+        return Response(200, dict(result, principal=principal.id))
+
     def _write_field(self, request: Request, object: str, id: str, field_name: str) -> Response:
         if self.mesh is None:
             return Response(503, {"error": "no_mesh"})
@@ -438,7 +463,7 @@ def handler_for(api: Api):
                 self.send_header("Access-Control-Allow-Origin", origin)
                 self.send_header("Vary", "Origin")
                 self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
-                self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
                 self.send_header("Access-Control-Max-Age", "600")
 
         def do_OPTIONS(self):
@@ -449,6 +474,9 @@ def handler_for(api: Api):
 
         def do_POST(self):
             self._handle("POST")
+
+        def do_DELETE(self):
+            self._handle("DELETE")
 
         def log_message(self, fmt, *args):
             return
