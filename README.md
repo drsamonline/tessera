@@ -9,8 +9,8 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <p>
 <a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
 <img alt="Status: specification + reference core" src="https://img.shields.io/badge/status-spec%20%2B%20reference%20core-1F3552">
-<img alt="Tests: 148 passing" src="https://img.shields.io/badge/tests-748%20passing-2e7d32">
-<img alt="Version 1.1" src="https://img.shields.io/badge/version-1.1-2e7d32">
+<img alt="Tests: 748 passing" src="https://img.shields.io/badge/tests-748%20passing-2e7d32">
+<img alt="Version 1.39.0" src="https://img.shields.io/badge/version-1.39.0-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
 <img alt="License: PolyForm Noncommercial 1.0.0" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2e7d32">
 </p>
@@ -31,13 +31,22 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 
 ---
 
-> **Project status: specification, plus a reference core. The product does not exist.**
-> This repository is the engineering specification for TESSERA, restructured and audited on 14 November 2026.
-> Every claim in these documents is a requirement, not a feature. Nothing here runs.
-> The specification began as a 261-line build prompt; it was audited against itself, 43 defects were found,
-> and all 43 are closed here by formal definition or by a numbered assumption
+> **Project status: a specification, a reference implementation that runs, and a demo that starts both halves.**
+>
+> **What runs today.** `python3 -m tessera.api` serves the HTTP API. `python3 -m tessera.demo` starts the API and the
+> console together on free ports and prints one link that works. 748 tests pass. Every connector in the repository is
+> checked against a 16-check suite, and the result is generated rather than typed
+> ([CONFORMANCE.md](CONFORMANCE.md)). The Postgres DDL is parsed by Postgres's own parser
+> ([docs/39](docs/39-postgres.md)).
+>
+> **What is still not true.** No connector has called a live tenant — every result comes from a recorded transport. The
+> Postgres DDL has been parsed, never executed against a server. There is no hosted service, no multi-tenant
+> deployment, and no customer has used this. The specification began as a 261-line build prompt and was audited
+> against itself: 43 defects found, all 43 closed by formal definition or by a numbered assumption
 > ([defect register](docs/audit/defect-register.md), [assumptions](docs/18-assumptions.md)).
-> **Nothing in this repository is measured.** Where a figure is an estimate it says so on the line it appears.
+>
+> Every public claim and the check behind it is in [CLAIMS.md](CLAIMS.md). Where a figure is an estimate it says so on
+> the line it appears.
 >
 > What does run: `tessera/`, a dependency-free reference implementation of the canonical schema, the ledger,
 > the metrics, routing, conflict resolution, the connector contract, the conformance suite, four connectors and
@@ -186,6 +195,7 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | [docs/45-smoke-audit.md](docs/45-smoke-audit.md) | One real call into every module |
 | [docs/46-cors.md](docs/46-cors.md) | The allowlist, and the gap it exposed |
 | [CONFORMANCE.md](CONFORMANCE.md) | Four connectors, sixteen checks, generated |
+| [CLAIMS.md](CLAIMS.md) | Every public claim, and the command that checks it |
 | [docs/diagrams/](docs/diagrams/) | Architecture and escalation, as SVG |
 | [docs/47-running-it.md](docs/47-running-it.md) | One command, one link |
 | [**tessera-app**](https://github.com/drsamonline/tessera-app) | The console: this core, in a browser, offline |

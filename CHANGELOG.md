@@ -6,6 +6,36 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.40.0] - 2026-11-15
+
+### Fixed
+
+Three sentences in the README and the landing page were **false**, and they were false in the modest direction, which
+is still false:
+
+| Was | Why it was wrong |
+|---|---|
+| "The product does not exist." | A reference implementation runs: `python3 -m tessera.api`, `python3 -m tessera.demo`, 748 tests |
+| "Every claim in these documents is a requirement, not a feature. Nothing here runs." | The service listens, the console renders, the conformance report is generated |
+| "Nothing in this repository is measured." | 748 tests, a 16-check suite across four connectors, 61 DDL statements parsed, contrast ratios, payload sizes |
+
+- Two badges were stale: `version-1.1` against a `VERSION` of 1.39.0, and an alt text reading "148 passing" over a
+  badge showing 748.
+
+### Added
+
+- **[CLAIMS.md](CLAIMS.md)** — eighteen public claims, the command that checks each, and four marked **not verified**
+  in the table rather than in a footnote.
+- **`scripts/check_claims.py`** — runs the checks that can run here. A missing optional dependency reports `SKIP`, not
+  `PASS`: "cannot check" and "checked" are different answers.
+- **`requirements-dev.txt`** — declares `pglast`, the only optional dependency, so the DDL check is reproducible rather
+  than dependent on whatever is installed.
+
+### The rule this establishes
+
+A new public claim enters the register before it enters a README, a landing page or a release note. If the check column
+says "—", the sentence that makes the claim says so too.
+
 ## [1.39.0] - 2026-11-15
 
 ### Fixed

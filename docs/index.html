@@ -414,9 +414,14 @@
         criteria, three rendered documents, and a dependency-free reference core &mdash; the canonical schema,
         the hash-chained ledger, every metric, routing, conflict resolution, the connector contract, the
         conformance suite, four connectors, backpressure, a working mesh, projections that rebuild from the ledger a workforce layer, an HTTP surface with an OpenAPI 3.1 contract, three-layer access control, a compliance substrate and local-first sync, under 748 tests. Reviewed: 13 findings, 11 fixed.</p>
-      <p><strong>What does not exist:</strong> the product. No connector connects, no service listens, no
-        interface renders, no workforce runtime runs. Every claim on this page outside the reference core is a
-        requirement, not a feature.</p>
+      <p><strong>What does not exist:</strong> the product. <b>No connector has called a live tenant</b> &mdash; every
+        result comes from a recorded transport. The Postgres DDL has been parsed by Postgres&rsquo;s own parser and
+        <b>never executed against a server</b>. There is no hosted service and no customer has used this.</p>
+      <p><strong>What changed since this page was written:</strong> the service does listen
+        (<code>python3 -m tessera.api</code>), the interface does render (the console, in a separate repository), and a
+        demo starts both halves with <code>python3 -m tessera.demo</code>. The sentence that used to say otherwise was
+        wrong, and being wrong in the modest direction is still being wrong. Every public claim and its check is in the
+        <a href="https://github.com/drsamonline/tessera/blob/main/CLAIMS.md">claim register</a>.</p>
       <p><strong>What was corrected:</strong> the source document&rsquo;s 30-day data-subject-request clock was a
         GDPR transplant and is now a per-jurisdiction configuration. Its 72-hour breach clock was right &mdash;
         DPDP Rules 2025, rule 7(2), requires it &mdash; and is retained.</p>
@@ -479,7 +484,8 @@
   <div class="wrap foot">
     <div>
       <strong style="color:var(--ink)">TESSERA</strong> &middot; PolyForm Noncommercial 1.0.0 &copy; 2026 Dr. Sohil Momin<br>
-      Specification only. Nothing here runs.
+      A specification, a reference implementation, and a demo that starts both halves.
+      <br>What runs, and what is still not true: <a href="https://github.com/drsamonline/tessera/blob/main/CLAIMS.md">the claim register</a>.
     </div>
     <nav aria-label="Elsewhere">
       <a href="https://github.com/drsamonline/tessera">Repository</a>

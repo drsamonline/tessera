@@ -1,0 +1,9 @@
+# Optional development dependencies. Nothing in tessera/ imports these at runtime;
+# they exist so the checks can be stronger than a regex.
+#
+#   pip install -r requirements-dev.txt
+#
+# pglast — libpg_query, the Postgres server's own parser. Used by
+# scripts/validate_ddl.py and tests/test_ddl.py to prove the generated DDL is
+# valid Postgres syntax. Without it those checks skip rather than lie.
+pglast>=7
