@@ -6,6 +6,27 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.44.0] - 2026-11-15
+
+### Added
+
+- **[docs/52-brief-conformance.md](docs/52-brief-conformance.md)** — the twenty deliverables in the original build prompt,
+  mapped to what exists, with **every deviation named**. Nine built whole, nine partial, two deviated, none untouched.
+
+### The two deviations, stated rather than smoothed over
+
+- **No Django.** The brief named a framework; the requirement was a validated, tenant-scoped, bi-temporal model with
+  row-level security, and that exists without an ORM. Defensible, and still a deviation.
+- **No SvelteKit, no Flutter.** The largest deviation in the project. What exists is one HTML file that runs offline and
+  an Android shell around it, with a real durable outbox — not SQLCipher, not Flutter.
+
+Also named: no academy videos, no email drip, no community platform, no encryption at rest on mobile, no graph sidecar.
+
+### Why this document exists
+
+The rest of the documentation answers "does the code work?". This answers "did you build what was asked?", which is a
+different question and the one the brief actually posed.
+
 ## [1.43.0] - 2026-11-15
 
 ### Changed

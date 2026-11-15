@@ -29,6 +29,8 @@ thing you are trying to do.
 
 **"I am auditing it."** [Acceptance criteria](16-acceptance-criteria.md) · [Assumptions](18-assumptions.md) · [Open decisions](19-open-decisions.md) · [Controls](51-controls.md) · [defect register](audit/defect-register.md) · [Invention register](14-invention-register.md)
 
+**"Did you build what was asked?"** [Brief conformance](52-brief-conformance.md) · [Acceptance criteria](16-acceptance-criteria.md) · [Assumptions](18-assumptions.md)
+
 **"I am buying it."** [Product definition](01-product.md) · [Standalone mode](48-standalone.md) · [Deletion](49-deletion.md) · [Compliance](29-compliance.md) · [PRIVACY](../PRIVACY.md) · [SECURITY](../SECURITY.md)
 
 ## Status legend
@@ -99,6 +101,7 @@ Ordered by the number in the filename, which is the order they were written and 
 | 49 | [Deletion](49-deletion.md) | all | Tombstone, reason, and what is not destroyed |
 | 50 | [Tenancy](50-tenancy.md) | all | Isolation by construction, and what is not done |
 | 51 | [Controls](51-controls.md) | all | Six IT general controls, and how each is tested |
+| 52 | [Brief conformance](52-brief-conformance.md) | all | The twenty original deliverables, and every deviation |
 | — | [CONFORMANCE.md](../CONFORMANCE.md) | all | Four connectors, sixteen checks, generated |
 
 **Live:** the reference core runs in a browser, offline, at [drsamonline.github.io/tessera-app](https://drsamonline.github.io/tessera-app/) - source in [tessera-app](https://github.com/drsamonline/tessera-app).
