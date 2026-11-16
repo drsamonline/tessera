@@ -176,15 +176,6 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 
 The full document inventory is in [docs/index.md](docs/index.md) — one place, so there is one list to keep true.
 
-## Two ways to run it
-
-**As a layer.** Point it at the CRMs a team already runs. Every field shows which system it came from and the rule
-that chose it; nothing is merged without a rule being recorded.
-
-**As the CRM.** `python3 -m tessera.demo --standalone` starts it with no external system at all. The native node is the
-system of record, the console creates and edits records, and connecting a CRM later turns the same data into a
-federated view. [docs/48-standalone.md](docs/48-standalone.md) states what standalone means and what it still is not.
-
 ## Run it
 
 ```bash
