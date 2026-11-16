@@ -66,7 +66,7 @@ must come from somewhere the database owner does not control - the external anch
 | O-03 | A connector failure surfaced as `500` | `ConnectorError` maps to `502 connector_failure` | `test_a_failing_connector_is_a_bad_gateway` |
 | O-04 | The uuid check accepted `"------------------------------------"` — it counted dashes | 8-4-4-4-12 hex, and a `Z` in a group is refused | `test_thirty_six_dashes_is_not_a_uuid` |
 | O-08 | `field_priority` returned `recent[0]`, which was whichever candidate the caller passed first | Sorted by node id, so the rule is a total order | `test_the_same_set_in_a_different_order_resolves_the_same_way` |
-| O-09 | No rate limit on auth attempts — an API that answers as fast as it answers correctly is an oracle | 10 failures in 60s per client, then `429` | `test_ten_wrong_tokens_then_429` |
+| O-09 | No rate limit on auth attempts, an API that answers as fast as it answers correctly is an oracle | 10 failures in 60s per client, then `429` | `test_ten_wrong_tokens_then_429` |
 | O-10 | The structural validator ignored `{placeholders}` in paths | Every placeholder must be a declared path parameter | `test_a_placeholder_without_a_parameter_is_reported` |
 
 **13 findings, 13 closed.** The review register is empty.
@@ -94,7 +94,7 @@ review are closed. What remains is not a defect list - it is twelve deliverables
 | 4 | Deletion (O-07) | Closed - reserved tombstone field, explicit resurrection |
 | 5 | Durability defaults to safe (R-12) | Closed - opt out, not opt in |
 
-What is left is not quality. It is scope: twelve deliverables never started, no interface, no Postgres, no
+What is left is scope, not quality: twelve deliverables never started, no interface, no Postgres, no
 container.
 
 ## What the review says about the process
@@ -103,5 +103,5 @@ Six of the eight modules reviewed had at least one finding, and the two blockers
 suite exercised heavily. The suite tested the happy path of every module and the **boundaries between modules**
 were where the defects lived: two precisions of timestamp meeting in a comparison, a projection meeting a revert.
 
-That is the argument for a review pass over a green test suite, and it is why this document exists rather than a
+This is the argument for a review pass over a green test suite, and it is why this document exists rather than a
 note that the tests pass.

@@ -3,7 +3,7 @@
 **Status: Draft**
 
 The contract every connector implements, the suite that enforces it, and the smallest mesh that can
-honestly be called one. Reference: [03-mesh.md](03-mesh.md).
+fairly be called one. Reference: [03-mesh.md](03-mesh.md).
 
 ## What is here
 

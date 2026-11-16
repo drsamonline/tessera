@@ -31,13 +31,13 @@ The seed is deliberately not one record. Six contacts, four companies, four deal
 
 | Situation | Where to look |
 |---|---|
-| Agreement — two systems say the same thing | Most fields on most contacts |
+| Agreement, two systems say the same thing | Most fields on most contacts |
 | Authority — HubSpot owns email, so it wins even when Zendesk disagrees | Asha Rao, Meera Iyer, Priya Nair |
 | A field that differs only in case | Daniel Okafor, whose name is capitalised in the support system |
 | A record present in one system only | Initech's deal, which NetSuite has never seen |
 
 One contact with one conflict is a unit test. A demo has to show the mesh disagreeing with itself, and it has to do
-it inside the canonical schema — a Contact has a name, an email, a phone and a company reference. Stages and amounts
+it inside the canonical schema, a Contact has a name, an email, a phone and a company reference. Stages and amounts
 live on Deal, which is why the seed creates three objects rather than inventing fields on one.
 
 ## What it is not

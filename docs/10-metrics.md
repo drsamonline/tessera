@@ -8,7 +8,7 @@ defined. A second definition anywhere else is a defect.
 ## Why this document exists
 
 Seven scores drove routing, trust, forecasting and conflict resolution in the source document with no formula
-that two engineers would implement identically. That is the largest single source of hidden rework, because
+that two engineers would implement identically. Ambiguity here is the largest single source of hidden rework, because
 "deterministic" is exactly the property that was missing. *(Closes B-02, B-03.)*
 
 ## Normalization transforms
@@ -19,7 +19,7 @@ that two engineers would implement identically. That is the largest single sourc
 
 Every **term** is in `[0,1]`. The **total** is not: the cross-boundary penalty is subtracted with a weight of
 0.2, so the routing score lies in `[-0.20, 1.00]`. Clamping it to `[0,1]` would collapse every heavily-penalised
-candidate to a tie at zero, which is precisely when the ordering matters. (R-17, found by the property tests in
+candidate to a tie at zero, which is exactly when the ordering matters. (R-17, found by the property tests in
 [42-property-tests.md](42-property-tests.md).)
 | `authority_match` | 1.0 if the field's authority map gives this node authority or delegate; 0.5 if bidirectional; 0.2 if mirror | `[0,1]` |
 | `sla_headroom` | `clamp(0, 1, (deadline - now) / (deadline - assigned_at))` | `[0,1]` |

@@ -43,7 +43,7 @@ bug.
 | Salesforce | `/services/data/v60.0/query`, `/sobjects/{Contact,Account,Opportunity}` | `nextRecordsUrl`, which replaces the request | `{id, success}` | every record carries an `attributes` block that is not data |
 | Zendesk | `/api/v2/{users,tickets}` | `meta.after_cursor` with `page[after]` | `{user: {...}}` | the record is wrapped, and the name field is `name` |
 
-Three providers, three cursor shapes, one contract. That is the argument for a conformance suite rather than a
+Three providers, three cursor shapes, one contract. A conformance suite is the only way to hold that contract, rather than a
 reviewer.
 
 ## The envelope decision

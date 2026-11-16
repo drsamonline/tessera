@@ -2,7 +2,7 @@
 
 **Status: Draft**
 
-The API had no CORS story at all. Not a wrong one — none. `docs/27` describes ten routes and a bearer token, and says
+The API had no CORS story at all. Not a wrong one, none. `docs/27` describes ten routes and a bearer token, and says
 nothing about a browser client on another origin, which meant the console could not talk to the engine even in
 principle.
 
@@ -30,5 +30,5 @@ victim's browser.
 - **No credentials mode.** The API uses an `Authorization` header, not cookies, so `Allow-Credentials` is not sent.
 - **No rate limiting on preflight.** A `204` costs almost nothing but it is still unbounded.
 - **The console does not use it yet.** The engine can now be called from a browser; the console still reads its
-  seeded data. That is the next piece of work, and this document exists so the gap is written down rather than
+  seeded data. That work is next, and this document exists so the gap is written down rather than
   discovered later.

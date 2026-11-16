@@ -64,7 +64,7 @@ and holds something worth protecting. The response simply does not contain it.
 ## Ownership is a record-level field
 
 `owner_seat_id` moved from `Contact` into the shared canonical envelope. Row-level access control needs it on
-every object, and a rule that only works for contacts is not a rule. It is optional: a record with no owner is
+every object; a rule that only works for contacts is not a rule. Ownership is optional: a record with no owner is
 invisible to an owner-scoped role, which is the safe direction.
 
 ## The criterion, tested six ways

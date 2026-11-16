@@ -9,12 +9,12 @@
 
 ## Why this structure works
 
-PolyForm Noncommercial restricts **users**, not the licensor. That is the property that makes dual licensing possible
+PolyForm Noncommercial restricts **users**, not the licensor. This property is what makes dual licensing possible
 without touching the free grant: the copyright holder may offer the same code under different terms to different
 people, and nothing already released becomes retroactively restricted.
 
-A permissive licence (MIT, Apache) would have been simpler and would have let anyone — including a competitor with a
-sales team — sell this without paying. On a product whose only moat is engineering, that is a donation with extra steps.
+A permissive licence (MIT, Apache) would have been simpler and would have let anyone, including a competitor with a
+sales team, sell this without paying. On a product whose only moat is engineering, that is a donation with extra steps.
 
 A fully proprietary licence was the other option and it is the wrong one here, for a reason specific to this project:
 
@@ -28,7 +28,7 @@ A fully proprietary licence was the other option and it is the wrong one here, f
 |---|---|
 | Reading, running, testing, benchmarking | Yes |
 | Personal projects, research, teaching | Yes |
-| Evaluation inside a business, before purchase | Yes — this is the point |
+| Evaluation inside a business, before purchase | Yes, this is the point |
 | Modifying for any of the above | Yes |
 | A revenue-generating deployment | **No. That needs a commercial licence** |
 

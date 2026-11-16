@@ -20,7 +20,7 @@ test for.
 
 Separate objects per tenant cannot leak through a missing filter, because there is no shared table to filter. It costs
 memory proportional to tenants in a process, which is the right trade for a product with dozens of customers and the
-wrong trade for one with millions — and this is the first.
+wrong trade for one with millions, and this is the first.
 
 ## Two checks, two questions
 
@@ -30,7 +30,7 @@ wrong trade for one with millions — and this is the first.
 | `Api` (per tenant) | **What** may this caller do? Scope and role. |
 
 The router does not skip the tenant's own auth. A router that authenticated on behalf of everything below it would
-mean the tenant's access policy was never applied on the routed path — the classic hole in a "we added a gateway"
+mean the tenant's access policy was never applied on the routed path, the classic hole in a "we added a gateway"
 change.
 
 ## What is proven

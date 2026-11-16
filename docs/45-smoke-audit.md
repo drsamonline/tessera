@@ -38,7 +38,7 @@ Five failures on the first run, and all five were the script's fault, not the co
 | `openapi has no attribute build_document` | It does |
 | `Seat.__init__() missing 2 arguments` | It takes `version` and `capability_manifest` |
 
-That is the useful result: the audit found no defects, and it found five places where a caller would have guessed
+The useful result: the audit found no defects, and it found five places where a caller would have guessed
 wrong. The signatures are the interface, and a smoke test is the cheapest way to find out that an interface is not
 the one you remember.
 

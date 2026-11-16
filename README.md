@@ -18,7 +18,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <img alt="Tests: 748 passing" src="https://img.shields.io/badge/tests-748%20passing-2e7d32">
 <img alt="Version 1.39.0" src="https://img.shields.io/badge/version-1.39.0-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
-<img alt="License: dual — noncommercial free, commercial by agreement" src="https://img.shields.io/badge/license-dual%20%C2%B7%20noncommercial%20free%20%C2%B7%20commercial%20by%20agreement-2e7d32">
+<img alt="License: dual, noncommercial free, commercial by agreement" src="https://img.shields.io/badge/license-dual%20%C2%B7%20noncommercial%20free%20%C2%B7%20commercial%20by%20agreement-2e7d32">
 </p>
 
 <p>
@@ -46,7 +46,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 > ([CONFORMANCE.md](CONFORMANCE.md)). The Postgres DDL is parsed by Postgres's own parser
 > ([docs/39](docs/39-postgres.md)).
 >
-> **What is still not true.** No connector has called a live tenant — every result comes from a recorded transport. The
+> **What is still not true.** No connector has called a live tenant, every result comes from a recorded transport. The
 > Postgres DDL has been parsed, never executed against a server. There is no hosted service, no multi-tenant
 > deployment, and no customer has used this. The specification began as a 261-line build prompt and was audited
 > against itself: 43 defects found, all 43 closed by formal definition or by a numbered assumption
@@ -100,7 +100,7 @@ python3 -m tessera.demo
 ```
 
 Both halves, free ports, the console's origin added to the CORS allowlist, one link that works. The seed is six
-contacts, four companies and four deals across three systems — enough to show agreement, authority, a case-only
+contacts, four companies and four deals across three systems, enough to show agreement, authority, a case-only
 difference and a record one system has never seen. [What the demo data contains](docs/47-running-it.md).
 
 ## Does it actually conform?
@@ -166,7 +166,7 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | Path | What it holds |
 |---|---|
 | `tessera/` | The reference implementation: canonical schema, ledger, metrics, routing, conflict resolution, connectors, mesh, API |
-| `docs/` | Fifty-two documents — the specification, the audits, and the evidence |
+| `docs/` | Fifty-two documents, the specification, the audits, and the evidence |
 | [docs/index.md](docs/index.md) | **The map.** Read these four, then jump to the task you have |
 | [CONFORMANCE.md](CONFORMANCE.md) | Four connectors, sixteen checks, generated |
 | [CLAIMS.md](CLAIMS.md) | Every public claim and the command that checks it |
@@ -174,7 +174,7 @@ five plus cross-cutting concerns. [Why the split](docs/06-roadmap.md).
 | `scripts/` | The gates: docs freshness, links, claims, conformance, DDL, smoke |
 | [deliverables/](deliverables/) | The same specification as PDF, DOCX and XLSX, for circulation |
 
-The full document inventory is in [docs/index.md](docs/index.md) — one place, so there is one list to keep true.
+The full document inventory is in [docs/index.md](docs/index.md), one place, so there is one list to keep true.
 
 ## Run it
 

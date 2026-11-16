@@ -3,7 +3,7 @@
 **Status: Draft, 15 November 2026**
 
 The project began as a 261-line build prompt. This document maps its twenty v1 deliverables to what exists, names every
-deviation, and states what was deliberately not built. It is the closing of the loop on the brief itself — the one
+deviation, and states what was deliberately not built. It is the closing of the loop on the brief itself, the one
 document that answers "did you build what you were asked for?" rather than "does the code work?".
 
 Read with [CLAIMS.md](../CLAIMS.md), which covers whether each claim is *true*; this covers whether each requirement was
@@ -44,8 +44,8 @@ accepts. Choosing Django would have added an ORM dependency to a repository whos
 library only. **The deviation is defensible and it is still a deviation: a reviewer asked for Django and did not get it.**
 
 **No SvelteKit, no Flutter.** The brief asked for two framework applications and a sync engine. What exists is one HTML
-file that runs offline, and an Android shell around it. The sync engine is real — a durable outbox with idempotent
-replay — but it is not SQLCipher and it is not Flutter. **This is the largest deviation in the project**, and the honest
+file that runs offline, and an Android shell around it. The sync engine is real, a durable outbox with idempotent
+replay, but it is not SQLCipher and it is not Flutter. **This is the largest deviation in the project**, and the honest
 reason is that a framework build needs a toolchain the environment does not have; a single file does not.
 
 ## What was deliberately not built
@@ -54,7 +54,7 @@ reason is that a framework build needs a toolchain the environment does not have
 |---|---|
 | Academy videos | No video production; the structure and scripts are not written either |
 | Email drip | No mail service, no consent flow for marketing mail |
-| Community platform | Nothing to put in it yet — a forum with no members is a cost, not a feature |
+| Community platform | Nothing to put in it yet, a forum with no members is a cost, not a feature |
 | Encryption at rest on mobile | Needs a key custody story the brief describes and the implementation does not have |
 | Graph sidecar | The score is computed without one; a graph store would be a second source of truth |
 

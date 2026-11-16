@@ -34,7 +34,7 @@ registry.is_permitted("asha@example.com", "support")     # False
 ```
 
 A `consent_state` field cannot answer "may I use this for marketing" and "may I use this for support" differently.
-That is the whole of purpose limitation, which is why the registry is keyed by purpose and why a grant requires
+Purpose limitation amounts to this, which is why the registry is keyed by purpose and why a grant requires
 the notice version it was given under.
 
 A lawful basis other than consent does not consult the registry, because a contract does not rest on consent.

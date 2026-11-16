@@ -46,7 +46,7 @@ A thousand mutations across three replicas converge to one state. That number is
 specification's acceptance criterion says 1,000 and because a smaller number would not have caught an ordering
 bug that only appears when a replica's counter and its id disagree about who wins.
 
-## No lost update, stated precisely
+## No lost update, stated in full
 
 Two replicas writing the same field produce one visible value and two logged operations:
 
@@ -62,7 +62,7 @@ The loser is **outranked, not deleted**. `test_the_losing_write_is_still_in_the_
 values survive in the log. The mesh's conflict resolver is where a human decides which one was right; the replica
 state holds one value because an interface has to render something.
 
-Two replicas writing *different* fields is not a conflict at all, and both survive. That is the case that
+Two replicas writing *different* fields is not a conflict at all, and both survive. This case
 field-level LWW exists for: the naive record-level rule would have thrown one of them away.
 
 ## The ledger and the sync stream cannot disagree

@@ -5,8 +5,8 @@
 TESSERA is not a financial reporting system, so SOX 404 does not bite it directly. What bites is the question a buyer's
 auditor asks anyway: **what are your IT general controls, and how do you know they operated?**
 
-This document maps each control to the code that implements it, the test that evidences it, and — where there is no
-test — says so. The method is the one used for ICFR testing: state the control objective, separate design from
+This document maps each control to the code that implements it, the test that evidences it, and, where there is no
+test, says so. The method is the one used for ICFR testing: state the control objective, separate design from
 operating effectiveness, test with evidence that stands alone, and classify what is missing rather than rounding it up.
 
 ## Scope, and why these six
@@ -61,14 +61,14 @@ that filter; the rest are engineering hygiene that no one relies on for a conclu
 | **Design effectiveness** | **Effective by construction.** There is no shared table to filter, so there is no predicate to forget |
 | **Operating effectiveness** | Tested: `tests/test_tenants.py`, eight tests including a cross-tenant read by id returning `404` |
 | **Evidence** | Two tenants, separate record sets, no shared ids, a create in one invisible in the other |
-| **Gap** | Isolation is per process. A deployment that runs one process per tenant inherits none of this and needs the Postgres RLS path — which has never been executed |
+| **Gap** | Isolation is per process. A deployment that runs one process per tenant inherits none of this and needs the Postgres RLS path, which has never been executed |
 
 ## C-5 — A deletion is attributable and explained
 
 | | |
 |---|---|
 | **Implementation** | `Mesh.tombstone` — requires a reason, appends `record.tombstoned`, the projection stops serving the record |
-| **Design effectiveness** | **Effective for attribution.** Not effective for erasure — see below |
+| **Design effectiveness** | **Effective for attribution.** Not effective for erasure, see below |
 | **Operating effectiveness** | Tested: `tests/test_standalone.py::TestTombstone`, six tests including `reason_required` and `409` on a second delete |
 | **Evidence** | A `record.tombstoned` event with the reason in its payload; a read returning `404`; the ledger still holding the record |
 | **Gap** | **Design deficiency, accepted and documented (R-07).** The bytes are not destroyed. Under the DPDP Act, "we stopped serving it and recorded why" is a defensible position and not the same as erasure. Crypto-shredding is the correct answer and needs a dependency the engine does not have |
@@ -81,11 +81,11 @@ that filter; the rest are engineering hygiene that no one relies on for a conclu
 | **Design effectiveness** | **Effective on the client.** The engine appends to a file with `durable=True`; there is no fsync-per-event option, so a power loss can lose the last event |
 | **Operating effectiveness** | Partially tested: the outbox replays idempotently; a killed process was not simulated |
 | **Evidence** | Intents survive a reload; ids make replay idempotent |
-| **Gap** | **No test kills the process mid-write.** That is the test this control actually needs and it does not exist |
+| **Gap** | **No test kills the process mid-write.** The control needs exactly that test and it does not exist |
 
 ## Deficiency classification
 
-Using the standard criteria — likelihood of misstatement and magnitude, aggregated by objective.
+Using the standard criteria, likelihood of misstatement and magnitude, aggregated by objective.
 
 | Finding | Classification | Why |
 |---|---|---|
@@ -96,7 +96,7 @@ Using the standard criteria — likelihood of misstatement and magnitude, aggreg
 | RLS never executed (C-4, in a per-tenant deployment) | **Significant deficiency** in that deployment model | The isolation claim rests on SQL that has never run |
 
 Aggregated: C-4 and C-5 both bear on *data integrity and confidentiality in a deployed environment*, and both are
-unverified in the same direction — the code is written, the execution is not. That aggregation is the honest finding of
+unverified in the same direction, the code is written, the execution is not. That aggregation is the honest finding of
 this document.
 
 ## What this document is not

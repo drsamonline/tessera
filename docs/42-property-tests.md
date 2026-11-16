@@ -40,11 +40,11 @@ Every **term** is normalised to `[0,1]`. The **total** is not: the cross-boundar
 weight of 0.2, so the routing score lies in `[-0.20, 1.00]`. `docs/10-metrics.md` claimed `[0,1]`, and the code
 never did.
 
-The tempting fix is to clamp. That is the wrong one: clamping collapses every heavily-penalised candidate to a tie
-at zero, which is precisely the situation where the ordering matters. `test_ordering_survives_below_zero` asserts
+The tempting fix is to clamp, and it is wrong: clamping collapses every heavily-penalised candidate to a tie
+at zero, which is exactly the situation where the ordering matters. `test_ordering_survives_below_zero` asserts
 that a candidate at −0.20 and one at −0.12 stay ordered.
 
-So the **invariant and the document** changed, not the arithmetic. That is the difference between a property test
+So the **invariant and the document** changed, not the arithmetic. A property test earns its keep here
 finding a bug and a property test finding a wrong assumption, and this one was the second.
 
 ## What is covered, and what a seed cannot reach

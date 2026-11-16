@@ -76,7 +76,7 @@ Three tests are worth naming:
 
 ## Update, 15 November 2026: the syntax is now a fact
 
-The DDL is parsed by **libpg_query** — the parser the Postgres server itself uses — through `pglast`.
+The DDL is parsed by **libpg_query** — the parser the Postgres server itself uses, through `pglast`.
 
 ```
 $ python3 scripts/validate_ddl.py

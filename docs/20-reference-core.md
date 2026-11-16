@@ -2,8 +2,8 @@
 
 **Status: Draft**
 
-A dependency-free Python implementation of the five parts of the specification that are defined precisely
-enough to be implemented and tested. It is not the product. It is the proof that the definitions in
+A dependency-free Python implementation of the five parts of the specification that are defined in full
+enough to be implemented and tested. It is the proof that the definitions in
 [10-metrics.md](10-metrics.md) and [11-history-authority.md](11-history-authority.md) can be written down
 without ambiguity.
 
@@ -111,7 +111,7 @@ builder would otherwise have had to guess.
 
 ## Where this sits against the 22 deliverables
 
-Zero of 22 deliverables are fully met. Four are partly met, and the part that is met is stated precisely.
+Zero of 22 deliverables are fully met. Four are partly met, and the part that is met is stated in full.
 
 | Deliverable | Status | What is done | What is missing |
 |---|---|---|---|

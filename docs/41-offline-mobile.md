@@ -13,7 +13,7 @@ only a salt and a verifier. The verifier is an HMAC over a fixed string under th
 passphrase is right without storing the key.
 
 `test_the_passphrase_and_the_key_never_reach_the_disk` opens **every file the client creates** and asserts neither
-the passphrase nor the key's hex appears in any of them. That is the clause, tested as written.
+the passphrase nor the key's hex appears in any of them. The clause is tested as written.
 
 The salt is random per vault, so the same passphrase on two devices produces two different keys.
 
@@ -37,12 +37,12 @@ The docstring says "not something to ship" twice, because a reader who skims wil
 ## The outbox survives the process being killed
 
 `OfflineOutbox` is append-only JSON Lines, flushed and `fsync`ed after every append. `test_the_outbox_survives_the_process_being_killed`
-appends two operations, drops the object without closing it, and reopens the file — both are there.
+appends two operations, drops the object without closing it, and reopens the file, both are there.
 
 ### R-16, found by its own test
 
 `_replay()` tolerated a torn final line from a kill mid-write; `pending()` did not. So reopening an outbox worked
-and reading it crashed — the two readers disagreed about what a half-written line means. Both skip it now, and the
+and reading it crashed, the two readers disagreed about what a half-written line means. Both skip it now, and the
 test that found it writes a truncated JSON object into the file and asserts the outbox still reads.
 
 A torn line is not an acknowledged write, so dropping it is correct rather than lenient.
@@ -52,7 +52,7 @@ A torn line is not an acknowledged write, so dropping it is correct rather than 
 `sync_after_absence` pushes the queue, pulls what the client missed, and drains the outbox **only on
 acknowledgement**.
 
-The test that matters is not "the sync completed". It is
+The test that matters is whether the sync completed with the right data, not whether it ran. It is
 `test_the_result_matches_a_client_that_never_left`: one client writes three operations while offline, a second
 client makes ten changes over the simulated week, and after reconnecting the absent client's fingerprint equals the
 fingerprint of a client that stayed connected the whole time. Convergence is the claim; a completed sync is not.

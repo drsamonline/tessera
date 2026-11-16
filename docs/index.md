@@ -13,7 +13,7 @@ thing you are trying to do.
 | [Product definition](01-product.md) | What the product is, who it is for, and the one event that means it worked |
 | [Architecture](02-architecture.md) | The layer model, the boundaries, and how it fails |
 | [Running it](47-running-it.md) | One command, one link. Run it before you read the design |
-| [CLAIMS.md](../CLAIMS.md) | Every public claim and the command that checks it — including the four that are not verified |
+| [CLAIMS.md](../CLAIMS.md) | Every public claim and the command that checks it, including the four that are not verified |
 
 ## By task
 

@@ -29,5 +29,5 @@ Replace the estimate with measured velocity after Stage 1. *(Assumption AS-18.)*
 
 ## What each stage must prove
 
-A stage is not complete when its code compiles. It is complete when the acceptance criteria for its
+A stage is complete when the acceptance criteria for its
 deliverables pass: [16-acceptance-criteria.md](16-acceptance-criteria.md).

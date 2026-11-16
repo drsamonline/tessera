@@ -8,9 +8,9 @@ TESSERA is a federation layer **and** a CRM. It connects the systems a team alre
 record when they run none.
 
 This was a decision, not a drift. The console had grown contacts, companies, deals, notes, ownership and assignment —
-a CRM's feature list — while the documents still described a layer above CRMs. Both halves are now stated.
+a CRM's feature list, while the documents still described a layer above CRMs. Both halves are now stated.
 
-## What standalone means, precisely
+## What standalone means, in full
 
 | Question | Answer |
 |---|---|
@@ -41,7 +41,7 @@ Three behaviours worth knowing:
 - **One node, not four.** A create broadcast to every connected system produces four records with four ids, and
   reconciling them is the problem this layer exists to solve.
 - **The projection is refreshed before the response.** A create that leaves the list empty is a create nobody
-  believes — found by testing exactly that.
+  believes, found by testing exactly that.
 - **The event is `record.created`** in the ledger, with the principal in the payload. The ledger's actor vocabulary is
   `human`, `agent`, `system`; a principal id is none of those.
 

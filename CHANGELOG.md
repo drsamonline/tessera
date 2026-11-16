@@ -6,6 +6,35 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.47.0] - 2026-11-15
+
+### Changed
+
+The documentation is the product here, and it is the one artefact no check covered. It now has one.
+
+- **Fourteen "That is the X" closers rewritten.** A sentence that restates the point it just made, in a shorter sentence,
+  is a staging habit. Each one became a plain statement; no claim was dropped.
+- **Thirty-two em dashes became commas.** 86 in 45,000 words is about twice what careful hand-written prose produces; the
+  ones doing a comma's job are now commas, and the 27 that are genuine interruptions stayed.
+- **Five staged contrasts and seven stock words rewritten** ("precisely", "honestly", "defined precisely").
+
+### Added
+
+- **`scripts/check_prose.py`** — four budgets, measured from the corpus rather than invented: em dashes per thousand
+  words, staged contrasts, closers of the form "That is the X", and stock vocabulary. The dash ceiling is 1.2 per
+  thousand because 0.69 is what this repository produces when it is written carefully.
+
+### The numbers
+
+| | Before | After | Budget |
+|---|---|---|---|
+| Em dashes per 1000 words | 1.91 | **0.69** | 1.2 |
+| "That is the X" closers | 14 | **0** | 0 |
+| Staged contrasts | 6 | **0** | 3 |
+| Stock vocabulary | 7 | **0** | 0 |
+
+The gate runs on every push, so the next one of these is caught by CI rather than by a reader.
+
 ## [1.46.0] - 2026-11-15
 
 ### Added
