@@ -6,6 +6,19 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.50.1] - 2026-11-22
+
+### Fixed
+
+- **The badge check caught its own first case.** `check_docs.py` verified the test count in the README and the landing
+  page but not the version badge, which drifted four times in one day — `version-1.39.0` against a `VERSION` of 1.49.0,
+  alt text reading "748 passing" over a badge showing 750, a status chip still saying "specification + reference core"
+  long after the core ran.
+
+  It now checks every `version-X.Y.Z` badge and every `Version X.Y.Z` alt string in both files. Its first run found the
+  README one commit behind, which is the point: a number in an image URL is still a claim, and a claim nobody checks is
+  the thing this repository keeps getting wrong.
+
 ## [1.50.0] - 2026-11-22
 
 ### Changed

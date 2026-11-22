@@ -89,7 +89,15 @@ def main():
         if target not in docs:
             problems.append(f"docs/index.md links {target}, which does not exist")
 
+    # every version badge in the README and on the landing page
     version = read("VERSION").strip()
+    for name, text in (("README.md", readme), ("docs/index.html", page)):
+        for found in re.findall(r"version-(\d+\.\d+\.\d+)", text):
+            if found != version:
+                problems.append(f"{name} has a version badge for {found}, VERSION is {version}")
+        for found in re.findall(r"Version (\d+\.\d+\.\d+)", text):
+            if found != version:
+                problems.append(f"{name} alt text says Version {found}, VERSION is {version}")
     changelog = read("CHANGELOG.md")
     newest = re.search(r"^## \[(\d+\.\d+\.\d+)\]", changelog, re.MULTILINE)
     if not newest:

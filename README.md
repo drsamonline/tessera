@@ -16,7 +16,7 @@ Every change is chained and verifiable, on your own hardware.</p>
 <a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
 <img alt="Status: under development" src="https://img.shields.io/badge/status-under%20development-b45309">
 <img alt="Tests: 750 passing" src="https://img.shields.io/badge/tests-750%20passing-2e7d32">
-<img alt="Version 1.49.0" src="https://img.shields.io/badge/version-1.49.0-2e7d32">
+<img alt="Version 1.50.1" src="https://img.shields.io/badge/version-1.50.1-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
 <img alt="License: dual, noncommercial free, commercial by agreement" src="https://img.shields.io/badge/license-dual%20%C2%B7%20noncommercial%20free%20%C2%B7%20commercial%20by%20agreement-2e7d32">
 </p>
