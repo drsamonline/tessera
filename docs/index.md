@@ -31,6 +31,8 @@ thing you are trying to do.
 
 **"Did you build what was asked?"** [Brief conformance](52-brief-conformance.md) · [Acceptance criteria](16-acceptance-criteria.md) · [Assumptions](18-assumptions.md)
 
+**"Who else does this?"** [Landscape](54-landscape.md) · [Invention register](14-invention-register.md)
+
 **"I am buying it."** [Product definition](01-product.md) · [Standalone mode](48-standalone.md) · [Deletion](49-deletion.md) · [Compliance](29-compliance.md) · [PRIVACY](../PRIVACY.md) · [SECURITY](../SECURITY.md)
 
 ## Status legend
@@ -103,6 +105,7 @@ Ordered by the number in the filename, which is the order they were written and 
 | 51 | [Controls](51-controls.md) | all | Six IT general controls, and how each is tested |
 | 52 | [Brief conformance](52-brief-conformance.md) | all | The twenty original deliverables, and every deviation |
 | 53 | [Licensing](53-licensing.md) | all | Dual licensing: why, and what it does not grant |
+| 54 | [Landscape](54-landscape.md) | all | Five companies already sell this. What is left |
 | — | [CONFORMANCE.md](../CONFORMANCE.md) | all | Four connectors, sixteen checks, generated |
 
 **Live:** the reference core runs in a browser, offline, at [drsamonline.github.io/tessera-app](https://drsamonline.github.io/tessera-app/) - source in [tessera-app](https://github.com/drsamonline/tessera-app).

@@ -6,6 +6,37 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.48.0] - 2026-11-22
+
+### Added
+
+- **[docs/54-landscape.md](docs/54-landscape.md)** — the competitive research this project had never done. Five companies
+  already sell the category, three of them directly, one of them shipping per-field provenance, one shipping
+  human-in-the-loop conflict policy as a configurable option.
+
+### What it found, stated plainly
+
+| Assumed differentiator | Reality |
+|---|---|
+| "The mosaic layer above every CRM" as a category claim | PipeMe, Racha and Syntaxia all describe themselves this way. PipeMe prices at €19/seat/month, Racha at $25 |
+| Per-field provenance | Syntaxia: *"Every record carries its complete provenance"* |
+| Human-in-the-loop conflict resolution | Stacksync ships it as a per-field policy |
+
+The unified view, the conflict resolution and the provenance display are the three things this project spent most of its
+effort on. All three are now commodity features with published prices.
+
+### What is actually left
+
+1. **A tamper-evident ledger** — no competitor mentions a hash chain or verifiable history.
+2. **A workforce layer** with seats, handoff packets and escalation.
+3. **Self-hosted and source-available** — all five are SaaS, which excludes any buyer who cannot send customer data to a
+   vendor.
+4. **A consent envelope on every record** — required fields in the schema, not an Enterprise add-on.
+
+### The positioning change
+
+From "the mosaic layer above every CRM" to **"the CRM mesh you can host yourself, with a history you can prove"**.
+
 ## [1.47.0] - 2026-11-15
 
 ### Changed
