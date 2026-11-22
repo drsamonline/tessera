@@ -517,7 +517,7 @@ def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
     log = EventLog(path)
     mesh = Mesh(tenant_id, log)
     crm = SimulatedConnector("hubspot", "sales",
-                             objects=("Contact", "Company", "Deal", "Activity"), page_size=10)
+                             objects=("Contact", "Company", "Deal", "Activity", "Seat"), page_size=10)
     support = SimulatedConnector("zendesk", "support", page_size=10)
     erp = SimulatedConnector("netsuite", "erp",
                              objects=("Contact", "Company", "Deal"), page_size=10)
@@ -581,6 +581,23 @@ def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
         if index != 3:
             erp.seed("Deal", dict(record, amount_minor=amount))
 
+    # Seats, as records. The workforce layer is modelled in depth and the demo had
+    # none, which meant /v1/objects/Seat returned an empty list and a Task - which
+    # requires a seat - could not be created at all. A demo that cannot exercise the
+    # layer it is demonstrating is a demo of something else.
+    seat_rows = [
+        ("0001", "Account manager", ["crm.contact.read", "crm.contact.write", "crm.deal.write"],
+         {"objects": ["Contact", "Company", "Deal", "Activity", "Task"]}, 86400, "human", None),
+        ("0002", "Support lead", ["crm.contact.read", "support.ticket.write"],
+         {"objects": ["Contact", "Ticket", "Activity", "Task"]}, 14400, "human", None),
+        ("0003", "Enrichment agent", ["crm.contact.read"],
+         {"objects": ["Contact", "Company", "Activity", "Task"]}, 3600, "agent",
+         uid("e0", "0001")),
+        ("0004", "Collections agent", ["crm.deal.read", "erp.invoice.read"],
+         {"objects": ["Deal", "Invoice", "Activity", "Task"]}, 3600, "agent",
+         uid("e0", "0001")),
+    ]
+
     if standalone:
         # No CRM behind it. The native store is the system of record, and the
         # product is a CRM that happens to be able to federate later.
@@ -595,16 +612,29 @@ def demo_api(tenant_id: str = "018f0000-0000-7000-8000-000000000001",
             native.seed("Contact", dict(base, id=uid("c1", suffix), full_name=name,
                                         email=email, phone="+91 90000 00001",
                                         company_ref=f"Company:{uid('c0', company)}"))
+        for suffix, name, caps, scope, sla, kind, fallback in seat_rows:
+            native.seed("Seat", dict(base, id=uid("e0", suffix), name=name, version=1,
+                                     capability_manifest=caps, permissions_scope=scope,
+                                     sla={"seconds": sla, "response_seconds": max(60, sla // 4)},
+                                     escalation_ladder=[], fallback_seat_id=fallback,
+                                     owner_seat_id=None))
         mesh.register(Node("native", native, "native", trust=0.9))
         mesh.sync("Contact")
         mesh.sync("Company")
+        mesh.sync("Seat")
     else:
+        for suffix, name, caps, scope, sla, kind, fallback in seat_rows:
+            crm.seed("Seat", dict(base, id=uid("e0", suffix), name=name, version=1,
+                                  capability_manifest=caps, permissions_scope=scope,
+                                  sla={"seconds": sla, "response_seconds": max(60, sla // 4)},
+                                  escalation_ladder=[], fallback_seat_id=fallback,
+                                  owner_seat_id=None))
         mesh.register(Node("hubspot", crm, "sales",
                            authority={"email": "authority", "stage": "authority"}, trust=0.8))
         mesh.register(Node("zendesk", support, "support", trust=0.6))
         mesh.register(Node("netsuite", erp, "erp",
                            authority={"amount_minor": "authority"}, trust=0.75))
-        for object_name in ("Company", "Contact", "Deal"):
+        for object_name in ("Company", "Contact", "Deal", "Seat"):
             mesh.sync(object_name)
 
     tokens = {

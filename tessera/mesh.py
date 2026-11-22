@@ -279,10 +279,18 @@ class Mesh:
         if self.log is not None:
             # The ledger's actor vocabulary is human, agent or system. A principal
             # id is none of those; the principal travels in the payload instead.
+            # The canonical_ref is what the projection keys on. Without it the
+            # event is skipped and the record only appears when a later sync
+            # happens to carry it - which is how a create became invisible on the
+            # third call in a row. The record travels in the payload too, so a
+            # rebuild needs nothing else.
             self.log.append(tenant_id=self.tenant_id, actor="human",
                             action="record.created",
                             payload={"object": object_name, "id": record["id"],
-                                     "node": target.id, "principal": actor})
+                                     "node": target.id, "principal": actor,
+                                     "record": record},
+                            canonical_ref=canonical.make_ref(object_name, record["id"]),
+                            source_node_id=target.id)
         self.sync(object_name)
         return {"object": object_name, "id": record["id"], "node": target.id}
 

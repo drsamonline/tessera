@@ -182,3 +182,47 @@ class TestTombstone(unittest.TestCase):
                              "/v1/objects/Contact/018f0000-0000-7000-8000-0000000000ff",
                              {"reason": "never existed"})
         self.assertEqual(response.status, 404)
+
+
+class TestRepeatedCreates(unittest.TestCase):
+    """A create must be visible on the very next read, every time.
+
+    It was not. `record.created` carried no `canonical_ref`, so the projection
+    skipped it; the record appeared only when a later `sync` happened to carry it.
+    The first two creates worked and the third silently did not, which is the worst
+    shape a bug can take: it looks like a slow read.
+    """
+
+    def test_five_creates_in_a_row_are_all_visible(self):
+        api_ = api.demo_api(standalone=True)
+        headers = {"Authorization": "Bearer demo-token"}
+
+        def call(method, path, body=None):
+            return api_.handle(api.Request(method=method, path=path, query={},
+                                           headers=headers, body=body))
+
+        start = len(call("GET", "/v1/objects/Contact").body["ids"])
+        for index in range(5):
+            created = call("POST", "/v1/objects/Contact", {
+                "full_name": f"Person {index}", "email": f"person{index}@example.com",
+                "consent_state": "pending", "lawful_basis": "legitimate_interest",
+                "purpose_id": "support"})
+            self.assertEqual(created.status, 201)
+            after = call("GET", "/v1/objects/Contact").body["ids"]
+            self.assertIn(created.body["id"], after,
+                          f"create {index} is not visible to the next read")
+            self.assertEqual(len(after), start + index + 1)
+
+    def test_a_create_is_in_the_ledger_with_a_reference(self):
+        api_ = api.demo_api(standalone=True)
+        headers = {"Authorization": "Bearer demo-token"}
+        created = api_.handle(api.Request(
+            method="POST", path="/v1/objects/Contact", query={}, headers=headers,
+            body={"full_name": "Referenced", "email": "referenced@example.com",
+                  "consent_state": "pending", "lawful_basis": "legitimate_interest",
+                  "purpose_id": "support"}))
+        events = [e for e in api_.log.events() if e["action"] == "record.created"]
+        mine = [e for e in events if e["payload"].get("id") == created.body["id"]]
+        self.assertTrue(mine, "the create is not in the ledger")
+        self.assertEqual(mine[0]["canonical_ref"],
+                         f"Contact:{created.body['id']}")

@@ -15,7 +15,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 <p>
 <a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
 <img alt="Status: specification + reference core" src="https://img.shields.io/badge/status-spec%20%2B%20reference%20core-1F3552">
-<img alt="Tests: 748 passing" src="https://img.shields.io/badge/tests-748%20passing-2e7d32">
+<img alt="Tests: 748 passing" src="https://img.shields.io/badge/tests-750%20passing-2e7d32">
 <img alt="Version 1.39.0" src="https://img.shields.io/badge/version-1.39.0-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
 <img alt="License: dual, noncommercial free, commercial by agreement" src="https://img.shields.io/badge/license-dual%20%C2%B7%20noncommercial%20free%20%C2%B7%20commercial%20by%20agreement-2e7d32">
@@ -41,7 +41,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 > **Project status: a specification, a reference implementation that runs, and a demo that starts both halves.**
 >
 > **What runs today.** `python3 -m tessera.api` serves the HTTP API. `python3 -m tessera.demo` starts the API and the
-> console together on free ports and prints one link that works. 748 tests pass. Every connector in the repository is
+> console together on free ports and prints one link that works. 750 tests pass. Every connector in the repository is
 > checked against a 16-check suite, and the result is generated rather than typed
 > ([CONFORMANCE.md](CONFORMANCE.md)). The Postgres DDL is parsed by Postgres's own parser
 > ([docs/39](docs/39-postgres.md)).
@@ -58,7 +58,7 @@ Together they make one picture &mdash; and one tamper-evident record of how the 
 > What does run: `tessera/`, a dependency-free reference implementation of the canonical schema, the ledger,
 > the metrics, routing, conflict resolution, the connector contract, the conformance suite, four connectors and
 > a working mesh, projections that rebuild from the ledger, the workforce layer, and an HTTP surface with an OpenAPI 3.1
-> contract, ten MCP tools, three-layer access control a compliance substrate and local-first sync. 748 tests, standard library only, no network.
+> contract, ten MCP tools, three-layer access control a compliance substrate and local-first sync. 750 tests, standard library only, no network.
 > An independent code review found 13 findings and fixed 11: [docs/31-code-review.md](docs/31-code-review.md).
 > [What it does and does not do](docs/20-reference-core.md).
 
@@ -186,7 +186,7 @@ python3 -m tessera.cli schema                # print and check both contracts
 python3 -m tessera.cli timeline              # what we knew vs what was true, then revert and mirror
 python3 -m tessera.bench --gate              # measure, and fail on a regression
 python3 -m tessera.jargon                    # the lint that blocks release
-python3 -m unittest discover -s tests -t .   # 748 tests
+python3 -m unittest discover -s tests -t .   # 750 tests
 python3 -m tessera.fuzz                      # four property suites
 python3 scripts/smoke.py                     # one call into every module
 python3 scripts/check_docs.py                # docs and landing page match the tree

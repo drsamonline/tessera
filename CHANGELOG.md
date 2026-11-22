@@ -6,6 +6,31 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.49.0] - 2026-11-22
+
+### Fixed
+
+**A create stopped being visible after the second one.** `record.created` was appended without a `canonical_ref`, so the
+projection skipped it; the record only appeared if a later `sync` happened to carry it. The first two creates worked and
+the third silently did not.
+
+That is the worst shape a bug can take: it looks like a slow read. Found because seeding seats made a test run in a
+different order.
+
+Two tests now guard it: five creates in a row are all visible on the next read, and every `record.created` carries a
+reference.
+
+### Added
+
+- **Seats in the demo, in both modes.** `/v1/objects/Seat` returned an empty list, which meant the workforce layer was
+  modelled in depth and could not be exercised at all — and a Task, which requires a seat, could not be created. Four
+  seats now: two human, two agent, with capabilities, scopes, SLAs and a fallback seat for the agents.
+
+### What that unblocks
+
+A CRM follow-up is a Task assigned to a seat. Without seats there was no way to create one, so the console could not have
+follow-ups at all. It can now.
+
 ## [1.48.0] - 2026-11-22
 
 ### Added
