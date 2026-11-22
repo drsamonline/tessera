@@ -25,6 +25,9 @@ Run all the checks: `python3 scripts/check_claims.py`.
 | 16 | The console's static gates pass | `scripts/check_app.py` | verified |
 | 17 | The APK installs and runs | — | **not verified. Never run on a device.** |
 | 18 | No customer has used this | — | true by definition, and the point |
+| 19 | The chain is tamper-evident | `python3 -m tessera.cli verify`; the console's Tamper control | verified |
+| 20 | It runs where you put it | `python3 -m tessera.demo`; `docker compose up` manifests exist but are unrun | verified locally, **not in a container** |
+| 21 | The unified view is table stakes | [docs/54](docs/54-landscape.md), five vendors with published prices | verified by research, not by a benchmark |
 
 ## The four that are not verified
 

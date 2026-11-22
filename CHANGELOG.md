@@ -6,6 +6,38 @@ Format follows Keep a Changelog. Versions follow the specification, not the (non
 
 Nothing yet.
 
+## [1.50.0] - 2026-11-22
+
+### Changed
+
+**The headline changed, because the research said it had to.**
+
+| Was | Now |
+|---|---|
+| "The mosaic layer above every CRM" | "A CRM mesh you can host yourself, with a history you can prove" |
+
+`docs/54` found PipeMe, Racha and Syntaxia selling the same unified view at €19 to $25 a seat, two of them shipping
+per-field provenance and human-in-the-loop conflict resolution. A headline that a competitor's pricing page already
+answers is not a headline.
+
+The README now says why, above the fold, and names the four things that are not commodity: the tamper-evident ledger, the
+workforce layer, self-hosting, and a consent envelope that is a schema field rather than an Enterprise add-on.
+
+### Fixed
+
+- Three badges were stale again: `version-1.39.0` against a `VERSION` of 1.49.0, alt text reading "748 passing" over a
+  badge showing 750, and a status chip still saying "specification + reference core".
+
+### Added
+
+Three claims to the register, because the new positioning makes new claims:
+
+| # | Claim | Status |
+|---|---|---|
+| 19 | The chain is tamper-evident | verified |
+| 20 | It runs where you put it | verified locally, **not in a container** |
+| 21 | The unified view is table stakes | verified by research, not by a benchmark |
+
 ## [1.49.0] - 2026-11-22
 
 ### Fixed

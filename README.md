@@ -8,15 +8,15 @@
 
 <h1>TESSERA</h1>
 
-<p><b>The mosaic layer above every CRM.</b><br>
-Every system you already run becomes a tile. The tiles keep their own shape.<br>
-Together they make one picture &mdash; and one tamper-evident record of how the picture was made.</p>
+<p><b>A CRM mesh you can host yourself, with a history you can prove.</b><br>
+It joins the systems you already run, and it is the system of record when you run none.<br>
+Every change is chained and verifiable, on your own hardware.</p>
 
 <p>
 <a href="https://drsamonline.github.io/tessera/"><img alt="Landing page: live" src="https://img.shields.io/badge/landing%20page-live-d9a441"></a>
-<img alt="Status: specification + reference core" src="https://img.shields.io/badge/status-spec%20%2B%20reference%20core-1F3552">
-<img alt="Tests: 748 passing" src="https://img.shields.io/badge/tests-750%20passing-2e7d32">
-<img alt="Version 1.39.0" src="https://img.shields.io/badge/version-1.39.0-2e7d32">
+<img alt="Status: under development" src="https://img.shields.io/badge/status-under%20development-b45309">
+<img alt="Tests: 750 passing" src="https://img.shields.io/badge/tests-750%20passing-2e7d32">
+<img alt="Version 1.49.0" src="https://img.shields.io/badge/version-1.49.0-2e7d32">
 <img alt="Defects: 43 found, 43 closed" src="https://img.shields.io/badge/audit-43%20defects%20closed-b45309">
 <img alt="License: dual, noncommercial free, commercial by agreement" src="https://img.shields.io/badge/license-dual%20%C2%B7%20noncommercial%20free%20%C2%B7%20commercial%20by%20agreement-2e7d32">
 </p>
@@ -117,6 +117,24 @@ committed document does not match a fresh run, so it cannot drift into being a c
 | Native (in-process) | 16/16 |
 
 All four run against recorded transports. No connector here has called a live tenant.
+
+## Why the headline is not "the mosaic layer above every CRM"
+
+That was the claim for two weeks. Then the competitive research got done
+([docs/54](docs/54-landscape.md)): PipeMe, Racha and Syntaxia all sell a multi-CRM unified view, at €19 and $25 per seat,
+and two of them ship per-field provenance and human-in-the-loop conflict resolution.
+
+The unified view, the conflict resolution and the provenance display are the three things this project spent most of its
+effort on. All three are commodity features with published prices.
+
+Four things are not:
+
+| | |
+|---|---|
+| **A tamper-evident ledger** | No competitor mentions a hash chain or verifiable history |
+| **A workforce layer** | Seats, handoff packets, escalation. Nobody else has an idea of who is working a record |
+| **Self-hosted, source-available** | All five are SaaS. A hospital cannot buy any of them |
+| **A consent envelope per record** | `consent_state`, `lawful_basis`, `purpose_id` are required schema fields, not an Enterprise add-on |
 
 ## How it fits together
 
