@@ -7,7 +7,7 @@ Run all the checks: `python3 scripts/check_claims.py`.
 
 | # | Claim | Check | Status |
 |---|---|---|---|
-| 1 | 748 tests pass | `python3 -m unittest discover -s tests -t .` | verified |
+| 1 | 750 tests pass | `python3 -m unittest discover -s tests -t .` | verified |
 | 2 | Four connectors pass a 16-check conformance suite | `python3 scripts/conformance_report.py` | verified against recorded transports |
 | 3 | The Postgres DDL is valid Postgres syntax | `python3 scripts/validate_ddl.py` (libpg_query) | verified |
 | 4 | The Postgres DDL runs against a server | — | **not verified. Never executed.** |

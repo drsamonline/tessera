@@ -26,7 +26,7 @@ def main() -> int:
     code, out = run(sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", ".")
     tests = re.search(r"Ran (\d+) tests", out)
     count = int(tests.group(1)) if tests else 0
-    checks.append(("748 tests pass", 0 if code == 0 and count == 748 else 1,
+    checks.append(("750 tests pass", 0 if code == 0 and count == 750 else 1,
                    f"{count} tests, exit {code}"))
 
     code, out = run(sys.executable, "scripts/conformance_report.py")
